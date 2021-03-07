@@ -1,0 +1,13 @@
+[user]
+	name = nagamocha3000
+	email = nagamocha@gmail.com
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+[url "ssh://git@github.com/"]
+    insteadOf = https://github.com/
+[core]
+	editor = vim
+[color]
+    status = always
+[init]
+	defaultBranch = main
