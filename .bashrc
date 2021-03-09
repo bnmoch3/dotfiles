@@ -25,7 +25,7 @@ ulimit -u 2048
 
 
 # by default, terminal uses emacs keystrokes for editing commands, instead use vim keystrokes
-# set -o vi
+set -o vi
 
 
 # enable go get for private repos
