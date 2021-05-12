@@ -1,6 +1,7 @@
 " CREDITS for initial settings, 
 " - The fine folks at MIT's Missing Semester class
 " - ThePrimeagen: www.youtube.com/watch?v=n9k9scbTuvQ
+" - Practical Vim - Drew Neil
 
 " set encoding to utf-8 because why not
 set encoding=utf-8
@@ -9,14 +10,22 @@ set encoding=utf-8
 " Vim functionality.
 set nocompatible
 
+" By default, vim records and persists the last 20 commands.
+" The configuration below increases this limit
+set history=200
+
 " Allow to cut/copy/paste to/from system clipboard, for mac
-" set clipboard=unnamed
-" noremap y "*y
-" noremap yy "*yy
+set clipboard=unnamedplus
+noremap Y "+y
+noremap YY "+yy
 " noremap Y "*y$
 " noremap x "*x
 " noremap dd "*dd
 " noremap D "*D
+
+" enable file detection and indent scripts
+filetype on
+filetype plugin indent on
 
 
 " Center to line when searching
@@ -41,23 +50,24 @@ set expandtab
 
 " Enable sensible indentation and settings for python files
 au BufNewFile,BufRead *.py
-    \ set tabstop=4
-    \ set softtabstop=4
-    \ set shiftwidth=4
-    \ set textwidth=79
-    \ set expandtab
-    \ set autoindent
+    \ set tabstop=4 |
+    \ set softtabstop=4 |
+    \ set shiftwidth=4 |
+    \ set textwidth=79 |
+    \ set expandtab |
+    \ set autoindent |
     \ set fileformat=unix
 
 " for python, mark extra whitespace as bad
+highlight BadWhitespace ctermbg=red guibg=darkred
 au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
 
 
 " Enable sensible indentation for html and css files
-au BufNewFile,BufRead  *.html, *.css
-    \ set tabstop=2
+au BufNewFile,BufRead  *.html,*.css,*.js,*.ts,*.jsx,*.tsx
+    \ set tabstop=2 |
+    \ set shiftwidth=2 |
     \ set softtabstop=2
-    \ set shiftwidth=2
 
 " Enable vim to try do a smart job in indentations
 set smartindent
@@ -171,7 +181,11 @@ Plug 'vim-airline/vim-airline'
 " add git info
 Plug 'tpope/vim-fugitive'
 
-
+" add syntax highlighting for tsx
+"
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
+autocmd BufNewFile,BufRead *.tsx,*.jsx set filetype=typescriptreact
 
 call plug#end()
 

@@ -1,5 +1,7 @@
+#! /usr/bin/bash
+
 # enable grep to use colors
-export GREP_OPTIONS='--color=auto'
+# export GREP_OPTIONS='--color=auto'
 
 # enable ls to use colors
 export CLICOLOR=1
@@ -44,6 +46,19 @@ export PATH="$PATH:$(yarn global bin)"
 
 # Alias definitions.
 
-if [ -f ~/Config/.bash_aliases ]; then
-    . ~/Config/.bash_aliases
+if [ -f "$HOME/Config/.bash_aliases" ]; then
+    . "$HOME/Config/.bash_aliases"
 fi
+
+# function helpers
+# if [ -f "$HOME/Config/helpers/go_to_projects.sh" ]; then
+#    . "$HOME/Config/helpers/go_to_projects.sh" 
+#    echo alive
+# fi
+
+
+# Helper functions and scripts
+# for helper_script in $(ls -Ap "$HOME/Config/helpers/" | grep -v /)
+# do
+#     . "$helper_script"
+# done
