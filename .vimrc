@@ -1,4 +1,4 @@
-" CREDITS for initial settings, 
+" Credits:
 " - The fine folks at MIT's Missing Semester class
 " - ThePrimeagen: www.youtube.com/watch?v=n9k9scbTuvQ
 " - Practical Vim - Drew Neil
@@ -14,25 +14,47 @@ set nocompatible
 " The configuration below increases this limit
 set history=200
 
-" Allow to cut/copy/paste to/from system clipboard, for mac
+" Allow to cut/copy into system clipboard 
 set clipboard=unnamedplus
 noremap Y "+y
 noremap YY "+yy
+noremap D "*D
 " noremap Y "*y$
 " noremap x "*x
 " noremap dd "*dd
-" noremap D "*D
 
 " enable file detection and indent scripts
 filetype on
 filetype plugin indent on
 
+" enable easy navigation of buffer list
+noremap <silent> [b :bprevious<CR>
+noremap <silent> ]b :bnext<CR>
+noremap <silent> [B :bfirst<CR>
+noremap <silent> ]B :blast<CR>
+
+" Add mapping for clearing highlighting after a search
+nnoremap <silent> \ :<C-u>nohlsearch<CR>
+
+" Adds visual-star search to vim. This inverts the default behaviour
+" in vim which is: while in visual mode, doing a star-search searches 
+" for all the words visually selected rather than the word directly
+" under the cursor.
+" xnoremap * :<C-u>call <SID>VSetSearch('/')<CR>/<C-R>=@/<CR><CR>
+" xnoremap # :<C-u>call <SID>VSetSearch('?')<CR>?<C-R>=@/<CR><CR>
+
+" function! s:VSetSearch(cmdtype)
+"   let temp = @s
+"   norm! gv"sy
+"   let @/ = '\V' . substitute(escape(@s, a:cmdtype.'\'), '\n', '\\n', 'g')
+"   let @s = temp
+" endfunction
 
 " Center to line when searching
 " currently disabling rest of options till I understand them
 :nnoremap n nzz
 :nnoremap N Nzz
-" :nnoremap * *zz
+:nnoremap * *zz
 " :nnoremap # #zz
 " :nnoremap g* g*zz
 " :nnoremap g# g#zz
@@ -85,7 +107,7 @@ set noerrorbells visualbell t_vb=
 set number
 
 " Enable relative line numbering mode.
-set relativenumber
+" set relativenumber
 
 " Always show the status line at the bottom, even if you only have one window open.
 set laststatus=2
@@ -104,6 +126,7 @@ set smartcase
 
 " Enable searching as you type, rather than waiting till you press enter.
 set incsearch
+set hlsearch
 
 " Unbind some useless/annoying default key bindings.
 nmap Q <Nop> " 'Q' in normal mode enters Ex mode. You almost never want this.
@@ -116,7 +139,8 @@ set nowrap
 
 " set width to 80 characters
 set colorcolumn=80
-highligh ColorColumn ctermbg=0 guibg=lightgrey
+" highlight ColorColumn ctermbg=0 guibg=lightgrey
+hi ColorColumn ctermbg=lightcyan guibg=blue
 
 " Try to prevent bad habits like using the arrow keys for movement.
 " nnoremap <Left>  :echoe "Use h"<CR>
@@ -178,14 +202,53 @@ let g:go_auto_type_info = 1
 " customize status line
 Plug 'vim-airline/vim-airline'
 
+" add tim-pope's commentary plugin
+Plug 'tpope/vim-commentary'
+
+" add tim-pope's surround plugin to simplify quoting/wrapping text
+Plug 'tpope/vim-surround'
+
 " add git info
 Plug 'tpope/vim-fugitive'
 
+" add tim-pope's unimpaired plugin for quick navigation of lists
+Plug 'tpope/vim-unimpaired'
+
 " add syntax highlighting for tsx
-"
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 autocmd BufNewFile,BufRead *.tsx,*.jsx set filetype=typescriptreact
+
+" for cpp dev
+Plug 'ycm-core/YouCompleteMe'
+" to enable syntastic:
+" github.com/ycm-core/YouCompleteMe#user-content-the-gycm_show_diagnostics_ui-option
+let g:ycm_show_diagnostics_ui = 0
+Plug 'preservim/tagbar'
+let syntastic_cpp_checkers = ['clang_tidy']
+let syntastic_go_checkers = [ 'gofmt' ]
+Plug 'rhysd/vim-clang-format'
+let g:clang_format#auto_format = 1
+
+    
+" fzf
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+" add tmux navigation compatibility
+Plug 'christoomey/vim-tmux-navigator'
+let g:tmux_navigator_save_on_switch = 1  
+" Disable tmux navigator when zooming the Vim pane
+let g:tmux_navigator_disable_when_zoomed = 1
+" Easily interact with tmux from vim
+Plug 'preservim/vimux'
+map <Leader>vp :VimuxPromptCommand<CR>
+" Run last command executed by VimuxRunCommand
+map <Leader>vl :VimuxRunLastCommand<CR>
+" Inspect runner pane
+map <Leader>vi :VimuxInspectRunner<CR>
+" Zoom the tmux runner pane
+map <leader>vz :VimuxZoomRunner<CR>
 
 call plug#end()
 
