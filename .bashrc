@@ -165,3 +165,8 @@ alias molecula='cd /home/bnm/MOLECULA'
 #     export PAGER="most"
 # fi
 . "$HOME/.cargo/env"
+
+
+# Enhance cd to use other dirs instead of just the current dir
+# Credits: https://mhoffman.github.io/2015/05/21/how-to-navigate-directories-with-the-shell.html
+# CDPATH=.:~:~/PROJECTS:~/MOLECULA
