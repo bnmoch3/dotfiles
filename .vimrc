@@ -33,6 +33,11 @@ noremap <silent> ]b :bnext<CR>
 noremap <silent> [B :bfirst<CR>
 noremap <silent> ]B :blast<CR>
 
+" make sure spacebar doesn't have any mapping beforehand
+nnoremap <SPACE> <Nop>
+" set mapleader key to spacebar
+let mapleader=" "
+
 " Add mapping for clearing highlighting after a search
 nnoremap <silent> \ :<C-u>nohlsearch<CR>
 
@@ -234,6 +239,18 @@ let g:clang_format#auto_format = 1
 " fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+" for searching files within vim
+nnoremap <silent><leader>f :GFiles!<CR>
+" search for open buffers with fzf
+nnoremap <silent><leader>b :Buffers!<CR>
+" search for code with Ag
+nnoremap <silent><leader>c :Ag!<CR>
+" search for marks with fzf
+nnoremap <silent><leader>m :Marks!<CR>
+" search lines within current file with fzf
+nnoremap <silent><leader>l :BLines<CR>
+" search windows & tabs with fzf
+nnoremap <silent><leader>w :Windows<CR>
 
 " add tmux navigation compatibility
 Plug 'christoomey/vim-tmux-navigator'

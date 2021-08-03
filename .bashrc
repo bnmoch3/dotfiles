@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -170,3 +171,14 @@ alias molecula='cd /home/bnm/MOLECULA'
 # Enhance cd to use other dirs instead of just the current dir
 # Credits: https://mhoffman.github.io/2015/05/21/how-to-navigate-directories-with-the-shell.html
 # CDPATH=.:~:~/PROJECTS:~/MOLECULA
+
+
+# FZF options
+export FZF_DEFAULT_OPTS='--height 80% --layout=reverse --border --margin=1 --padding=1'
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+function edit-files() {
+    fzf --multi | xargs --no-run-if-empty -I{} nvim {} 
+}
+
