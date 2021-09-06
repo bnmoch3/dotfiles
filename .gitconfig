@@ -10,6 +10,11 @@
 [color]
     status = always
 [init]
-	defaultBranch = main
+	defaultBranch = master
+[merge]
+    tool = vimdiff
+    conflictstyle = diff3
+[difftool]
+    prompt = false
 [alias]
 	ll = log --graph --format=\"%C(yellow)%h%C(red)%d%C(reset) - %C(bold green)(%ar)%C(reset) %s %C(blue)<%an>%C(reset)\"

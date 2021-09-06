@@ -57,50 +57,10 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\W\$ '
-fi
 unset color_prompt force_color_prompt
 
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \W\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
 
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
-
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
-fi
-
-# colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
-
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
+PS1="\[\033[0;32m\][\h\$]\W:\[\033[0m\] "
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -113,20 +73,20 @@ if ! shopt -oq posix; then
   fi
 fi
 
-
-# psql editor
-# check out: https://simply.name/yet-another-psql-color-prompt.html
-export PSQL_EDITOR="code -w"
-
-
 # file limits for Pilosa
 ulimit -n 262144
 ulimit -u 2048
 
-
-
 # by default, terminal uses emacs keystrokes for editing commands, instead use vim keystrokes
 set -o vi
+
+
+# psql editor
+# check out: https://simply.name/yet-another-psql-color-prompt.html
+export PSQL_EDITOR="nvim"
+
+# colored GCC warnings and errors
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # enable go get for private repos
 export GOPRIVATE="github.com/molecula"
@@ -140,25 +100,15 @@ export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="$PATH:$(yarn global bin)"
 
 # Alias definitions.
-
-if [ -f "$HOME/Config/.bash_aliases" ]; then
-    . "$HOME/Config/.bash_aliases"
+if [ -f "$HOME/dotfiles/.bash_aliases" ]; then
+    . "$HOME/dotfiles/.bash_aliases"
 fi
 
+# Function definitions.
+if [ -f "$HOME/dotfiles/.bash_functions.sh" ]; then
+    . "$HOME/dotfiles/.bash_functions.sh"
+fi
 
-# soft delete for files
-alias del='trash-put'
-
-# some more ls aliases
-alias ll='ls -alF'
-alias l1='ls -1'
-alias la='ls -A'
-alias l='ls -CF'
-alias pwdd='pwd | xclip -i'
-alias cwdd='cd $(xclip -o)'
-alias hackertools='cd /home/bnm/PROJECTS/hackertools'
-alias projects='cd /home/bnm/PROJECTS/'
-alias molecula='cd /home/bnm/MOLECULA'
 
 [ -z "$TMUX" ] && export TERM=xterm-256color
 
@@ -174,11 +124,13 @@ alias molecula='cd /home/bnm/MOLECULA'
 
 
 # FZF options
+if type rg &> /dev/null; then
+    export FZF_DEFAULT_COMMANND='rg --files'
+    export FZF_DEFAULT_OPTS='-m'
+fi
+
 export FZF_DEFAULT_OPTS='--height 80% --layout=reverse --border --margin=1 --padding=1'
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-function edit-files() {
-    fzf --multi | xargs --no-run-if-empty -I{} nvim {} 
-}
 
