@@ -26,3 +26,6 @@
     ss = status -s
     last = log -1 HEAD
     visual = !gitk
+
+[pull]
+	rebase = true
