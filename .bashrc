@@ -132,5 +132,3 @@ fi
 export FZF_DEFAULT_OPTS='--height 80% --layout=reverse --border --margin=1 --padding=1'
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-
-
