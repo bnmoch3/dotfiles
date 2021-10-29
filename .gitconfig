@@ -17,4 +17,12 @@
 [difftool]
     prompt = false
 [alias]
-	ll = log --graph --format=\"%C(yellow)%h%C(red)%d%C(reset) - %C(bold green)(%ar)%C(reset) %s %C(blue)<%an>%C(reset)\"
+    lo = log --oneline
+	lg = log --graph --format=\"%C(yellow)%h%C(red)%d%C(reset) - %C(bold green)(%ar)%C(reset) %s %C(blue)<%an>%C(reset)\"
+    lp = log --pretty=format:\"%h - %an, %ar: %s\"
+    lpp = log --pretty=format:\"%h - [%an,%ar][%cn,%cr]: %s\"
+    unstage = restore --staged
+    s = status
+    ss = status -s
+    last = log -1 HEAD
+    visual = !gitk
