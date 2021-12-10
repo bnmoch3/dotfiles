@@ -99,6 +99,8 @@ export PATH=$PATH:/home/bnm/go/bin
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="$PATH:$(yarn global bin)"
 
+export PATH="$PATH:/home/bnm/installed/bin:/home/bnm/installed/bin/SQLiteStudio/"
+
 # Alias definitions.
 if [ -f "$HOME/dotfiles/.bash_aliases" ]; then
     . "$HOME/dotfiles/.bash_aliases"
