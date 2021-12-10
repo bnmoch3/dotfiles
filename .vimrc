@@ -190,12 +190,12 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 " m search for marks with fzf
 " l search lines within current file with fzf
 " w search windows & tabs with fzf
-nnoremap <silent><leader>f :GFiles!<CR> 	
+nnoremap <silent><leader>f :Files!<CR> 	
 nnoremap <silent><leader>b :Buffers!<CR> 	
 nnoremap <silent><leader>c :Rg!<CR> 		
 nnoremap <silent><leader>m :Marks!<CR> 		
-nnoremap <silent><leader>l :BLines<CR> 		
-nnoremap <silent><leader>w :Windows<CR> 	
+nnoremap <silent><leader>l :BLines!<CR> 		
+nnoremap <silent><leader>w :Windows!<CR> 	
 
 
 
