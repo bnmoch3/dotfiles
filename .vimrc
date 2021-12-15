@@ -67,7 +67,7 @@ highlight BadWhitespace ctermbg=red guibg=darkred
 au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
 
 " Enable sensible indentation for html and css files
-au BufNewFile,BufRead  *.html,*.css,*.js,*.ts,*.jsx,*.tsx,*yml,*.yaml
+au BufNewFile,BufRead  *.html,*.css,*.js,*.ts,*.jsx,*.tsx,*yml,*.yaml,*.sql
     \ set tabstop=2 |
     \ set shiftwidth=2 |
     \ set softtabstop=2
