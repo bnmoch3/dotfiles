@@ -161,7 +161,6 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L> 
 nnoremap <C-H> <C-W><C-H> 
 
-nnoremap <C-N> :Vexplore
 
 
 nnoremap <leader>q :make<CR>
