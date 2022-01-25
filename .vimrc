@@ -35,6 +35,10 @@ set shortmess+=I
 
 
 
+" add numbering for lines
+set number
+
+
 
 " use ripgrep instead of grep
 set grepprg=rg\ --vimgrep\ --smart-case\ --follow
