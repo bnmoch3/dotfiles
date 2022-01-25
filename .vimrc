@@ -304,6 +304,38 @@ let g:NERDTreeGitStatusShowIgnored = 0
 
 " for toggling, displaying and navigating marks
 Plug 'kshenoy/vim-signature'
+
+
+
+" add statusline
+Plug 'itchyny/lightline.vim'
+let g:lightline = {
+    \ 'colorscheme': 'one',
+    \ 'active': {
+    \   'left': [ [ 'mode', 'paste' ],
+    \             ['readonly', 'filename']],
+    \   'right': [ [ 'percent', 'lineinfo'],
+    \              [ 'buffer_number'],
+    \              [ 'gitbranch']]
+    \ },
+    \ 'component': {
+    \   'buffer_number': '[%n]' 
+    \ },
+    \ 'component_function': {
+    \   'filename': 'LightlineFilename',
+    \   'gitbranch': 'TrimmableGitBranchname',
+    \ },
+    \ }
+" trimmable git branch name
+function! TrimmableGitBranchname()
+  return winwidth(0) > 70 ? FugitiveHead() : ''
+endfunction
+" concat filename and modified status
+function! LightlineFilename()
+  let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+  let modified = &modified ? ' +' : ''
+  return filename . modified
+endfunction
  
  
  
