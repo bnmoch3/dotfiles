@@ -114,7 +114,7 @@ set hlsearch incsearch
 
 " turn on syntax highlighting, set colorscheme
 syntax on
-colorscheme pablo 
+" colorscheme pablo 
 
 
 " set width to 80 characters
@@ -258,6 +258,11 @@ Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 
 
+
+" add theme
+Plug 'joshdick/onedark.vim'
+
+
  
 call plug#end()
 
@@ -265,3 +270,4 @@ call plug#end()
 "
 " ----------------------------------------------------------------------
 
+colorscheme onedark
