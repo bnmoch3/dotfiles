@@ -250,8 +250,13 @@ map <leader>vz :VimuxZoomRunner<CR>
 
  
  
- 
- 
+" for working with git within vim
+Plug 'tpope/vim-fugitive' 
+
+" for showing git diff markers on curr buffer
+Plug 'airblade/vim-gitgutter'
+
+
  
 call plug#end()
 
