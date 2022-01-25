@@ -299,6 +299,13 @@ let g:NERDTreeGitStatusIndicatorMapCustom = {
                 \ }
 " disable show ignored
 let g:NERDTreeGitStatusShowIgnored = 0
+
+
+
+" for toggling, displaying and navigating marks
+Plug 'kshenoy/vim-signature'
+ 
+ 
  
 call plug#end()
 
