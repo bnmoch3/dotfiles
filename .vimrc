@@ -288,14 +288,14 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 let g:NERDTreeGitStatusIndicatorMapCustom = {
                 \ 'Modified'  :'M',
                 \ 'Staged'    :'+',
-                \ 'Untracked' :'?',
-                \ 'Renamed'   :'R',
-                \ 'Unmerged'  :'Um',
-                \ 'Deleted'   :'D',
-                \ 'Dirty'     :'Di',
-                \ 'Ignored'   :'I',
-                \ 'Clean'     :'C',
-                \ 'Unknown'   :'U?',
+                \ 'Untracked' :'??',
+                \ 'Renamed'   :'Renamed',
+                \ 'Unmerged'  :'Unmerged',
+                \ 'Deleted'   :'Deleted',
+                \ 'Dirty'     :'Dirty',
+                \ 'Ignored'   :'Ignored',
+                \ 'Clean'     :'Clean',
+                \ 'Unknown'   :'Unknown',
                 \ }
 " disable show ignored
 let g:NERDTreeGitStatusShowIgnored = 0
