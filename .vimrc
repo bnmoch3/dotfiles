@@ -238,15 +238,16 @@ Plug 'christoomey/vim-tmux-navigator'
 let g:tmux_navigator_save_on_switch = 1  
 " Disable tmux navigator when zooming the Vim pane
 let g:tmux_navigator_disable_when_zoomed = 1
+
 " Easily interact with tmux from vim
-Plug 'preservim/vimux'
+" Plug 'preservim/vimux'
 " <Leader>vl    run last command executed by VimuxRunCommand
 " <Leader>vi    Inspect runner pane
 " <leader>vz    Zoom the tmux runner pane
-map <Leader>vp :VimuxPromptCommand<CR>
-map <Leader>vl :VimuxRunLastCommand<CR>     
-map <Leader>vi :VimuxInspectRunner<CR>      
-map <leader>vz :VimuxZoomRunner<CR>         
+" map <Leader>vp :VimuxPromptCommand<CR>
+" map <Leader>vl :VimuxRunLastCommand<CR>     
+" map <Leader>vi :VimuxInspectRunner<CR>      
+" map <leader>vz :VimuxZoomRunner<CR>         
 
  
  
