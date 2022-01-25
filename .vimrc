@@ -338,7 +338,12 @@ function! LightlineFilename()
 endfunction
  
  
- 
+
+" for autoclosing {},(),[],"",'',``
+Plug 'jiangmiao/auto-pairs'
+
+
+
 call plug#end()
 
 " ----------------------------------------------------------------------
