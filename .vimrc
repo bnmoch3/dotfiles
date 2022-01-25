@@ -349,6 +349,11 @@ nnoremap <Leader>t :TagbarToggle<CR>
 
 
 
+" display buffer list on tabline
+Plug 'ap/vim-buftabline'
+
+
+
 call plug#end()
 
 " ----------------------------------------------------------------------
