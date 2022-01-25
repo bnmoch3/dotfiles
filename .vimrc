@@ -267,6 +267,38 @@ Plug 'airblade/vim-gitgutter'
 Plug 'joshdick/onedark.vim'
 
 
+
+" add nerdtree for file nav
+Plug 'preservim/nerdtree'
+" NERDTreeFind - find location of file in curr buffer
+" NERDTreeToggle - open/close NERDTree
+nnoremap <C-n> :NERDTreeToggle<CR>
+nnoremap <C-f> :NERDTreeFind<CR>
+" Exit Vim if NERDTree is the only window remaining in the only tab.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+" Close the tab if NERDTree is the only window remaining in it.
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+" If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
+autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
+    \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
+" manage NERDTree and tabs painlessly
+Plug 'jistr/vim-nerdtree-tabs'
+" for displaying git status in nerdtree
+Plug 'Xuyuanp/nerdtree-git-plugin'
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+                \ 'Modified'  :'M',
+                \ 'Staged'    :'+',
+                \ 'Untracked' :'?',
+                \ 'Renamed'   :'R',
+                \ 'Unmerged'  :'Um',
+                \ 'Deleted'   :'D',
+                \ 'Dirty'     :'Di',
+                \ 'Ignored'   :'I',
+                \ 'Clean'     :'C',
+                \ 'Unknown'   :'U?',
+                \ }
+" disable show ignored
+let g:NERDTreeGitStatusShowIgnored = 0
  
 call plug#end()
 
