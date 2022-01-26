@@ -165,6 +165,10 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L> 
 nnoremap <C-H> <C-W><C-H> 
 
+nnoremap <Up> 5<C-W>+
+nnoremap <Down> 5<C-W>-
+nnoremap <Left> 5<C-W>>
+nnoremap <Right> 5<C-W><
 
 
 " enable escape for terminal mode
