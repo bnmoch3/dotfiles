@@ -167,10 +167,6 @@ nnoremap <C-H> <C-W><C-H>
 
 
 
-nnoremap <leader>q :make<CR>
-
-
-
 " enable escape for terminal mode
 " enable nav from terminal (while in terminal mode)
 if has('nvim')
