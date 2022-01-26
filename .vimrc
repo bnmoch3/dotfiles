@@ -240,18 +240,6 @@ Plug 'tpope/vim-surround'
  
 " add tim-pope's unimpaired plugin for quick navigation of lists
 Plug 'tpope/vim-unimpaired'
-
-
-
-" for cpp dev
-Plug 'ycm-core/YouCompleteMe'
-" to enable syntastic:
-" github.com/ycm-core/YouCompleteMe#user-content-the-gycm_show_diagnostics_ui-option
-let g:ycm_show_diagnostics_ui = 0
-let syntastic_cpp_checkers = ['clang_tidy']
-let syntastic_go_checkers = [ 'gofmt' ]
-Plug 'rhysd/vim-clang-format'
-let g:clang_format#auto_format = 1
  
  
  
