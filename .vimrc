@@ -375,6 +375,15 @@ Plug 'tmhedberg/SimpylFold'
 
 
 
+" for better python indentation
+Plug 'Vimjas/vim-python-pep8-indent'
+" enable indentation for multiline strings (use autoindent)
+let g:python_pep8_indent_multiline_string = -1
+
+
+
+" ----------------------------------------------------------------------
+
 call plug#end()
 
 " ----------------------------------------------------------------------
