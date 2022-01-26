@@ -170,6 +170,20 @@ nnoremap <C-H> <C-W><C-H>
 nnoremap <leader>q :make<CR>
 
 
+
+" enable escape for terminal mode
+" enable nav from terminal (while in terminal mode)
+if has('nvim')
+    " tnoremap <Esc> <C-\><C-n>
+    " tnoremap <C-v><Esc> <Esc>
+
+    tnoremap <C-h> <C-\><C-n><C-w>h
+    tnoremap <C-j> <C-\><C-n><C-w>j
+    tnoremap <C-k> <C-\><C-n><C-w>k
+    tnoremap <C-l> <C-\><C-n><C-w>l
+endif
+
+
 " -----------------------------------------------------------------------------
 "                                   PLUGINS
 " -----------------------------------------------------------------------------
