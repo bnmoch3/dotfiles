@@ -171,6 +171,11 @@ nnoremap <Left> 5<C-W>>
 nnoremap <Right> 5<C-W><
 
 
+nnoremap <Leader>o :w<CR>:%bd \| e# \| bd# <CR>
+
+nnoremap <C-Down> :sp \| terminal<CR>10<C-W>-
+nnoremap <C-Right> :vs \| terminal<CR>40<C-W><
+
 " enable escape for terminal mode
 " enable nav from terminal (while in terminal mode)
 if has('nvim')
