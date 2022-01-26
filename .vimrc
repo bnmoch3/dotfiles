@@ -370,6 +370,11 @@ cnoremap Fl Limelight!!<CR>
 
 
 
+" for better folding for python
+Plug 'tmhedberg/SimpylFold'
+
+
+
 call plug#end()
 
 " ----------------------------------------------------------------------
