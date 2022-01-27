@@ -192,6 +192,8 @@ endif
 " -----------------------------------------------------------------------------
 "                                   PLUGINS
 " -----------------------------------------------------------------------------
+" disable LSP features in ALE before plugins are loaded
+let g:ale_disable_lsp = 1
 " automatically install vim-plug
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
@@ -201,7 +203,36 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
- 
+" for linting + some fixing
+" disable using ale for completion
+let g:ale_completion_enabled = 0
+let g:ale_linters = {
+    \ 'python': ['flake8', 'pylint'],
+    \ 'sh' : ['shellcheck'],
+    \ }
+Plug 'dense-analysis/ale'
+let g:ale_fixers = {
+    \ 'python': ['yapf', 'reorder-python-imports'],
+    \ }
+" only run linters and fixers that are specified
+let g:ale_linters_explicit = 1
+" edit print format
+let g:ale_sign_error = '!!'
+let g:ale_sign_warning = '>>'
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%:%severity%] %s'
+" limit running of linters
+let g:ale_fix_on_save = 1
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 0
+ " run linter on opening a file
+let g:ale_lint_on_enter = 1
+" use quickfix list to navigate errors
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
+" height for ALE list display
+let g:ale_list_window_size = 5
  
 " set up fzf
 Plug 'junegunn/fzf.vim'
@@ -305,12 +336,15 @@ Plug 'kshenoy/vim-signature'
 
 " add statusline
 Plug 'itchyny/lightline.vim'
+Plug 'maximbaz/lightline-ale'
 let g:lightline = {
     \ 'colorscheme': 'one',
     \ 'active': {
     \   'left': [ [ 'mode', 'paste' ],
     \             ['readonly', 'filename']],
-    \   'right': [ [ 'percent', 'lineinfo'],
+    \   'right': [ 
+    \              [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
+    \              [ 'percent', 'lineinfo'],
     \              [ 'buffer_number'],
     \              [ 'gitbranch']]
     \ },
@@ -321,6 +355,20 @@ let g:lightline = {
     \   'filename': 'LightlineFilename',
     \   'gitbranch': 'TrimmableGitBranchname',
     \ },
+    \ }
+let g:lightline.component_expand = {
+    \  'linter_checking': 'lightline#ale#checking',
+    \  'linter_infos': 'lightline#ale#infos',
+    \  'linter_warnings': 'lightline#ale#warnings',
+    \  'linter_errors': 'lightline#ale#errors',
+    \  'linter_ok': 'lightline#ale#ok',
+    \ }
+let g:lightline.component_type = {
+    \     'linter_checking': 'right',
+    \     'linter_infos': 'right',
+    \     'linter_warnings': 'warning',
+    \     'linter_errors': 'error',
+    \     'linter_ok': 'right',
     \ }
 " trimmable git branch name
 function! TrimmableGitBranchname()
