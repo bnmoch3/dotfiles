@@ -292,6 +292,7 @@ Plug 'tpope/vim-fugitive'
 
 " add theme
 Plug 'joshdick/onedark.vim'
+Plug 'fxn/vim-monochrome'
 
 
 
@@ -446,3 +447,4 @@ call plug#end()
 " ----------------------------------------------------------------------
 
 colorscheme onedark
+" colorscheme monochrome
