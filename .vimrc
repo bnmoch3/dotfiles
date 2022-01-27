@@ -286,7 +286,7 @@ let g:tmux_navigator_disable_when_zoomed = 1
 Plug 'tpope/vim-fugitive' 
 
 " for showing git diff markers on curr buffer
-Plug 'airblade/vim-gitgutter'
+" Plug 'airblade/vim-gitgutter'
 
 
 
