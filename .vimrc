@@ -485,6 +485,11 @@ let g:semshi#error_sign_delay = 2
 
 
 
+" for syntax support for jina templates
+Plug 'lepture/vim-jinja'
+
+
+
 " ----------------------------------------------------------------------
 
 call plug#end()
