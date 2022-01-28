@@ -32,11 +32,29 @@ set nocp
  
 " Disable the default Vim startup message.
 set shortmess+=I
+" dont pass messages to |ins-completion-menu|
+set shortmess+=c
+
+
+
+" set signcolumn even if there's no error/warning
+if has("nvim-0.5.0") || has("patch-8.1.1564")
+  " Recently vim can merge signcolumn and number column into one
+  set signcolumn=number
+else
+  set signcolumn=yes
+endif
 
 
 
 " add numbering for lines
 set number
+set relativenumber
+
+
+
+" give more space for displaying messages
+set cmdheight=2
 
 
 
@@ -91,8 +109,10 @@ set mouse+=a
 
 
 " no swapfile, no backups
+" for COC some servers have issues with backup files
 set noswapfile
 set nobackup
+set nowritebackup
 set undodir=~/.vim/undodir " you have to mkdir
 set undofile
 
@@ -252,6 +272,33 @@ nnoremap <silent><leader>w :Windows!<CR>
 
 
 
+" for LSP
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+nnoremap <silent> gd :call <SID>show_documentation()<CR>
+nnoremap <silent> gD <Plug>(coc-definition)
+nmap <silent> gr <Plug>(coc-rename)
+nmap <silent> gR <Plug>(coc-references)
+nmap <silent> gt <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+" Remap <C-f> and <C-b> for scroll float windows/popups.
+if has('nvim-0.4.0') || has('patch-8.2.0750')
+  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+endif
+
+
+
 " For working with Go
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 let g:go_fmt_command = "goimports"    " Run goimports along gofmt on each save
@@ -301,7 +348,7 @@ Plug 'preservim/nerdtree'
 " NERDTreeFind - find location of file in curr buffer
 " NERDTreeToggle - open/close NERDTree
 nnoremap <C-n> :NERDTreeToggle<CR>
-nnoremap <C-f> :NERDTreeFind<CR>
+nnoremap <C-c> :NERDTreeFind<CR>
 " Exit Vim if NERDTree is the only window remaining in the only tab.
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 " Close the tab if NERDTree is the only window remaining in it.
