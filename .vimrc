@@ -230,10 +230,10 @@ let g:ale_linters = {
     \ 'python': ['flake8', 'pylint'],
     \ 'sh' : ['shellcheck'],
     \ }
-Plug 'dense-analysis/ale'
 let g:ale_fixers = {
-    \ 'python': ['yapf', 'reorder-python-imports'],
+    \ 'python': ['black', 'yapf', 'trim_whitespace', 'reorder-python-imports'],
     \ }
+Plug 'dense-analysis/ale'
 " only run linters and fixers that are specified
 let g:ale_linters_explicit = 1
 " edit print format
