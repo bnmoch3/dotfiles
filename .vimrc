@@ -476,13 +476,6 @@ let g:python_pep8_indent_multiline_string = -1
 
 
 
-" for better syntax highlighting for python
-Plug 'numirias/semshi', { 'do': ':UpdateRemotePlugins' }
-" show syntax error after 2 seconds instead of the default 1.5
-let g:semshi#error_sign_delay = 2
-
-
-
 " for syntax support for jina templates
 Plug 'lepture/vim-jinja'
 
