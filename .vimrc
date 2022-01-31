@@ -271,7 +271,6 @@ nnoremap <silent><leader>l :BLines!<CR>
 nnoremap <silent><leader>w :Windows!<CR> 	
 
 
-
 " for LSP
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 function! s:show_documentation()
@@ -296,7 +295,6 @@ if has('nvim-0.4.0') || has('patch-8.2.0750')
   vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
   vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 endif
-
 
 
 " For working with Go
@@ -487,6 +485,11 @@ let g:semshi#error_sign_delay = 2
 
 " for syntax support for jina templates
 Plug 'lepture/vim-jinja'
+
+
+
+" for terminal
+" Plug 'kassio/neoterm'
 
 
 
