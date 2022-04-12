@@ -1,13 +1,19 @@
 [user]
 	name = nm
 	email = nagamocha@gmail.com
+
+[includeIf "gitdir:~/SHAMIRI/"]
+    path = ~/SHAMIRI/.gitconfig.shamiri
+
 [url "git@github.com:"]
 	insteadOf = https://github.com/
 [url "ssh://git@github.com/"]
     insteadOf = https://github.com/
+
 [core]
-	editor = vim
+	editor = nvim
 	autocrlf = input
+    excludesfile=~/.gitignore
 [color]
     status = always
 [init]
@@ -27,8 +33,10 @@
     ss = status -s
     last = log -1 HEAD
     visual = !gitk
+    id = ls 
 
 [pull]
 	rebase = true
 [rerere]
 	enabled = true
+
