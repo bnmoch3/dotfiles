@@ -88,9 +88,6 @@ export PSQL_EDITOR="nvim"
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# enable go get for private repos
-export GOPRIVATE="github.com/molecula"
-
 # Go language
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:/home/bnm/go/bin
@@ -134,3 +131,4 @@ fi
 export FZF_DEFAULT_OPTS='--height 80% --layout=reverse --border --margin=1 --padding=1'
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
