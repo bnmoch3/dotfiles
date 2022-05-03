@@ -1,0 +1,15 @@
+{
+  "diagnostic.displayByAle": true,
+  "python.pythonPath": "python",
+  "jedi.startupMessage": true,
+  "jedi.jediSettings.autoImportModules": [],
+  "jedi.jediSettings.caseInsensitiveCompletion": false,
+  "jedi.workspace.symbols.maxSymbols": 100,
+  "jedi.workspace.symbols.ignoreFolders": [
+    ".nox",
+    ".tox",
+    ".venv",
+    "__pycache__",
+    "venv"
+  ]
+}

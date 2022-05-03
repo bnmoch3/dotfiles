@@ -1,5 +1,4 @@
-" -----------------------------------------------------------------------------
-"                                   SETTINGS
+" ----------------------------------------------------------------------------- SETTINGS
 " -----------------------------------------------------------------------------
 " switch from the default Vi-compatibility mode so as to enable useful
 " vim functionality.
@@ -138,7 +137,6 @@ set hlsearch incsearch
 
 " turn on syntax highlighting, set colorscheme
 syntax on
-" colorscheme pablo 
 
 
 " set width to 80 characters
@@ -209,6 +207,9 @@ if has('nvim')
 endif
 
 
+" set python host
+let g:python3_host_prog='~/venvs/nvim/bin/python'
+
 " -----------------------------------------------------------------------------
 "                                   PLUGINS
 " -----------------------------------------------------------------------------
@@ -227,11 +228,13 @@ call plug#begin('~/.vim/plugged')
 " disable using ale for completion
 let g:ale_completion_enabled = 0
 let g:ale_linters = {
-    \ 'python': ['flake8', 'pylint'],
+    \ 'python': ['flake8'],
     \ 'sh' : ['shellcheck'],
     \ }
 let g:ale_fixers = {
-    \ 'python': ['black', 'yapf', 'trim_whitespace', 'reorder-python-imports'],
+    \ 'python': ['black', 'trim_whitespace', 'isort'],
+    \ 'html' : ['prettier'],
+    \ 'json' : ['prettier'],
     \ }
 Plug 'dense-analysis/ale'
 " only run linters and fixers that are specified
@@ -253,7 +256,16 @@ let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
 " height for ALE list display
 let g:ale_list_window_size = 5
- 
+" virtual env for ALE to use
+let g:ale_python_black_executable = $HOME . '/venvs/nvim/bin/black'
+let g:ale_python_black_use_global = 1
+let g:ale_python_flake8_executable = $HOME . '/venvs/nvim/bin/flake8'
+let g:ale_python_flake8_use_global = 1
+let g:ale_python_isort_executable = $HOME . '/venvs/nvim/bin/isort'
+let g:ale_python_isort_use_global = 1
+
+
+
 " set up fzf
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -273,6 +285,7 @@ nnoremap <silent><leader>w :Windows!<CR>
 
 " for LSP
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'pappasam/coc-jedi', { 'do': 'yarn install --frozen-lockfile && yarn build', 'branch': 'main' }
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
@@ -460,7 +473,7 @@ let g:limelight_priority = -1
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
 cnoremap Fg Goyo<CR>
-cnoremap Fl Limelight!!<CR>
+" cnoremap Fl Limelight!!<CR>
 
 
 
@@ -495,4 +508,3 @@ call plug#end()
 " ----------------------------------------------------------------------
 
 colorscheme onedark
-" colorscheme monochrome
