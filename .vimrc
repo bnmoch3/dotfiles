@@ -99,6 +99,7 @@ Plug 'fxn/vim-monochrome'
 Plug 'altercation/vim-colors-solarized'
 
 " options: [light] morning, solarzed [dark] onedark, monochrome
+set background=dark
 let s:my_default_colorscheme = "onedark"
 let g:solarized_termcolors=256
 
@@ -109,7 +110,7 @@ function! ToggleStyle(theme)
     echom "theme: ".a:theme
     let l:themes = {
         \ "dark": ["onedark", "monochrome"],
-        \ "light": ["morning", "solarized"],
+        \ "light": ["solarized", "morning"],
         \ }
     if a:theme ==# "dark"
         if s:theme_index_dark ==# len(l:themes.dark)
@@ -118,6 +119,7 @@ function! ToggleStyle(theme)
         set background=dark
         execute "colorscheme ".l:themes.dark[s:theme_index_dark]
         let s:theme_index_dark = s:theme_index_dark + 1
+        let g:lightline.colorscheme = 'srcery_drk'
     elseif a:theme ==# "light"
         if s:theme_index_light ==# len(l:themes.light)
             let s:theme_index_light = 0
@@ -125,13 +127,20 @@ function! ToggleStyle(theme)
         set background=light
         execute "colorscheme ".l:themes.light[s:theme_index_light]
         let s:theme_index_light = s:theme_index_light + 1
+        let g:lightline.colorscheme = 'solarized'
     endif
+    call lightline#init()
+    call lightline#colorscheme()
+    call lightline#update()
 endfunction
 command! Dark call ToggleStyle("dark")
 command! Light call ToggleStyle("light")
 
 " turn on syntax highlighting
 syntax on
+
+" do not display mode in statusline, will be displayed by statusbar
+set noshowmode
 
 " remove default wrapping
 set nowrap
@@ -146,7 +155,7 @@ set number numberwidth=5
 set relativenumber
 
 " give more space for displaying messages
-set cmdheight=2
+set cmdheight=1
 
 " set signcolumn even if there's no error/warning
 if has("nvim-0.5.0") || has("patch-8.1.1564")
@@ -192,7 +201,7 @@ command! Focus Limelight!!
 Plug 'itchyny/lightline.vim'
 Plug 'maximbaz/lightline-ale'
 let g:lightline = {
-    \ 'colorscheme': 'one',
+    \ 'colorscheme': 'srcery_drk',
     \ 'active': {
     \   'left': [ [ 'mode', 'paste' ],
     \             ['readonly', 'filename']],
@@ -495,8 +504,7 @@ nnoremap <C-Right> :vs \| terminal<CR>40<C-W><
 " enable escape for terminal mode
 " enable nav from terminal (while in terminal mode)
 if has('nvim')
-    " tnoremap <Esc> <C-\><C-n>
-    " tnoremap <C-v><Esc> <Esc>
+    tnoremap <Esc> <C-\><C-n>
 
     tnoremap <C-h> <C-\><C-n><C-w>h
     tnoremap <C-j> <C-\><C-n><C-w>j
