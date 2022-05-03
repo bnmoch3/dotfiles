@@ -78,7 +78,6 @@ vnoremap <localleader>v b
 "
 " add tim-pope's commentary plugin
 Plug 'tpope/vim-commentary'
-call plug#end()
 
 "" add tim-pope's surround plugin to simplify quoting/wrapping text
 Plug 'tpope/vim-surround'
@@ -97,11 +96,41 @@ Plug 'jiangmiao/auto-pairs'
 " add theme
 Plug 'joshdick/onedark.vim'
 Plug 'fxn/vim-monochrome'
+Plug 'altercation/vim-colors-solarized'
 
 " options: [light] morning, solarzed [dark] onedark, monochrome
-let s:my_colorscheme = "onedark"
+let s:my_default_colorscheme = "onedark"
+let g:solarized_termcolors=256
 
-" turn on syntax highlighting, set colorscheme
+" for toggling styles
+let s:theme_index_dark = 0
+let s:theme_index_light = 0
+function! ToggleStyle(theme)
+    echom "theme: ".a:theme
+    let l:themes = {
+        \ "dark": ["onedark", "monochrome"],
+        \ "light": ["morning", "solarized"],
+        \ }
+    if a:theme ==# "dark"
+        if s:theme_index_dark ==# len(l:themes.dark)
+            let s:theme_index_dark = 0
+        endif
+        set background=dark
+        execute "colorscheme ".l:themes.dark[s:theme_index_dark]
+        let s:theme_index_dark = s:theme_index_dark + 1
+    elseif a:theme ==# "light"
+        if s:theme_index_light ==# len(l:themes.light)
+            let s:theme_index_light = 0
+        endif
+        set background=light
+        execute "colorscheme ".l:themes.light[s:theme_index_light]
+        let s:theme_index_light = s:theme_index_light + 1
+    endif
+endfunction
+command! Dark call ToggleStyle("dark")
+command! Light call ToggleStyle("light")
+
+" turn on syntax highlighting
 syntax on
 
 " remove default wrapping
@@ -142,10 +171,14 @@ let g:limelight_conceal_guifg = '#777777'
 " Highlighting priority (default: 10)
 " Set it to -1 not to overrule hlsearch
 let g:limelight_priority = -1
-autocmd! User GoyoEnter Limelight
-autocmd! User GoyoLeave Limelight!
-cnoremap Fg Goyo<CR>
-cnoremap Fl Limelight!!<CR>
+augroup my_autocmds
+    autocmd! User GoyoEnter Limelight
+    autocmd! User GoyoLeave Limelight!
+augroup END
+
+" command! Center :Goyo<cr>
+command! Center Goyo
+command! Focus Limelight!!
 "
 "
 "
@@ -258,7 +291,7 @@ nnoremap <silent> \ :<C-u>nohlsearch<CR>
 
 " for browsing tags
 Plug 'preservim/tagbar'
-nnoremap <Leader>t :TagbarToggle<CR>
+nnoremap <localleader>t :TagbarToggle<CR>
 
 " use ripgrep for external grep
 set grepprg=rg\ --vimgrep\ --smart-case\ --follow
@@ -573,14 +606,12 @@ endif
 "
 " for vim filetype, set foldmethod to marker
 augroup my_autocmds
-    autocmd Filetype vim set foldmethod=marker
+    autocmd Filetype vim setlocal foldmethod=marker
+    autocmd BufReadPost *vimrc execute "normal zM"
 augroup END
 
-" quickly edit vimrc
-nnoremap <localleader>ev :tabedit $MYVIMRC<cr>G
-
 " save and source vimrc
-nnoremap <localleader>w :w $MYVIMRC<cr>:source $MYVIMRC<cr>
+nnoremap <localleader>s :w $MYVIMRC<cr>:source $MYVIMRC<cr>
 "
 "
 "
@@ -666,6 +697,4 @@ let g:go_auto_type_info = 1           " Automatically get signature/type info fo
 
 call plug#end()
 
-execute "colorscheme ".s:my_colorscheme
- 
- 
+execute "colorscheme ".s:my_default_colorscheme
