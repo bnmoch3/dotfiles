@@ -100,7 +100,7 @@ Plug 'altercation/vim-colors-solarized'
 
 " options: [light] morning, solarzed [dark] onedark, monochrome
 set background=dark
-let s:my_default_colorscheme = "onedark"
+let s:my_default_colorscheme = "monochrome"
 let g:solarized_termcolors=256
 
 " for toggling styles
@@ -526,11 +526,13 @@ let g:ale_completion_enabled = 0
 let g:ale_linters = {
     \ 'python': ['flake8'],
     \ 'sh' : ['shellcheck'],
+    \ 'lua': ['luacheck'],
     \ }
 let g:ale_fixers = {
     \ 'python': ['black', 'trim_whitespace', 'isort'],
     \ 'html' : ['prettier'],
     \ 'json' : ['prettier'],
+    \ 'lua' : ['stylua'],
     \ }
 Plug 'dense-analysis/ale'
 " only run linters and fixers that are specified
