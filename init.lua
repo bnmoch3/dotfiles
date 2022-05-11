@@ -61,6 +61,7 @@ require("packer").startup(function(use)
 	use("ap/vim-buftabline") -- display buffer list on tabline
 	use("kyazdani42/nvim-web-devicons")
 	use({ "kyazdani42/nvim-tree.lua", requires = { "kyazdani42/nvim-web-devicons" } })
+	use({ "nvim-lualine/lualine.nvim", requires = { "kyazdani42/nvim-web-devicons" } })
 
 	-- Automatically set up your configuration after cloning packer.nvim
 	-- Put this at the end after all plugins
@@ -200,3 +201,26 @@ nnoremap("<C-n>r", ":NvimTreeRefresh<CR>")
 nnoremap("<C-n>c", ":NvimTreeCollapse<CR>")
 --close tab/vim if no other window open and only nvim-tree is left
 vim.cmd([[autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif ]])
+
+-- ============================================================================
+--                              LUALINE
+-- ============================================================================
+local lualine = require("lualine")
+lualine.setup({
+	options = {
+		theme = "auto",
+		disabled_filetypes = { "packer", "NvimTree" },
+		component_separators = { left = "|", right = "|" },
+		section_separators = { left = "", right = "" },
+		globalstatus = true,
+	},
+	sections = {
+		lualine_a = { "mode" },
+		lualine_b = { "filename" },
+		lualine_c = { "filetype" },
+		lualine_x = { "" },
+		lualine_y = { "diagnostics", "diff", "branch" },
+		lualine_z = { "" },
+	},
+	extensions = { "quickfix" },
+})
