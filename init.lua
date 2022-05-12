@@ -45,6 +45,9 @@ require("packer").startup(function(use)
 	use("tpope/vim-commentary") -- for commenting out lines
 	use("tpope/vim-surround") -- for surround selected text with given char
 	use("jiangmiao/auto-pairs") -- for autoclosing {},(), [], "", '', ``
+	use("nvim-lua/plenary.nvim")
+	use("nvim-treesitter/nvim-treesitter")
+	use("neovim/nvim-lspconfig")
 
 	-- themes
 	use("joshdick/onedark.vim")
@@ -62,6 +65,7 @@ require("packer").startup(function(use)
 	use("kyazdani42/nvim-web-devicons")
 	use({ "kyazdani42/nvim-tree.lua", requires = { "kyazdani42/nvim-web-devicons" } })
 	use({ "nvim-lualine/lualine.nvim", requires = { "kyazdani42/nvim-web-devicons" } })
+	use({ "nvim-telescope/telescope.nvim", requires = { { "nvim-lua/plenary.nvim" } } })
 
 	-- Automatically set up your configuration after cloning packer.nvim
 	-- Put this at the end after all plugins
@@ -101,9 +105,6 @@ vim.o.shortmess = vim.o.shortmess .. "c" -- dont pass messages to |ins-completio
 vim.o.grepprg = "rg --vimgrep --smart-case --follow"
 vim.o.hlsearch = true
 vim.o.incsearch = true
-
-vim.o.foldmethod = "indent"
-vim.o.foldlevel = 99
 
 -- indenting
 vim.o.tabstop = 4
@@ -224,3 +225,54 @@ lualine.setup({
 	},
 	extensions = { "quickfix" },
 })
+
+-- ============================================================================
+--                              TREE-SITTER
+-- ============================================================================
+local nvim_treesitter_configs = require("nvim-treesitter.configs")
+nvim_treesitter_configs.setup({
+	ensure_installed = "all",
+	sync_install = false,
+	highlight = { enable = true },
+	indent = { enable = true },
+})
+vim.o.foldmethod = "expr"
+vim.o.foldexpr = "nvim_treesitter#foldexpr()"
+-- ============================================================================
+--                              TELESCOPE
+-- ============================================================================
+local telescope = require("telescope")
+telescope.setup({
+	defaults = {
+		layout_config = {
+			vertical = { width = 0.5 },
+		},
+		scroll_strategy = "limit",
+		mappings = {
+			i = {
+				["<C-s>"] = require("telescope.actions").select_horizontal, -- set to <C-s> to be consistent with nvim-tree
+				["<C-e>"] = require("telescope.actions").preview_scrolling_up,
+				["<C-y>"] = require("telescope.actions").preview_scrolling_down,
+				["<C-x>"] = false, -- disable default horizontal split
+				["<C-u>"] = false, -- disable default preview scroll up
+				["<C-d>"] = false, -- disable default preview scroll down
+			},
+			n = {
+				["<C-s>"] = require("telescope.actions").select_horizontal, -- set to <C-s> to be consistent with nvim-tree
+				["<C-e>"] = require("telescope.actions").preview_scrolling_up,
+				["<C-y>"] = require("telescope.actions").preview_scrolling_down,
+				["<C-x>"] = false, -- disable default horizontal split
+				["<C-u>"] = false, -- disable default preview scroll up
+				["<C-d>"] = false, -- disable default preview scroll down
+			},
+		},
+	},
+})
+nnoremap("<leader>ff", "<cmd>lua require('telescope.builtin').find_files()<cr>")
+nnoremap("<leader>fg", "<cmd>lua require('telescope.builtin').live_grep()<cr>")
+nnoremap("<leader>fb", "<cmd>lua require('telescope.builtin').buffers()<cr>")
+nnoremap("<leader>fh", "<cmd>lua require('telescope.builtin').help_tags()<cr>")
+nnoremap("<leader>fm", "<cmd>lua require('telescope.builtin').marks()<cr>")
+nnoremap("<leader>fr", "<cmd>lua require('telescope.builtin').registers()<cr>")
+nnoremap("<leader>fl", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>")
+nnoremap("<leader>fd", "<cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>")
