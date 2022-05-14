@@ -46,6 +46,7 @@ require("packer").startup(function(use)
 	use("tpope/vim-surround") -- for surround selected text with given char
 	use("jiangmiao/auto-pairs") -- for autoclosing {},(), [], "", '', ``
 	use("nvim-lua/plenary.nvim")
+	use("DanilaMihailov/beacon.nvim")
 	use("nvim-treesitter/nvim-treesitter")
 	use("neovim/nvim-lspconfig")
 
@@ -130,6 +131,11 @@ vim.o.smartcase = true
 -- TODO install filetype
 -- vim.g.did_load_filetypes = 1
 
+vim.g.beacon_size = 60
+vim.g.beacon_timeout = 2000
+vim.cmd([[highlight Beacon guibg=LightGray ctermbg=8]])
+vim.g.beacon_ignore_filetypes = { "qf", "NvimTree" }
+
 -- ============================================================================
 --                              KEYMAPS
 -- ============================================================================
@@ -150,9 +156,9 @@ nnoremap("<C-H>", " <C-W><C-H> ")
 nnoremap("\\", ":<C-u>nohlsearch<CR>")
 
 -- center to line when searching
-nnoremap("n", "nzz")
-nnoremap("N", "Nzz")
-nnoremap("*", "*zz")
+nnoremap("n", "nzz:Beacon<cr>")
+nnoremap("N", "Nzz:Beacon<cr>")
+nnoremap("*", "*zz:Beacon<cr>")
 -- ============================================================================
 --                              NVIM-TREE
 -- ============================================================================
