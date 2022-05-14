@@ -73,6 +73,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
+source "$HOME/dotfiles/bash/completions/alacritty.bash"
 
 # by default, terminal uses emacs keystrokes for editing commands, instead use vim keystrokes
 set -o vi
