@@ -15,6 +15,7 @@ fi
 
 # soft delete for files
 alias del='trash-put'
+alias trash='trash-put'
 
 # some more ls aliases
 alias ll='ls -alF'
