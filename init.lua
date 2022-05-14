@@ -196,6 +196,9 @@ nvim_tree.setup({
 		},
 	},
 })
+vim.g.nvim_tree_icons = {
+    git={ unstaged="", staged="", unmerged="", renamed="", untracked="", deleted="" }
+}
 nnoremap("<C-n>n", ":NvimTreeToggle<CR>")
 nnoremap("<C-n>f", ":NvimTreeFindFileToggle<CR>")
 nnoremap("<C-n>r", ":NvimTreeRefresh<CR>")
