@@ -246,6 +246,14 @@ vim.o.foldenable = false
 --                              TELESCOPE
 -- ============================================================================
 local telescope = require("telescope")
+local telescope_mappings = {
+    ["<C-s>"] = require("telescope.actions").select_horizontal, -- set to <C-s> to be consistent with nvim-tree
+    ["<C-e>"] = require("telescope.actions").preview_scrolling_up,
+    ["<C-y>"] = require("telescope.actions").preview_scrolling_down,
+    ["<C-x>"] = false, -- disable default horizontal split
+    ["<C-u>"] = false, -- disable default preview scroll up
+    ["<C-d>"] = false, -- disable default preview scroll down
+}
 telescope.setup({
 	defaults = {
 		layout_config = {
@@ -253,22 +261,8 @@ telescope.setup({
 		},
 		scroll_strategy = "limit",
 		mappings = {
-			i = {
-				["<C-s>"] = require("telescope.actions").select_horizontal, -- set to <C-s> to be consistent with nvim-tree
-				["<C-e>"] = require("telescope.actions").preview_scrolling_up,
-				["<C-y>"] = require("telescope.actions").preview_scrolling_down,
-				["<C-x>"] = false, -- disable default horizontal split
-				["<C-u>"] = false, -- disable default preview scroll up
-				["<C-d>"] = false, -- disable default preview scroll down
-			},
-			n = {
-				["<C-s>"] = require("telescope.actions").select_horizontal, -- set to <C-s> to be consistent with nvim-tree
-				["<C-e>"] = require("telescope.actions").preview_scrolling_up,
-				["<C-y>"] = require("telescope.actions").preview_scrolling_down,
-				["<C-x>"] = false, -- disable default horizontal split
-				["<C-u>"] = false, -- disable default preview scroll up
-				["<C-d>"] = false, -- disable default preview scroll down
-			},
+			i = telescope_mappings,
+			n = telescope_mappings,
 		},
 	},
 })
