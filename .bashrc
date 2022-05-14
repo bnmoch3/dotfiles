@@ -73,9 +73,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# file limits for Pilosa
-ulimit -n 262144
-ulimit -u 65536
 
 # by default, terminal uses emacs keystrokes for editing commands, instead use vim keystrokes
 set -o vi
