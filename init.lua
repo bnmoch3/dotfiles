@@ -157,6 +157,13 @@ nnoremap("*", "*zz")
 --                              NVIM-TREE
 -- ============================================================================
 local nvim_tree = require("nvim-tree")
+local function nvim_tree_search_files(node)
+	local dir = node.parent.cwd or node.parent.absolute_path
+	if dir == nil then
+		return
+	end
+	require("telescope.builtin").find_files({ cwd = dir })
+end
 local nvim_tree_key_mappings = {
 	-- nvim-tree
 	{ key = "?", action = "toggle_help" },
@@ -169,6 +176,7 @@ local nvim_tree_key_mappings = {
 	{ key = "W", action = "collapse_all" },
 	{ key = "C", action = "cd" },
 	{ key = "U", action = "dir_up" },
+	{ key = "/", action = "search_files", action_cb = nvim_tree_search_files },
 	-- opening files
 	{ key = { "<CR>", "o", "O" }, action = "edit" },
 	{ key = "<C-p>", action = "preview" },
