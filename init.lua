@@ -205,7 +205,7 @@ nvim_tree.setup({
 	},
 })
 vim.g.nvim_tree_icons = {
-    git={ unstaged="", staged="", unmerged="", renamed="", untracked="", deleted="" }
+	git = { unstaged = "", staged = "", unmerged = "", renamed = "", untracked = "", deleted = "" },
 }
 nnoremap("<C-n>n", ":NvimTreeToggle<CR>")
 nnoremap("<C-n>f", ":NvimTreeFindFileToggle<CR>")
@@ -255,12 +255,12 @@ vim.o.foldenable = false
 -- ============================================================================
 local telescope = require("telescope")
 local telescope_mappings = {
-    ["<C-s>"] = require("telescope.actions").select_horizontal, -- set to <C-s> to be consistent with nvim-tree
-    ["<C-e>"] = require("telescope.actions").preview_scrolling_up,
-    ["<C-y>"] = require("telescope.actions").preview_scrolling_down,
-    ["<C-x>"] = false, -- disable default horizontal split
-    ["<C-u>"] = false, -- disable default preview scroll up
-    ["<C-d>"] = false, -- disable default preview scroll down
+	["<C-s>"] = require("telescope.actions").select_horizontal, -- set to <C-s> to be consistent with nvim-tree
+	["<C-e>"] = require("telescope.actions").preview_scrolling_up,
+	["<C-y>"] = require("telescope.actions").preview_scrolling_down,
+	["<C-x>"] = false, -- disable default horizontal split
+	["<C-u>"] = false, -- disable default preview scroll up
+	["<C-d>"] = false, -- disable default preview scroll down
 }
 telescope.setup({
 	defaults = {
