@@ -130,3 +130,6 @@ export FZF_DEFAULT_OPTS='--height 80% --layout=reverse --border --margin=1 --pad
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
