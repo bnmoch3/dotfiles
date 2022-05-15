@@ -156,9 +156,9 @@ nnoremap("<C-H>", " <C-W><C-H> ")
 nnoremap("\\", ":<C-u>nohlsearch<CR>")
 
 -- center to line when searching
-nnoremap("n", "nzz:Beacon<cr>")
-nnoremap("N", "Nzz:Beacon<cr>")
-nnoremap("*", "*zz:Beacon<cr>")
+nnoremap("n", "nzz")
+nnoremap("N", "Nzz")
+nnoremap("*", "*zz")
 -- ============================================================================
 --                              NVIM-TREE
 -- ============================================================================
