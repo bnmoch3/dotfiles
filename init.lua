@@ -164,9 +164,9 @@ nnoremap("*", "*zz")
 -- ============================================================================
 local nvim_tree = require("nvim-tree")
 local function nvim_tree_search_files(node)
-	local dir = node.parent.cwd or node.parent.absolute_path
-	if dir == nil then
-		return
+	local dir = vim.fn.getcwd()
+	if node.parent ~= nil then
+		dir = node.parent.cwd or node.parent.absolute_path
 	end
 	require("telescope.builtin").find_files({ cwd = dir })
 end
