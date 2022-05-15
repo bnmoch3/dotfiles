@@ -217,8 +217,6 @@ nnoremap("<C-n>n", ":NvimTreeToggle<CR>")
 nnoremap("<C-n>f", ":NvimTreeFindFileToggle<CR>")
 nnoremap("<C-n>r", ":NvimTreeRefresh<CR>")
 nnoremap("<C-n>c", ":NvimTreeCollapse<CR>")
---close tab/vim if no other window open and only nvim-tree is left
-vim.cmd([[autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif ]])
 
 -- ============================================================================
 --                              LUALINE
