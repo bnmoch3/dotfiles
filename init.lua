@@ -344,7 +344,7 @@ local lsp_actions = {
 	},
 	{ -- jumps to the def of symbols under the cursor
 		cmd = "definition",
-		keybinding = {"<Leader>gd","<C-]>"},
+		keybinding = { "<Leader>gd", "<C-]>" },
 		action = vim.lsp.buf.definition,
 	},
 	{ -- displays information about the symbol under the cursor
@@ -358,12 +358,12 @@ local lsp_actions = {
 		action = vim.lsp.buf.implementation,
 	},
 	{ -- lists all the call sites of the sym under the cursor
-		cmd = {"called_by", "incoming"},
+		cmd = { "called_by", "incoming" },
 		keybinding = nil,
 		action = vim.lsp.buf.incoming_calls,
 	},
 	{ -- list all items that are called by the symbol under the cursor
-		cmd = {"calls", "outgoing"},
+		cmd = { "calls", "outgoing" },
 		keybinding = nil,
 		action = vim.lsp.buf.outgoing_calls,
 	},
@@ -403,47 +403,41 @@ local custom_lsp_attach = function(client)
 			return cmd[1]
 		end
 	end
-    
-    local function flatten_apply(val, fn)
-        if val == nil then
-            return
-        end
-        if type(val) == "table" then
-            for _,v in ipairs(val) do
-                fn(v)
-            end
-            return
-        end
-        fn(val)
-    end
+
+	local function flatten_apply(val, fn)
+		if val == nil then
+			return
+		end
+		if type(val) == "table" then
+			for _, v in ipairs(val) do
+				fn(v)
+			end
+			return
+		end
+		fn(val)
+	end
 
 	-- set up keyboard shortcuts
 	for _, v in ipairs(lsp_actions) do
-        flatten_apply(
-            v.keybinding,
-            function (keybinding)
-                if keybinding ~= nil and keybinding ~= "" then
-                    local cmd = pluck_first(v.cmd)
-                    nnoremap(keybinding, "<cmd>Lsp " .. cmd .. "<cr>")
-                end
-            end
-        )
+		flatten_apply(v.keybinding, function(keybinding)
+			if keybinding ~= nil and keybinding ~= "" then
+				local cmd = pluck_first(v.cmd)
+				nnoremap(keybinding, "<cmd>Lsp " .. cmd .. "<cr>")
+			end
+		end)
 	end
 
 	-- tab complete for Lsp command
 	function complete_lsp_command(ArgLeader)
 		local cmds = {}
 		for _, v in ipairs(lsp_actions) do
-            flatten_apply(
-                v.cmd,
-                function(cmd)
-                    if string.find(cmd, "^" .. ArgLeader) ~= nil then
-                        cmds[#cmds + 1] = cmd 
-                    end
-                end
-            )
+			flatten_apply(v.cmd, function(cmd)
+				if string.find(cmd, "^" .. ArgLeader) ~= nil then
+					cmds[#cmds + 1] = cmd
+				end
+			end)
 		end
-        pp(cmds)
+		pp(cmds)
 		return cmds
 	end
 
@@ -454,12 +448,9 @@ local custom_lsp_attach = function(client)
 			-- build reverse map from cmd to actions
 			local cmds_to_actions = {}
 			for _, v in ipairs(lsp_actions) do
-                flatten_apply(
-                    v.cmd,
-                    function(cmd) 
-                        cmds_to_actions[cmd] = v.action 
-                    end
-                )
+				flatten_apply(v.cmd, function(cmd)
+					cmds_to_actions[cmd] = v.action
+				end)
 			end
 			-- return closure to access reverse map
 			return function(opts)
