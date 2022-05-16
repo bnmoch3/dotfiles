@@ -295,6 +295,25 @@ nnoremap("<leader>fl", "<cmd>lua require('telescope.builtin').current_buffer_fuz
 nnoremap("<leader>fd", "<cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>")
 
 -- ============================================================================
+--                              DIAGNOSTICS
+-- ============================================================================
+nnoremap("<Leader>dn", "zz<cmd>lua vim.diagnostic.goto_next()<cr>")
+nnoremap("<Leader>dp", "zz<cmd>lua vim.diagnostic.goto_prev()<cr>")
+Toggle_diagnostics = (function()
+	local diagnostics_on = true
+	return function()
+		if diagnostics_on then
+			vim.diagnostic.hide()
+		else
+			vim.diagnostic.show()
+		end
+		diagnostics_on = not diagnostics_on
+	end
+end)()
+nnoremap("<Leader>dd", "<cmd>lua Toggle_diagnostics()<cr>")
+vim.api.nvim_create_user_command("ToggleDiagnostics", Toggle_diagnostics, { nargs = 0 })
+
+-- ============================================================================
 --                              LSP
 -- ============================================================================
 
