@@ -51,10 +51,8 @@ require("packer").startup(function(use)
 	use("neovim/nvim-lspconfig")
 
 	-- themes, styling
-	use("joshdick/onedark.vim")
-	use("fxn/vim-monochrome")
-	use("altercation/vim-colors-solarized")
-	vim.g.solarized_termcolors = 256
+	use("ellisonleao/gruvbox.nvim")
+	use("chriskempson/base16-vim")
 	use("DanilaMihailov/beacon.nvim") -- temporarily highlight cursor's curr line
 	use("lukas-reineke/indent-blankline.nvim") -- indentation guides
 
@@ -132,6 +130,9 @@ vim.o.smartcase = true
 
 -- TODO install filetype
 -- vim.g.did_load_filetypes = 1
+
+vim.cmd([[colorscheme base16-gruvbox-dark-pale]])
+vim.o.termguicolors = true
 
 vim.g.beacon_size = 60
 vim.g.beacon_timeout = 2000
@@ -230,7 +231,7 @@ nnoremap("<C-n>c", ":NvimTreeCollapse<CR>")
 local lualine = require("lualine")
 lualine.setup({
 	options = {
-		theme = "auto",
+		theme = "gruvbox",
 		disabled_filetypes = { "packer", "NvimTree" },
 		component_separators = { left = "|", right = "|" },
 		section_separators = { left = "", right = "" },
