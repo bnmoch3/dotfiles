@@ -46,16 +46,17 @@ require("packer").startup(function(use)
 	use("tpope/vim-surround") -- for surround selected text with given char
 	use("jiangmiao/auto-pairs") -- for autoclosing {},(), [], "", '', ``
 	use("nvim-lua/plenary.nvim")
-	use("DanilaMihailov/beacon.nvim")
 	use("nvim-treesitter/nvim-treesitter")
 	use("williamboman/nvim-lsp-installer")
 	use("neovim/nvim-lspconfig")
 
-	-- themes
+	-- themes, styling
 	use("joshdick/onedark.vim")
 	use("fxn/vim-monochrome")
 	use("altercation/vim-colors-solarized")
 	vim.g.solarized_termcolors = 256
+	use("DanilaMihailov/beacon.nvim") -- temporarily highlight cursor's curr line
+	use("lukas-reineke/indent-blankline.nvim") -- indentation guides
 
 	use("preservim/tagbar")
 	use("christoomey/vim-tmux-navigator") -- add tmux navigation compatibility
@@ -136,6 +137,10 @@ vim.g.beacon_size = 60
 vim.g.beacon_timeout = 2000
 vim.cmd([[highlight Beacon guibg=LightGray ctermbg=8]])
 vim.g.beacon_ignore_filetypes = { "qf", "NvimTree" }
+
+vim.g.indentLine_char = "|"
+vim.g.indent_blankline_user_treesitter = true
+vim.g.indent_blankline_show_first_indent_level = false
 
 -- ============================================================================
 --                              KEYMAPS
