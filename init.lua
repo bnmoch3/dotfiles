@@ -298,8 +298,8 @@ nnoremap("<leader>fd", "<cmd>lua require('telescope.builtin').lsp_document_symbo
 -- ============================================================================
 --                              DIAGNOSTICS
 -- ============================================================================
-nnoremap("<Leader>dn", "zz<cmd>lua vim.diagnostic.goto_next()<cr>")
-nnoremap("<Leader>dp", "zz<cmd>lua vim.diagnostic.goto_prev()<cr>")
+nnoremap("]d", "zz<cmd>lua vim.diagnostic.goto_next()<cr>")
+nnoremap("[d", "zz<cmd>lua vim.diagnostic.goto_prev()<cr>")
 Toggle_diagnostics = (function()
 	local diagnostics_on = true
 	return function()
@@ -315,49 +315,26 @@ nnoremap("<Leader>dd", "<cmd>lua Toggle_diagnostics()<cr>")
 vim.api.nvim_create_user_command("ToggleDiagnostics", Toggle_diagnostics, { nargs = 0 })
 
 vim.api.nvim_create_user_command(
-	"SetMinLevel",
-	(function(opts)
-		local default_level = "INFO"
-		vim.diagnostic.config({
-			signs = { severity = vim.diagnostic.severity[default_level] },
-			underline = { severity = vim.diagnostic.severity[default_level] },
-			virtual_text = { severity = vim.diagnostic.severity[default_level] },
-		})
-		local default_handlers = {
-			signs = vim.diagnostic.handlers.signs,
-			virtual_text = vim.diagnostic.handlers.virtual_text,
-			underline = vim.diagnostic.handlers.underline,
-		}
-		return function(opts)
-			local function patch(default_handler, level)
-				return {
-					show = function(ns, bufnr, diagnostics, opts)
-						if opts == nil then
-							opts = {}
-						end
-						opts.severity = vim.diagnostic.severity[level]
-						default_handler.show(ns, bufnr, diagnostics, opts)
-					end,
-					hide = default_handler.hide,
-				}
-			end
-			local level = opts.args
-			for target, default_handler in pairs(default_handlers) do
-				vim.diagnostic.handlers[target] = patch(default_handler, level)
-			end
-			vim.diagnostic.config({
-				signs = { severity = vim.diagnostic.severity[level] },
-				underline = { severity = vim.diagnostic.severity[level] },
-				virtual_text = { severity = vim.diagnostic.severity[level] },
-			})
-			vim.diagnostic.hide()
-			vim.diagnostic.show()
-		end
-	end)(),
+	"SetLevel",
+    function(opts)
+        local level = opts.args
+        vim.diagnostic.config({
+            signs = { severity = vim.diagnostic.severity[level] },
+            underline = { severity = vim.diagnostic.severity[level] },
+            virtual_text = { severity = vim.diagnostic.severity[level] },
+        })
+    end,
 	{
 		nargs = 1,
-		complete = function()
-			return { "ERROR", "WARN", "INFO", "HINT" }
+		complete = function(ArgLeader)
+            local hints = {}
+			local levels = { "ERROR", "WARN", "INFO", "HINT" }
+            for _, level in ipairs(levels) do
+				if ArgLeader and string.find(level, "^" .. string.upper(ArgLeader)) ~= nil then
+                    hints[#hints + 1] = level
+                end
+            end
+            return hints
 		end,
 	}
 )
