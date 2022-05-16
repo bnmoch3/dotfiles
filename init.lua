@@ -49,6 +49,7 @@ require("packer").startup(function(use)
 	use("nvim-treesitter/nvim-treesitter")
 	use("williamboman/nvim-lsp-installer")
 	use("neovim/nvim-lspconfig")
+	use({ "folke/trouble.nvim", requires = { "folke/lsp-colors.nvim" } })
 
 	-- themes, styling
 	use("ellisonleao/gruvbox.nvim")
@@ -66,7 +67,7 @@ require("packer").startup(function(use)
 	use("kyazdani42/nvim-web-devicons")
 	use({ "kyazdani42/nvim-tree.lua", requires = { "kyazdani42/nvim-web-devicons" } })
 	use({ "nvim-lualine/lualine.nvim", requires = { "kyazdani42/nvim-web-devicons" } })
-	use({ "nvim-telescope/telescope.nvim", requires = { { "nvim-lua/plenary.nvim" } } })
+	use({ "nvim-telescope/telescope.nvim", requires = { "nvim-lua/plenary.nvim" } })
 
 	-- Automatically set up your configuration after cloning packer.nvim
 	-- Put this at the end after all plugins
@@ -312,6 +313,58 @@ Toggle_diagnostics = (function()
 end)()
 nnoremap("<Leader>dd", "<cmd>lua Toggle_diagnostics()<cr>")
 vim.api.nvim_create_user_command("ToggleDiagnostics", Toggle_diagnostics, { nargs = 0 })
+
+vim.api.nvim_create_user_command(
+	"SetMinLevel",
+	(function(opts)
+		local default_level = "INFO"
+		vim.diagnostic.config({
+			signs = { severity = vim.diagnostic.severity[default_level] },
+			underline = { severity = vim.diagnostic.severity[default_level] },
+			virtual_text = { severity = vim.diagnostic.severity[default_level] },
+		})
+		local default_handlers = {
+			signs = vim.diagnostic.handlers.signs,
+			virtual_text = vim.diagnostic.handlers.virtual_text,
+			underline = vim.diagnostic.handlers.underline,
+		}
+		return function(opts)
+			local function patch(default_handler, level)
+				return {
+					show = function(ns, bufnr, diagnostics, opts)
+						if opts == nil then
+							opts = {}
+						end
+						opts.severity = vim.diagnostic.severity[level]
+						default_handler.show(ns, bufnr, diagnostics, opts)
+					end,
+					hide = default_handler.hide,
+				}
+			end
+			local level = opts.args
+			for target, default_handler in pairs(default_handlers) do
+				vim.diagnostic.handlers[target] = patch(default_handler, level)
+			end
+			vim.diagnostic.config({
+				signs = { severity = vim.diagnostic.severity[level] },
+				underline = { severity = vim.diagnostic.severity[level] },
+				virtual_text = { severity = vim.diagnostic.severity[level] },
+			})
+			vim.diagnostic.hide()
+			vim.diagnostic.show()
+		end
+	end)(),
+	{
+		nargs = 1,
+		complete = function()
+			return { "ERROR", "WARN", "INFO", "HINT" }
+		end,
+	}
+)
+nnoremap("<Leader>dt", "<cmd>TroubleToggle<cr>")
+nnoremap("<Leader>dq", "<cmd>Trouble quickfix<cr>")
+nnoremap("<Leader>dg", "<cmd>Trouble document_diagnostics<cr>")
+nnoremap("<Leader>dw", "<cmd>Trouble workspace_diagnostics<cr>")
 
 -- ============================================================================
 --                              LSP
