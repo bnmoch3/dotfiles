@@ -48,6 +48,7 @@ require("packer").startup(function(use)
 	use("nvim-lua/plenary.nvim")
 	use("nvim-treesitter/nvim-treesitter")
 	use("williamboman/nvim-lsp-installer")
+    use("jose-elias-alvarez/null-ls.nvim")
 	use("neovim/nvim-lspconfig")
 	use({ "folke/trouble.nvim", requires = { "folke/lsp-colors.nvim" } })
 
