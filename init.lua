@@ -244,7 +244,7 @@ lualine.setup({
 		lualine_b = { "filename" },
 		lualine_c = { "filetype" },
 		lualine_x = { "" },
-		lualine_y = { "diagnostics", "diff", "branch" },
+		lualine_y = { { "diagnostics", sections = { "error", "warn" } }, "diff", "branch" },
 		lualine_z = { "" },
 	},
 	extensions = { "quickfix" },
@@ -299,50 +299,83 @@ nnoremap("<leader>fd", "<cmd>lua require('telescope.builtin').lsp_document_symbo
 -- ============================================================================
 --                              DIAGNOSTICS
 -- ============================================================================
-nnoremap("]d", "zz<cmd>lua vim.diagnostic.goto_next()<cr>")
-nnoremap("[d", "zz<cmd>lua vim.diagnostic.goto_prev()<cr>")
 Toggle_diagnostics = (function()
 	local diagnostics_on = true
 	return function()
 		if diagnostics_on then
-			vim.diagnostic.hide()
+			vim.diagnostic.disable(0)
 		else
-			vim.diagnostic.show()
+			vim.diagnostic.enable(0)
 		end
 		diagnostics_on = not diagnostics_on
+		print("Diagnostics enabled:", diagnostics_on)
 	end
 end)()
-nnoremap("<Leader>dd", "<cmd>lua Toggle_diagnostics()<cr>")
-vim.api.nvim_create_user_command("ToggleDiagnostics", Toggle_diagnostics, { nargs = 0 })
 
-vim.api.nvim_create_user_command(
-	"SetLevel",
-    function(opts)
-        local level = opts.args
-        vim.diagnostic.config({
-            signs = { severity = vim.diagnostic.severity[level] },
-            underline = { severity = vim.diagnostic.severity[level] },
-            virtual_text = { severity = vim.diagnostic.severity[level] },
-        })
-    end,
-	{
-		nargs = 1,
-		complete = function(ArgLeader)
-            local hints = {}
-			local levels = { "ERROR", "WARN", "INFO", "HINT" }
-            for _, level in ipairs(levels) do
-				if ArgLeader and string.find(level, "^" .. string.upper(ArgLeader)) ~= nil then
-                    hints[#hints + 1] = level
-                end
-            end
-            return hints
-		end,
-	}
-)
+local severity = { min = vim.diagnostic.severity["WARN"] }
+vim.diagnostic.config({
+	severity_sort = true,
+	underline = { severity = severity },
+	virtual_text = { severity = severity },
+	signs = { severity = severity },
+})
+
+local function set_min_severity_level(opts)
+	local new_severity = { min = vim.diagnostic.severity[opts.args] }
+	local config = vim.diagnostic.config() -- get curr config
+	for _, v in ipairs({ "signs", "underline", "virtual_text" }) do
+		config[v].severity = new_severity
+	end
+	vim.diagnostic.config(config)
+	severity = new_severity
+	-- update LSP handler for publishing diagnostics
+	vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+		vim.lsp.diagnostic.on_publish_diagnostics,
+		config
+	)
+end
+
+local set_min_severity_level_opts = {
+	nargs = 1,
+	complete = function(ArgLeader)
+		local hints = {}
+		local levels = { "ERROR", "WARN", "INFO", "HINT" }
+		for _, level in ipairs(levels) do
+			if ArgLeader and string.find(level, "^" .. string.upper(ArgLeader)) ~= nil then
+				hints[#hints + 1] = level
+			end
+		end
+		return hints
+	end,
+}
+function Goto_diagnostics(direction)
+	local opts = { severity = severity }
+	if direction == "next" then
+		vim.diagnostic.goto_next(opts)
+	elseif direction == "prev" then
+		vim.diagnostic.goto_prev(opts)
+	else
+		error("Invalid direction: " .. tostring(direction))
+	end
+end
+
+require("trouble").setup({
+	mode = "document_diagnostics",
+	action_keys = {
+		open_split = { "<C-s>" },
+		hover = { "h", "l" },
+	},
+})
+
 nnoremap("<Leader>dt", "<cmd>TroubleToggle<cr>")
 nnoremap("<Leader>dq", "<cmd>Trouble quickfix<cr>")
 nnoremap("<Leader>dg", "<cmd>Trouble document_diagnostics<cr>")
 nnoremap("<Leader>dw", "<cmd>Trouble workspace_diagnostics<cr>")
+nnoremap("]d", "zz<cmd>lua Goto_diagnostics('next')<cr>")
+nnoremap("[d", "zz<cmd>lua Goto_diagnostics('prev')<cr>")
+nnoremap("<Leader>dd", "<cmd>lua Toggle_diagnostics()<cr>")
+vim.api.nvim_create_user_command("ToggleDiagnostics", Toggle_diagnostics, { nargs = 0 })
+vim.api.nvim_create_user_command("SetMinLevel", set_min_severity_level, set_min_severity_level_opts)
 
 -- ============================================================================
 --                              LSP
