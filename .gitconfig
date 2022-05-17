@@ -7,6 +7,7 @@
 
 [url "git@github.com:"]
 	insteadOf = https://github.com/
+
 [url "ssh://git@github.com/"]
     insteadOf = https://github.com/
 
@@ -14,15 +15,32 @@
 	editor = nvim
 	autocrlf = input
     excludesfile=~/.gitignore
+    pager = delta
+
+[interactive]
+    diffFiilter = delta --color-only
+
+[delta]
+    navigate = true
+    light = false
+    side-by-side = true
+
+[diff]
+    colorMoved = default
+
 [color]
     status = always
+
 [init]
 	defaultBranch = master
+
 [merge]
     tool = vimdiff
     conflictstyle = diff3
+
 [difftool]
     prompt = false
+
 [alias]
     lo = log --oneline
 	lg = log --graph --format=\"%C(yellow)%h%C(red)%d%C(reset) - %C(bold green)(%ar)%C(reset) %s %C(blue)<%an>%C(reset)\"
