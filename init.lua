@@ -299,13 +299,16 @@ nnoremap("<leader>fd", "<cmd>lua require('telescope.builtin').lsp_document_symbo
 -- ============================================================================
 --                              DIAGNOSTICS
 -- ============================================================================
+vim.o.signcolumn = "yes:1"
 Toggle_diagnostics = (function()
 	local diagnostics_on = true
 	return function()
 		if diagnostics_on then
 			vim.diagnostic.disable(0)
-		else
+            vim.o.signcolumn = "no"
+        else
 			vim.diagnostic.enable(0)
+            vim.o.signcolumn = "yes:1"
 		end
 		diagnostics_on = not diagnostics_on
 		print("Diagnostics enabled:", diagnostics_on)
