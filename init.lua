@@ -382,22 +382,6 @@ vim.api.nvim_create_user_command("SetMinLevel", set_min_severity_level, set_min_
 -- ============================================================================
 
 --[[
-Note:
-    taplo for toml
-Other LSPs to keep in mind for future
-    Web-Dev: 
-        cssls, html, vuels, cssls, tailwindcss, jsonls, 
-        cssmodules_ls, graphql, eslint
-    Sql: 
-        sqls, sqlls
-    Markdown: 
-        prosemd_lsp, remark_ls, za
-    Misc: 
-        asm_lsp(Assembly), cmake, bashls, zls(Zig)
-        sorbet(Ruby), solargraph(Ruby), elixirls
-        tflint(Terraform), terraformls(Terraform),
-        rust_analyzer, ltex(Latex)
-
 - stop all clients, then reload the buffer
     :lua vim.lsp.stop_client(vim.lsp.get_active_clients())
 
