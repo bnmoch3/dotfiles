@@ -48,7 +48,7 @@ require("packer").startup(function(use)
 	use("nvim-lua/plenary.nvim")
 	use("nvim-treesitter/nvim-treesitter")
 	use("williamboman/nvim-lsp-installer")
-    use("jose-elias-alvarez/null-ls.nvim")
+	use("jose-elias-alvarez/null-ls.nvim")
 	use("neovim/nvim-lspconfig")
 	use({ "folke/trouble.nvim", requires = { "folke/lsp-colors.nvim" } })
 
@@ -305,10 +305,10 @@ Toggle_diagnostics = (function()
 	return function()
 		if diagnostics_on then
 			vim.diagnostic.disable(0)
-            vim.o.signcolumn = "no"
-        else
+			vim.o.signcolumn = "no"
+		else
 			vim.diagnostic.enable(0)
-            vim.o.signcolumn = "yes:1"
+			vim.o.signcolumn = "yes:1"
 		end
 		diagnostics_on = not diagnostics_on
 		print("Diagnostics enabled:", diagnostics_on)
@@ -572,3 +572,67 @@ for lang_server, config in pairs(lang_servers) do
 	config.on_attach = custom_lsp_attach
 	lspconfig[lang_server].setup(config)
 end
+
+-- ============================================================================
+--                              FORMATTING
+-- ============================================================================
+local null_ls = require("null-ls")
+-- add trimwhitespace for python, lua
+-- add isort for python
+-- make sure prettier doesn't format yaml
+null_ls.setup({
+	sources = {
+		-- general
+		null_ls.builtins.formatting.trim_whitespace,
+		null_ls.builtins.formatting.trim_newlines,
+		-- lua
+		null_ls.builtins.formatting.stylua,
+		-- bash
+		null_ls.builtins.diagnostics.shellcheck,
+		null_ls.builtins.formatting.shfmt,
+		-- js, html, css
+		null_ls.builtins.diagnostics.eslint,
+		null_ls.builtins.formatting.prettier.with({
+			filetypes = { "html", "javascript", "json", "javascriptreact", "typescript", "typescriptreact", "yaml" },
+		}),
+		-- docker
+		null_ls.builtins.diagnostics.hadolint,
+		-- go
+		null_ls.builtins.formatting.gofmt,
+		null_ls.builtins.formatting.goimports,
+		-- toml
+		null_ls.builtins.formatting.taplo,
+		-- python
+		null_ls.builtins.formatting.black.with({
+			prefer_local = ".venv/bin",
+		}),
+	},
+	-- format on write
+	on_attach = (function()
+		-- only use null-ls for formatting
+		local lsp_formatting = function(bufnr)
+			vim.lsp.buf.format({
+				filter = function(clients)
+					return vim.tbl_filter(function(client)
+						return client.name == "null-ls"
+					end, clients)
+				end,
+				bufnr = bufnr,
+			})
+		end
+
+		local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+		return function(client, bufnr)
+			if client.supports_method("textDocument/formatting") then
+				vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+				vim.api.nvim_create_autocmd("BufWritePre", {
+					group = augroup,
+					buffer = bufnr,
+					callback = function()
+						lsp_formatting(bufnr)
+					end,
+				})
+			end
+		end
+	end)(),
+})
