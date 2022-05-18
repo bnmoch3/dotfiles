@@ -51,6 +51,7 @@ require("packer").startup(function(use)
 	use("jose-elias-alvarez/null-ls.nvim")
 	use("neovim/nvim-lspconfig")
 	use({ "folke/trouble.nvim", requires = { "folke/lsp-colors.nvim" } })
+	use("stevearc/aerial.nvim")
 
 	-- themes, styling
 	use("ellisonleao/gruvbox.nvim")
@@ -243,7 +244,7 @@ lualine.setup({
 		lualine_a = { "mode" },
 		lualine_b = { "filename" },
 		lualine_c = { "filetype" },
-		lualine_x = { "" },
+		lualine_x = { "aerial" },
 		lualine_y = { { "diagnostics", sections = { "error", "warn" } }, "diff", "branch" },
 		lualine_z = { "" },
 	},
@@ -391,6 +392,15 @@ vim.api.nvim_create_user_command("SetMinLevel", set_min_severity_level, set_min_
 - default handlers used when creating a new client:
     :lua print(vim.inspect(vim.tbl_keys(vim.lsp.handlers)))
 --]]
+require("aerial").setup({
+	highlight_on_hover = true,
+	link_tree_to_folds = true,
+	manage_folds = true,
+	show_guides = true,
+	on_attach = function(bufnr)
+		nnoremap("<Leader>t", "<cmd>AerialToggle<cr>")
+	end,
+})
 
 local lsp_actions = {
 	{ -- resolve document highlights for current text document pos.
@@ -539,6 +549,9 @@ local custom_lsp_attach = function(client)
 			complete = complete_lsp_command,
 		}
 	)
+
+	-- set up aerial for a code outline window
+	require("aerial").on_attach(client, bufnr)
 end
 
 require("nvim-lsp-installer").setup({})
