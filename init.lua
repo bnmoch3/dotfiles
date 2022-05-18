@@ -17,9 +17,9 @@ local function nnoremap(shortcut, command, bufnr)
 	end
 end
 
-local function inoremap(shortcut, command)
-	vim.api.nvim_set_keymap("i", shortcut, command, { noremap = true, silent = true })
-end
+-- local function inoremap(shortcut, command)
+-- 	vim.api.nvim_set_keymap("i", shortcut, command, { noremap = true, silent = true })
+-- end
 
 local function vnoremap(shortcut, command)
 	vim.api.nvim_set_keymap("v", shortcut, command, { noremap = true, silent = true })
@@ -43,7 +43,6 @@ end
 -- ============================================================================
 --                              PLUGINS
 -- ============================================================================
-local my_augroup_id = vim.api.nvim_create_augroup("my_augroup", { clear = true })
 require("packer").startup(function(use)
 	use("wbthomason/packer.nvim")
 	use("tpope/vim-commentary") -- for commenting out lines
@@ -435,7 +434,7 @@ require("aerial").setup({
 	manage_folds = true,
 	show_guides = true,
 	default_bindings = true,
-	on_attach = function(bufnr)
+	on_attach = function(_) -- bufnr arg
 		nnoremap("<Leader>t", "<cmd>AerialToggle<cr>")
 	end,
 })
@@ -598,7 +597,7 @@ local custom_lsp_attach = function(client, bufnr)
 	end
 
 	-- tab complete for Lsp command
-	function complete_lsp_command(ArgLeader)
+	local function complete_lsp_command(ArgLeader)
 		local cmds = {}
 		for _, v in ipairs(lsp_actions) do
 			flatten_apply(v.cmd, function(cmd)
