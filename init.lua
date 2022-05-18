@@ -9,8 +9,12 @@ function pp(obj)
 	print(inspect(obj))
 end
 
-local function nnoremap(shortcut, command)
-	vim.api.nvim_set_keymap("n", shortcut, command, { noremap = true, silent = true })
+local function nnoremap(shortcut, command, bufnr)
+	if bufnr == nil then
+		vim.api.nvim_set_keymap("n", shortcut, command, { noremap = true, silent = true })
+	else
+		vim.api.nvim_buf_set_keymap(bufnr, "n", shortcut, command, { noremap = true, silent = true })
+	end
 end
 
 local function inoremap(shortcut, command)
@@ -382,9 +386,47 @@ vim.api.nvim_create_user_command("ToggleDiagnostics", Toggle_diagnostics, { narg
 vim.api.nvim_create_user_command("SetMinLevel", set_min_severity_level, set_min_severity_level_opts)
 
 -- ============================================================================
+--                              AERIAL
+-- ============================================================================
+require("aerial.bindings").keys = {
+	{
+		"<CR>",
+		"<cmd>lua require'aerial'.select({jump=false})<CR>",
+		"Jump to the symbol under the cursor keep focus in aerial window",
+	},
+	{ "<c-]>", "<cmd>lua require'aerial'.select()<CR>", "Jump to the symbol under the cursor" },
+	{ "<C-v>", "<cmd>lua require'aerial'.select({split='v'})<CR>", "Jump to the symbol in a vertical split" },
+	{ "<C-s>", "<cmd>lua require'aerial'.select({split='h'})<CR>", "Jump to the symbol in a horizontal split" },
+	{ "{", "<cmd>AerialPrev<CR>", "Jump to the previous symbol" },
+	{ "}", "<cmd>AerialNext<CR>", "Jump to the next symbol" },
+	{ "[[", "<cmd>AerialPrevUp<CR>", "Jump up the tree, moving backwards" },
+	{ "]]", "<cmd>AerialNextUp<CR>", "Jump up the tree, moving forwards" },
+	{ "q", "<cmd>AerialClose<CR>", "Close the aerial window" },
+	{ "za", "<cmd>AerialTreeToggle<CR>", "Toggle the symbol under the cursor open/closed" },
+	{ "zA", "<cmd>AerialTreeToggle!<CR>", "Recursive toggle the symbol under the cursor open/closed" },
+	{ "zo", "<cmd>AerialTreeOpen<CR>", "Expand the symbol under the cursor" },
+	{ "zO", "<cmd>AerialTreeOpen!<CR>", "Recursive expand the symbol under the cursor" },
+	{ "zc", "<cmd>AerialTreeClose<CR>", "Collapse the symbol under the cursor" },
+	{ "zC", "<cmd>AerialTreeClose!<CR>", "Recursive collapse the symbol under the cursor" },
+	{ "zR", "<cmd>AerialTreeOpenAll<CR>", "Expand all nodes in the tree" },
+	{ "zM", "<cmd>AerialTreeCloseAll<CR>", "Collapse all nodes in the tree" },
+	{ "r", "<cmd>AerialTreeSyncFolds<CR>", "Sync code folding to the tree (useful if they get out of sync)" },
+}
+
+require("aerial").setup({
+	highlight_on_hover = true,
+	link_tree_to_folds = true,
+	manage_folds = true,
+	show_guides = true,
+	default_bindings = true,
+	on_attach = function(bufnr)
+		nnoremap("<Leader>t", "<cmd>AerialToggle<cr>")
+	end,
+})
+
+-- ============================================================================
 --                              LSP
 -- ============================================================================
-
 --[[
 - stop all clients, then reload the buffer
     :lua vim.lsp.stop_client(vim.lsp.get_active_clients())
@@ -392,16 +434,6 @@ vim.api.nvim_create_user_command("SetMinLevel", set_min_severity_level, set_min_
 - default handlers used when creating a new client:
     :lua print(vim.inspect(vim.tbl_keys(vim.lsp.handlers)))
 --]]
-require("aerial").setup({
-	highlight_on_hover = true,
-	link_tree_to_folds = true,
-	manage_folds = true,
-	show_guides = true,
-	on_attach = function(bufnr)
-		nnoremap("<Leader>t", "<cmd>AerialToggle<cr>")
-	end,
-})
-
 local lsp_actions = {
 	{ -- resolve document highlights for current text document pos.
 		cmd = "document_highlight",
