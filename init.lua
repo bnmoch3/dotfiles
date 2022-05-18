@@ -57,6 +57,7 @@ require("packer").startup(function(use)
 	use("neovim/nvim-lspconfig")
 	use({ "folke/trouble.nvim", requires = { "folke/lsp-colors.nvim" } })
 	use("stevearc/aerial.nvim")
+	use("rmagatti/goto-preview")
 
 	-- themes, styling
 	use("ellisonleao/gruvbox.nvim")
@@ -622,6 +623,13 @@ for lang_server, config in pairs(lang_servers) do
 	config.on_attach = custom_lsp_attach
 	lspconfig[lang_server].setup(config)
 end
+
+require("goto-preview").setup({})
+nnoremap("\\d", "<cmd>lua require('goto-preview').goto_preview_definition()<CR>")
+nnoremap("\\i", "<cmd>lua require('goto-preview').goto_preview_implementation()<CR>")
+nnoremap("\\q", "<cmd>lua require('goto-preview').close_all_win()<CR>")
+nnoremap("\\p", "<cmd>lua require('goto-preview').goto_preview_references()<CR>")
+-- nnoremap("\\d", "") -- add for docs
 
 -- ============================================================================
 --                              FORMATTING, LINTING
