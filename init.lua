@@ -152,9 +152,6 @@ vim.o.autoindent = true
 vim.o.ignorecase = true
 vim.o.smartcase = true
 
--- disable LSP features in ALE before plugins are loaded
--- vim.g.ale_disable_lsp = 1
-
 -- TODO install filetype
 -- vim.g.did_load_filetypes = 1
 
