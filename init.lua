@@ -513,11 +513,6 @@ local lsp_actions = {
 		keybinding = nil,
 		action = vim.lsp.buf.completion,
 	},
-	{ -- jumps to the declaration of the sym under the cursor, not impl by many lsps
-		cmd = "declaration",
-		keybinding = nil,
-		action = vim.lsp.buf.declaration,
-	},
 	{ -- jumps to the def of symbols under the cursor
 		cmd = "definition",
 		keybinding = { "<Leader>gd", "<C-]>" },
