@@ -323,7 +323,6 @@ Toggle_diagnostics = (function()
 			vim.o.signcolumn = "yes:1"
 		end
 		diagnostics_on = not diagnostics_on
-		print("Diagnostics enabled:", diagnostics_on)
 	end
 end)()
 
