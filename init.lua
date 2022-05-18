@@ -587,7 +587,7 @@ for lang_server, config in pairs(lang_servers) do
 end
 
 -- ============================================================================
---                              FORMATTING
+--                              FORMATTING, LINTING
 -- ============================================================================
 local null_ls = require("null-ls")
 -- add trimwhitespace for python, lua
