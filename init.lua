@@ -475,34 +475,33 @@ local lsp_actions = {
 	},
 }
 
-local custom_lsp_attach = function(client)
-	local function pluck_first(cmd)
-		if type(cmd) == "string" then
-			return cmd
-		end
-		if type(cmd) == "table" then
-			return cmd[1]
-		end
+local function listify(val)
+	if type(val) ~= "table" then
+		return { val }
+	else
+		return val
 	end
+end
 
-	local function flatten_apply(val, fn)
-		if val == nil then
-			return
-		end
-		if type(val) == "table" then
-			for _, v in ipairs(val) do
-				fn(v)
-			end
-			return
-		end
-		fn(val)
+local function flatten_apply(val, fn)
+	if val == nil then
+		return
 	end
+	if type(val) == "table" then
+		for _, v in ipairs(val) do
+			fn(v)
+		end
+		return
+	end
+	fn(val)
+end
 
+local custom_lsp_attach = function(client, bufnr)
 	-- set up keyboard shortcuts
 	for _, v in ipairs(lsp_actions) do
 		flatten_apply(v.keybinding, function(keybinding)
 			if keybinding ~= nil and keybinding ~= "" then
-				local cmd = pluck_first(v.cmd)
+				local cmd = listify(v.cmd)[1]
 				nnoremap(keybinding, "<cmd>Lsp " .. cmd .. "<cr>")
 			end
 		end)
