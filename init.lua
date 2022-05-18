@@ -60,6 +60,18 @@ require("packer").startup(function(use)
 	use("rmagatti/goto-preview")
 	use("ray-x/lsp_signature.nvim")
 
+	-- autocompletion
+	use("hrsh7th/cmp-nvim-lsp")
+	use("hrsh7th/cmp-buffer")
+	use("hrsh7th/cmp-path")
+	use("hrsh7th/cmp-cmdline")
+	use("hrsh7th/nvim-cmp")
+
+	-- snippets
+	use("saadparwaiz1/cmp_luasnip")
+	use("L3MON4D3/LuaSnip")
+	use("rafamadriz/friendly-snippets")
+
 	-- themes, styling
 	use("ellisonleao/gruvbox.nvim")
 	use("chriskempson/base16-vim")
@@ -432,6 +444,53 @@ require("aerial").setup({
 })
 
 -- ============================================================================
+--                              AUTO-COMPLETION
+-- ============================================================================
+local cmp = require("cmp")
+local luasnip = require("luasnip")
+
+vim.opt.completeopt = { "menu", "menuone", "noselect" }
+
+cmp.setup({
+	snippet = {
+		expand = function(args)
+			luasnip.lsp_expand(args.body)
+		end,
+	},
+	mapping = cmp.mapping.preset.insert({
+		["<C-b>"] = cmp.mapping.scroll_docs(-4),
+		["<C-f>"] = cmp.mapping.scroll_docs(4),
+		["<C-Space>"] = cmp.mapping.complete(),
+		["<C-e>"] = cmp.mapping.abort(),
+		["<CR>"] = cmp.mapping.confirm({ select = true }),
+	}),
+	sources = cmp.config.sources({
+		{ name = "nvim_lsp" },
+		{ name = "luasnip" },
+	}, {
+		{ name = "buffer" },
+	}),
+})
+
+-- use buffer source for `/`
+cmp.setup.cmdline("/", {
+	mapping = cmp.mapping.preset.cmdline(),
+	sources = {
+		{ name = "buffer" },
+	},
+})
+
+-- use cmdline & path source for ':'
+cmp.setup.cmdline(":", {
+	mapping = cmp.mapping.preset.cmdline(),
+	sources = cmp.config.sources({
+		{ name = "path" },
+	}, {
+		{ name = "cmdline" },
+	}),
+})
+
+-- ============================================================================
 --                              LSP
 -- ============================================================================
 --[[
@@ -619,8 +678,12 @@ local lang_servers = {
 	yamlls = {},
 }
 
+-- for autocompletion
+local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
+
 for lang_server, config in pairs(lang_servers) do
 	config.on_attach = custom_lsp_attach
+	config.capabilities = capabilities
 	lspconfig[lang_server].setup(config)
 end
 
