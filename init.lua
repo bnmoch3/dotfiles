@@ -527,7 +527,7 @@ local lsp_actions = {
 		action = vim.lsp.buf.definition,
 	},
 	{ -- displays information about the symbol under the cursor
-		cmd = "hover",
+		cmd = { "hover", "doc" },
 		keybinding = "<Leader>gh",
 		action = vim.lsp.buf.hover,
 	},
@@ -692,7 +692,7 @@ nnoremap("\\d", "<cmd>lua require('goto-preview').goto_preview_definition()<CR>"
 nnoremap("\\i", "<cmd>lua require('goto-preview').goto_preview_implementation()<CR>")
 nnoremap("\\q", "<cmd>lua require('goto-preview').close_all_win()<CR>")
 nnoremap("\\p", "<cmd>lua require('goto-preview').goto_preview_references()<CR>")
--- nnoremap("\\d", "") -- add for docs
+nnoremap("\\d", "<cmd>lua vim.lsp.buf.hover()<CR>") -- for docs
 
 -- for showing signature as virtual text
 require("lsp_signature").setup({})
