@@ -399,7 +399,7 @@ nnoremap("]d", "zz<cmd>lua Goto_diagnostics('next')<cr>")
 nnoremap("[d", "zz<cmd>lua Goto_diagnostics('prev')<cr>")
 nnoremap("<Leader>dd", "<cmd>lua Toggle_diagnostics()<cr>")
 vim.api.nvim_create_user_command("ToggleDiagnostics", Toggle_diagnostics, { nargs = 0 })
-vim.api.nvim_create_user_command("SetMinLevel", set_min_severity_level, set_min_severity_level_opts)
+vim.api.nvim_create_user_command("SetLevel", set_min_severity_level, set_min_severity_level_opts)
 
 -- ============================================================================
 --                              AERIAL
