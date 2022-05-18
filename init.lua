@@ -58,6 +58,7 @@ require("packer").startup(function(use)
 	use({ "folke/trouble.nvim", requires = { "folke/lsp-colors.nvim" } })
 	use("stevearc/aerial.nvim")
 	use("rmagatti/goto-preview")
+	use("ray-x/lsp_signature.nvim")
 
 	-- themes, styling
 	use("ellisonleao/gruvbox.nvim")
@@ -629,6 +630,9 @@ nnoremap("\\i", "<cmd>lua require('goto-preview').goto_preview_implementation()<
 nnoremap("\\q", "<cmd>lua require('goto-preview').close_all_win()<CR>")
 nnoremap("\\p", "<cmd>lua require('goto-preview').goto_preview_references()<CR>")
 -- nnoremap("\\d", "") -- add for docs
+
+-- for showing signature as virtual text
+require("lsp_signature").setup({})
 
 -- ============================================================================
 --                              FORMATTING, LINTING
