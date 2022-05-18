@@ -49,6 +49,7 @@ require("packer").startup(function(use)
 	use("tpope/vim-commentary") -- for commenting out lines
 	use("tpope/vim-surround") -- for surround selected text with given char
 	use("jiangmiao/auto-pairs") -- for autoclosing {},(), [], "", '', ``
+	use("milkypostman/vim-togglelist")
 	use("nvim-lua/plenary.nvim")
 	use("nvim-treesitter/nvim-treesitter")
 	use("williamboman/nvim-lsp-installer")
@@ -113,6 +114,11 @@ vim.o.shortmess = vim.o.shortmess .. "c" -- dont pass messages to |ins-completio
 vim.o.grepprg = "rg --vimgrep --smart-case --follow"
 vim.o.hlsearch = true
 vim.o.incsearch = true
+
+-- quickfix
+vim.g.toggle_list_no_mappings = true
+nnoremap("<localleader>q", "<cmd>call ToggleQuickfixList()<cr>")
+nnoremap("<localleader>l", "<cmd>call ToggleLocationList()<cr>")
 
 -- indenting
 vim.o.tabstop = 4
