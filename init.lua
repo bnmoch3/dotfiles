@@ -116,6 +116,7 @@ vim.o.number = true
 vim.o.numberwidth = 5
 vim.o.relativenumber = true
 vim.o.cmdheight = 1
+vim.wo.colorcolumn = "80"
 
 vim.o.swapfile = false -- no swapfile, no backups
 vim.o.backup = false
