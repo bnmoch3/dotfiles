@@ -51,10 +51,11 @@
     ss = status -s
     last = log -1 HEAD
     visual = !gitk
-    id = ls 
+    id = ls
+    d = diff
+    ds = diff --staged
 
 [pull]
 	rebase = true
 [rerere]
 	enabled = true
-
