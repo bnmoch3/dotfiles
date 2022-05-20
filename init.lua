@@ -45,6 +45,7 @@ end
 -- ============================================================================
 require("packer").startup(function(use)
 	use("wbthomason/packer.nvim")
+	use("alvan/vim-closetag")
 	use("tpope/vim-commentary") -- for commenting out lines
 	use("tpope/vim-surround") -- for surround selected text with given char
 	use("jiangmiao/auto-pairs") -- for autoclosing {},(), [], "", '', ``
