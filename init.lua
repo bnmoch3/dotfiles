@@ -79,8 +79,8 @@ require("packer").startup(function(use)
 
 	use("preservim/tagbar")
 	use("christoomey/vim-tmux-navigator") -- add tmux navigation compatibility
-	vim.api.tmux_navigator_save_on_switch = true
-	vim.api.tmux_navigator_disable_when_zoomed = true
+	vim.g.tmux_navigator_save_on_switch = true
+	vim.g.tmux_navigator_disable_when_zoomed = true
 	use("kshenoy/vim-signature") -- for toggling, displaying and navigating marks
 	use("tpope/vim-unimpaired") -- tim-pope's, for quick navigation of lists
 	use("ap/vim-buftabline") -- display buffer list on tabline
