@@ -18,7 +18,7 @@
     pager = delta
 
 [interactive]
-    diffFiilter = delta --color-only
+    diffFilter = delta --color-only
 
 [delta]
     navigate = true
