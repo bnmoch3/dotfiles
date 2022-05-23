@@ -15,7 +15,7 @@
 	editor = nvim
 	autocrlf = input
     excludesfile=~/.gitignore
-    pager = delta
+    pager=bat
 
 [interactive]
     diffFilter = delta --color-only
