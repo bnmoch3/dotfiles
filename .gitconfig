@@ -26,6 +26,7 @@
     side-by-side = true
 
 [diff]
+    external=patdiff-git-wrapper
     colorMoved = default
 
 [color]
