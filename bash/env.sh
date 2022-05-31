@@ -23,7 +23,7 @@ if type rg &>/dev/null; then
 	export FZF_DEFAULT_OPTS='-m'
 fi
 
-export FZF_DEFAULT_OPTS='--height 80% --layout=reverse --border --margin=1 --padding=1'
+export FZF_DEFAULT_OPTS='--height 80% --layout=reverse --border --margin=1'
 
 # yarn
 if command -v yarn &>/dev/null; then
