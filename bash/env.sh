@@ -40,9 +40,19 @@ if [[ -d "$HOME/.pyenv" ]]; then
 	eval "$(pyenv init -)"
 fi
 
+# source cargo
+if [[ -f "$HOME/.cargo/env" ]]; then
+	. "$HOME/.cargo/env"
+fi
+
+# # opam configuration
+if [[ -f $HOME/.opam/opam-init/init.sh ]]; then
+	. $HOME/.opam/opam-init/init.sh
+fi
+
 # PATH="$PATH:/home/bnm/installed/bin:/home/bnm/installed/bin/SQLiteStudio/"
 if [[ -d "$HOME/dotfiles" ]]; then
-	PATH="$HOME/bin:$PATH"
+	PATH="$HOME/.local/bin:$PATH"
 fi
 
 export PATH

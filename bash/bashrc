@@ -1,6 +1,5 @@
 #!/usr/bin/bash
 
-
 # Do not give other users read, write, execute access on
 # newly created files
 # edited from chezmoi
@@ -51,13 +50,3 @@ source "$HOME/dotfiles/bash/aliases.sh"
 
 # source functions
 source "$HOME/dotfiles/bash/functions.sh"
-
-# source cargo
-if [[ -f "$HOME/.cargo/env" ]]; then
-	. "$HOME/.cargo/env"
-fi
-
-# # opam configuration
-if [[ -f $HOME/.opam/opam-init/init.sh ]]; then
-    . $HOME/.opam/opam-init/init.sh
-fi
