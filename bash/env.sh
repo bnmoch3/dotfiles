@@ -9,7 +9,7 @@ fi
 export PSQL_EDITOR=$EDITOR
 
 # pager, use bat if present
-if ! command -v bat >/dev/null; then
+if command -v bat >/dev/null; then
 	export PAGER=bat
 fi
 
