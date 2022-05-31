@@ -53,7 +53,7 @@ source "$HOME/dotfiles/bash/aliases.sh"
 source "$HOME/dotfiles/bash/functions.sh"
 
 # source cargo
-if command -v cargo &>/dev/null; then
+if [[ -f "$HOME/.cargo/env" ]]; then
 	. "$HOME/.cargo/env"
 fi
 
