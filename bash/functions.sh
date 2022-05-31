@@ -18,9 +18,7 @@ function tms() {
 	# create session if does not exist
 	tmux has-session -t $session_name 2>/dev/null
 	if [[ $? != 0 ]]; then
-		echo "A"
 		tmux new-session -d -s $session_name
-		echo "B"
 	fi
 
 	# switch to session
