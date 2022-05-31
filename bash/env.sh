@@ -3,7 +3,7 @@
 if command -v "nvim" >/dev/null; then
 	EDITOR="nvim"
 else
-	EDITOR="vi"
+	EDITOR="vim"
 fi
 
 export PSQL_EDITOR=$EDITOR
