@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-if ! command -v "nvim" >/dev/null; then
+if command -v "nvim" >/dev/null; then
 	EDITOR="nvim"
 else
 	EDITOR="vi"
