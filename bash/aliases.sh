@@ -7,17 +7,6 @@ if [ -x /usr/bin/dircolors ]; then
     alias ls='ls --color=auto'
 fi
 
-# soft delete for files
-alias del='trash-put'
-alias trash='trash-put'
-
 # some more ls aliases
 alias ll='ls -alF'
 alias l1='ls -1'
-
-alias pwdd='pwd | xclip -i'
-alias cwdd='cd $(xclip -o)'
-
-alias activate="source .venv/bin/activate"
-
-alias open=xdg-open
