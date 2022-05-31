@@ -1,0 +1,98 @@
+# Configuration for Alacritty, the GPU enhanced terminal emulator.
+
+# Any items in the `env` entry below will be added as
+# environment variables. Some entries may override variables
+# set by alacritty itself.
+env:
+  TERM: alacritty
+  LANG: "en_US.UTF-8"
+  LC_CTYPE: en_US.UTF-8
+
+# Font configuration
+font:
+  # Normal (roman) font face
+  normal:
+    # Font family
+    #
+    # Default:
+    #   - (macOS) Menlo
+    #   - (Linux/BSD) monospace
+    #   - (Windows) Consolas
+    family: "monospace"
+
+    # The `style` can be specified to pick a specific face.
+    style: Regular
+  # Point size
+  size: 14.0
+
+  # Thin stroke font rendering (macOS only)
+  # Thin strokes are suitable for retina displays, but for non-retina screens
+  # it is recommended to set `use_thin_strokes` to `false`
+  #
+  # macOS >= 10.14.x:
+  #
+  # If the font quality on non-retina display looks bad then set
+  # `use_thin_strokes` to `true` and enable font smoothing by running the
+  # following command:
+  #   `defaults write -g CGFontRenderingFontSmoothingDisabled -bool NO`
+  #
+  # This is a global setting and will require a log out or restart to take
+  # effect.
+  use_thin_strokes: true
+
+# Colors (Tomorrow Night Bright)
+schemes:
+  tomorrow_night: &tomorrow_night # Default colors
+    primary:
+      background: "#282828"
+      foreground: "#d8d8d8"
+
+    # Colors the cursor will use if `custom_cursor_colors` is true
+    cursor:
+      text: "#0a0a0a"
+      cursor: "#d8d8d8"
+
+    # Normal colors
+    normal:
+      black: "#181818"
+      red: "#ab4642"
+      green: "#a1b56c"
+      yellow: "#f7ca88"
+      blue: "#7cafc2"
+      magenta: "#ba8baf"
+      cyan: "#86c1b9"
+      white: "#d8d8d8"
+
+    # Bright colors
+    bright:
+      black: "#585858"
+      red: "#ab4642"
+      green: "#a1b56c"
+      yellow: "#f7ca88"
+      blue: "#7cafc2"
+      magenta: "#ba8baf"
+      cyan: "#86c1b9"
+      white: "#f8f8f8"
+  gruvbox_material: &gruvbox_material
+    primary:
+      background: "0x282828"
+      foreground: "0xd8d8d8"
+    normal:
+      black: "0x303030"
+      red: "0xfa4a43"
+      green: "0xa1b56c"
+      yellow: "0xe78a4e"
+      blue: "0x7cafc2"
+      magenta: "0xba8baf"
+      cyan: "0x89b482"
+      white: "0xf8f8f8"
+    bright:
+      black: "0x928374"
+      red: "0xea6962"
+      green: "0xa9b665"
+      yellow: "0xe3a84e"
+      blue: "0x7daea3"
+      magenta: "0xd3869b"
+      cyan: "0x89b482"
+      white: "0xdfbf8e"
+colors: *gruvbox_material
