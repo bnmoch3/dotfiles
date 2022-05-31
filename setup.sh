@@ -34,7 +34,7 @@ _add_dotfile() {
 	if [[ $OVERWRITE == 0 ]]; then
 		ln -s "$dotfile" "$dest"
 	else
-		ln -s --force "$dotfile" "$dest"
+		ln -s -f "$dotfile" "$dest"
 	fi
 }
 
