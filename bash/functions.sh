@@ -4,6 +4,43 @@ function nv() {
 	nvim "$(fzf -m)"
 }
 
+function tms() {
+	# session name can either be passed as arg or prompted for
+	# if input session is blank, cwd base is used as the session name
+	if [[ -z $1 ]]; then
+		echo -n "tmux session name: "
+		read session_name
+		if [[ -z $session_name ]]; then
+			session_name=$(basename "$(pwd)")
+		fi
+	fi
+
+	# create session if does not exist
+	tmux has-session -t $session_name 2>/dev/null
+	if [[ $? != 0 ]]; then
+		echo "A"
+		tmux new-session -d -s $session_name
+		echo "B"
+	fi
+
+	# switch to session
+	if [[ -n $TMUX ]]; then
+		tmux switch -t $session_name
+	else
+		tmux attach -t $session_name
+	fi
+}
+
+function tmr() {
+	if [[ -n $TMUX ]]; then
+		tmux rename-window -t 1 'main'
+	fi
+}
+
+function tmk() {
+	tmux kill-session -t "$(tmux ls -F '#{session_name}' | fzf)"
+}
+
 # copy cwd to system clipboard
 function pwdd() {
 	if [[ "$OSTYPE" == "linux-gnu"* ]]; then
