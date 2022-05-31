@@ -1,0 +1,57 @@
+#!/usr/bin/bash
+
+# Do not give other users read, write, execute access on
+# newly created files
+# edited from chezmoi
+umask 077
+
+# If not running interactively, return
+case $- in
+*i*) ;;      # interactive shell
+*) return ;; # non-interactive shell
+esac
+
+# Prompt
+PS1="\[\033[0;32m\][\h\$]\W:\[\033[0m\] "
+
+# History, ignore duplicate lines and commands starting with whitespace
+HISTCONTROL=ignoreboth
+
+# Append to end of HISTFILE rather than overwriting upon exiting shell
+shopt -s histappend
+
+# List status of any stopped & running jobs before exiting an interactive shell
+shopt -s checkjobs
+
+# If hash command no longer exists, perform normal path search
+shopt -s checkhash
+
+# Use vim keystrokes
+set -o vi
+
+# Enable bash completion
+if ! shopt -oq posix; then # turn off posix compliance
+	if [ -f /usr/share/bash-completion/bash_completion ]; then
+		source /usr/share/bash-completion/bash_completion
+	fi
+fi
+
+# add all other completions
+for f in ~/dotfiles/bash/completions/*.bash; do
+	# shellcheck disable=SC1090
+	source "$f"
+done
+
+# source common env vars
+source "$HOME/dotfiles/bash/env.sh"
+
+# source aliases
+source "$HOME/dotfiles/bash/aliases.sh"
+
+# source functions
+source "$HOME/dotfiles/bash/functions.sh"
+
+# source cargo
+if command -v cargo &>/dev/null; then
+	source "$HOME/.cargo/env"
+fi
