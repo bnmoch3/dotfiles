@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 _check_cmds() {
 	local check_must_install=(tmux nvim go node npm yarn cargo
@@ -21,7 +21,7 @@ _check_cmds() {
 		if command -v $cmd &>/dev/null; then
 			installed+=("$cmd")
 		else
-			nice_to_have=("$cmd")
+			nice_to_have+=("$cmd")
 		fi
 	done
 
