@@ -32,8 +32,9 @@ if command -v yarn &>/dev/null; then
 fi
 
 # go
-if command -v go &>/dev/null; then
-	PATH=$PATH:/usr/local/go/bin/:home/bnm/go/bin
+if [[ -d /usr/local/go ]]; then
+	PATH=$PATH:/usr/local/go/bin
+    PATH=$PATH:$(go env GOPATH)/bin
 fi
 
 # pyenv
