@@ -36,8 +36,10 @@ if command -v go &>/dev/null; then
 	PATH=$PATH:/usr/local/go/bin/:home/bnm/go/bin
 fi
 
-if command -v pyenv &>/dev/null; then
+# pyenv
+if [[ -d "$HOME/.pyenv" ]]; then
 	export PYENV_ROOT="$HOME/.pyenv"
+    PATH=$PATH:$PYENV_ROOT/bin
 	eval "$(pyenv init -)"
 fi
 
@@ -45,6 +47,5 @@ fi
 if [[ -d "$HOME/dotfiles" ]]; then
     PATH="$HOME/bin:$PATH"
 fi
-
 
 export PATH
