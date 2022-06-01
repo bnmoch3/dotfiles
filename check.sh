@@ -2,7 +2,7 @@
 
 _check_cmds() {
 	local check_must_install=(tmux nvim go node npm yarn cargo
-		rg fzf patdiff bat shellcheck)
+		rg fzf patdiff bat shellcheck delta)
 	local check_nice_to_have=(pyenv goimports prettier eslint shfmt)
 
 	local installed=()
