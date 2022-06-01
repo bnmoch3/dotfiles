@@ -83,7 +83,7 @@ function open() {
 	if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 		xdg-open $1
 	elif [[ "$OSTYPE" == "darwin"* ]]; then
-		open $1
+		/usr/bin/open $1
 	else
 		echo "open function not define for $OSTYPE"
 		return 1
