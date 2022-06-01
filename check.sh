@@ -8,21 +8,22 @@ _check_cmds() {
 		node
 		npm
 		yarn
-		cargo
-		rg
-		fzf
-		patdiff
-		bat
-		shellcheck
-		delta
+		cargo      # for rust pkgs
+		rg         # grep alternative
+		fzf        # fuzzy finder
+		patdiff    # diff alternative
+		bat        # cat alternative
+		shellcheck # lint shell scripts
+		delta      # diff alternative
 	)
 	local check_nice_to_have=(
-		pyenv
-		goimports
-		prettier
-		eslint
-		shfmt
-		exa
+		pyenv     # manage different python versions
+		goimports # automate importing pkgs for golang
+		prettier  # format html,js,json etc
+		eslint    # lint js
+		shfmt     # format shell scripts
+		exa       # ls alternative
+		procs     # ps alternative
 	)
 
 	local installed=()
