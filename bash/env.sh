@@ -21,6 +21,10 @@ fi
 
 export FZF_DEFAULT_OPTS='--height 80% --layout=reverse --border --margin=1'
 
+if [[ -f $HOME/.fzf.bash ]]; then
+	source "$HOME/.fzf.bash"
+fi
+
 # yarn
 if command -v yarn &>/dev/null; then
 	yarn_bin=$(yarn global bin)
