@@ -729,10 +729,8 @@ null_ls.setup({
 		-- only use null-ls for formatting
 		local lsp_formatting = function(bufnr)
 			vim.lsp.buf.format({
-				filter = function(clients)
-					return vim.tbl_filter(function(client)
+				filter = function(client)
 						return client.name == "null-ls"
-					end, clients)
 				end,
 				bufnr = bufnr,
 			})
