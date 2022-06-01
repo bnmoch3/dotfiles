@@ -45,9 +45,6 @@ done
 # source common env vars
 source "$HOME/dotfiles/bash/env.sh"
 
-# source aliases
-source "$HOME/dotfiles/bash/aliases.sh"
-
 # source functions
 source "$HOME/dotfiles/bash/functions.sh"
 
