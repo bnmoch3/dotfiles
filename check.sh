@@ -25,6 +25,7 @@ _check_cmds() {
 		exa       # ls alternative
 		procs     # ps alternative
 		tldr      # for cheatsheets, use rust-based
+		duf       # alternative to df
 	)
 
 	local installed=()
