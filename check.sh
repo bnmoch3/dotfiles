@@ -26,6 +26,7 @@ _check_cmds() {
 		procs     # ps alternative
 		tldr      # for cheatsheets, use rust-based
 		duf       # alternative to df
+		gping     # alternative to ping
 	)
 
 	local installed=()
