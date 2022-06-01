@@ -24,6 +24,7 @@ _check_cmds() {
 		shfmt     # format shell scripts
 		exa       # ls alternative
 		procs     # ps alternative
+		tldr      # for cheatsheets, use rust-based
 	)
 
 	local installed=()
