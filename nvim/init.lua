@@ -608,7 +608,6 @@ local custom_lsp_attach = function(client, bufnr)
 				end
 			end)
 		end
-		pp(cmds)
 		return cmds
 	end
 
@@ -730,7 +729,7 @@ null_ls.setup({
 		local lsp_formatting = function(bufnr)
 			vim.lsp.buf.format({
 				filter = function(client)
-						return client.name == "null-ls"
+					return client.name == "null-ls"
 				end,
 				bufnr = bufnr,
 			})
