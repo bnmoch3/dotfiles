@@ -709,7 +709,16 @@ null_ls.setup({
 		-- js, html, css
 		null_ls.builtins.diagnostics.eslint,
 		null_ls.builtins.formatting.prettier.with({
-			filetypes = { "html", "javascript", "json", "javascriptreact", "typescript", "typescriptreact", "yaml" },
+			filetypes = {
+				"html",
+				"javascript",
+				"json",
+				"javascriptreact",
+				"typescript",
+				"typescriptreact",
+				"yaml",
+				"css",
+			},
 		}),
 		-- docker
 		null_ls.builtins.diagnostics.hadolint,
