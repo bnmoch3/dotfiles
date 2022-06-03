@@ -27,6 +27,7 @@ _check_cmds() {
 		tldr      # for cheatsheets, use rust-based
 		duf       # alternative to df
 		gping     # alternative to ping
+		entr      # run command when file changes
 	)
 
 	local installed=()
