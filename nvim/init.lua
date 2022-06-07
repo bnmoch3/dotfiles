@@ -127,7 +127,7 @@ vim.o.shortmess = vim.o.shortmess .. "I" -- disable the default Vim startup mess
 vim.o.shortmess = vim.o.shortmess .. "c" -- dont pass messages to |ins-completion-menu|
 
 vim.o.grepprg = "rg --vimgrep --smart-case --follow"
-vim.o.hlsearch = true
+vim.o.hlsearch = false
 vim.o.incsearch = true
 
 -- quickfix
