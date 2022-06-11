@@ -4,10 +4,9 @@
 --                              HELPERS
 -- ============================================================================
 -- {{
--- local inspect = require("inspect")
--- function pp(obj)
--- 	print(inspect(obj))
--- end
+function pp(obj)
+	print(vim.inspect(obj))
+end
 
 local function nnoremap(shortcut, command, bufnr)
 	if bufnr == nil then
