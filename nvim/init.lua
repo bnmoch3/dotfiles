@@ -698,7 +698,9 @@ local null_ls = require("null-ls")
 null_ls.setup({
 	sources = {
 		-- general
-		null_ls.builtins.formatting.trim_whitespace,
+		null_ls.builtins.formatting.trim_whitespace.with({
+			disabled_filetypes = { "markdown" },
+		}),
 		null_ls.builtins.formatting.trim_newlines,
 		-- lua
 		null_ls.builtins.formatting.stylua,
@@ -757,4 +759,16 @@ null_ls.setup({
 			end
 		end
 	end)(),
+})
+
+-- set up wrapping for markdown
+local markdown_augroup = vim.api.nvim_create_augroup("Markdown", { clear = true })
+vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
+	group = markdown_augroup,
+	pattern = { "*.md" },
+	callback = function(opts)
+		bufnr = opts["buf"]
+		vim.bo.textwidth = 80
+		vim.bo.formatoptions = "tcqawjp]"
+	end,
 })
