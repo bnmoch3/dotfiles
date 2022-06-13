@@ -58,6 +58,7 @@ require("packer").startup(function(use)
 	use("stevearc/aerial.nvim")
 	use("rmagatti/goto-preview")
 	use("ray-x/lsp_signature.nvim")
+	use({ "yioneko/nvim-yati", requires = "nvim-treesitter/nvim-treesitter" })
 
 	-- autocompletion
 	use("hrsh7th/cmp-nvim-lsp")
@@ -280,11 +281,14 @@ nvim_treesitter_configs.setup({
 	ensure_installed = "all",
 	sync_install = false,
 	highlight = { enable = true },
-	indent = { enable = true },
+	-- use external plugin for indentation until fixed
+	-- indent = { enable = true },
+	yati = { enable = true },
 })
 vim.o.foldmethod = "expr"
 vim.o.foldexpr = "nvim_treesitter#foldexpr()"
 vim.o.foldenable = false
+
 -- ============================================================================
 --                              TELESCOPE
 -- ============================================================================
