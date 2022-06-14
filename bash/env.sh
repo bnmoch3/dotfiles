@@ -54,8 +54,11 @@ if [[ -f $HOME/.opam/opam-init/init.sh ]]; then
 	. $HOME/.opam/opam-init/init.sh
 fi
 
-# PATH="$PATH:/home/bnm/installed/bin:/home/bnm/installed/bin/SQLiteStudio/"
-if [[ -d "$HOME/dotfiles" ]]; then
+if [[ -d "$HOME/LOCAL/bin" ]]; then
+	PATH="$HOME/LOCAL/bin:$PATH"
+fi
+
+if [[ -d "$HOME/.local/bin" ]]; then
 	PATH="$HOME/.local/bin:$PATH"
 fi
 

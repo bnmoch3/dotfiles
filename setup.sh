@@ -95,7 +95,7 @@ usage() {
 }
 
 DRY_RUN=0
-BIN_PATH=$HOME/.local/bin
+BIN_PATH=$HOME/LOCAL/bin
 OVERWRITE=0
 
 while [[ -n "$1" ]]; do
