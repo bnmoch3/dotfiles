@@ -98,3 +98,12 @@ function activate() {
 		return 1
 	fi
 }
+
+function find1() {
+	dir=
+	if [[ ! "$1" =~ ^-.* ]]; then
+		dir=$1
+		shift
+	fi
+	find $dir -maxdepth 1 "$@"
+}
