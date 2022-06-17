@@ -15,6 +15,7 @@ _check_cmds() {
 		bat        # cat alternative
 		shellcheck # lint shell scripts
 		delta      # diff alternative
+		nvm        # for node version mgmt
 	)
 	local check_nice_to_have=(
 		pyenv     # manage different python versions

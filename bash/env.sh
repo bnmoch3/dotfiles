@@ -25,6 +25,11 @@ if [[ -f $HOME/.fzf.bash ]]; then
 	source "$HOME/.fzf.bash"
 fi
 
+# nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # nvm bash_completion
+
 # yarn
 if command -v yarn &>/dev/null; then
 	yarn_bin=$(yarn global bin)
