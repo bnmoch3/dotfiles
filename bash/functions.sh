@@ -30,8 +30,12 @@ function tms() {
 }
 
 function tmr() {
+	window_name='main'
+	if [[ -n $1 ]]; then
+		window_name=$1
+	fi
 	if [[ -n $TMUX ]]; then
-		tmux rename-window -t 1 'main'
+		tmux rename-window -t 1 $window_name
 	fi
 }
 
