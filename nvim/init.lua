@@ -651,7 +651,11 @@ local lspconfig = require("lspconfig")
 local lang_servers = {
 	pyright = {},
 	gopls = {},
-	clangd = {},
+	clangd = {
+		capabilities = {
+			offsetEncoding = "utf-8",
+		},
+	},
 	dockerls = {},
 	tsserver = {},
 	sumneko_lua = {
@@ -674,11 +678,21 @@ local lang_servers = {
 }
 
 -- for autocompletion
-local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
+capabilties = vim.lsp.protocol.make_client_capabilities()
+capabilties = require("cmp_nvim_lsp").update_capabilities(capabilties)
+function extend_obj(o, with_obj)
+	if with_obj == nil then
+		return o
+	end
+	for k, v in pairs(with_obj) do
+		o[k] = v
+	end
+	return o
+end
 
 for lang_server, config in pairs(lang_servers) do
 	config.on_attach = custom_lsp_attach
-	config.capabilities = capabilities
+	config.capabilities = extend_obj(capabilties, config.capabilities)
 	lspconfig[lang_server].setup(config)
 end
 
