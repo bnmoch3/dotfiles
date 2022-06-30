@@ -725,6 +725,8 @@ null_ls.setup({
 		-- bash
 		null_ls.builtins.diagnostics.shellcheck,
 		null_ls.builtins.formatting.shfmt,
+		-- C, C++
+		null_ls.builtins.formatting.clang_format,
 		-- js, html, css
 		null_ls.builtins.diagnostics.eslint,
 		null_ls.builtins.formatting.prettier.with({
