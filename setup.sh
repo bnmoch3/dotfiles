@@ -3,25 +3,25 @@
 # exit when any command fails
 set -e
 
-_add_dotfile() {
-	local dotfile=$1
+_add_config() {
+	local config=$1
 	local dest_dir=$2
 	local prefix=$3
 
 	local dest
-	dest=$dest_dir/$prefix$(basename "$dotfile")
+	dest=$dest_dir/$prefix$(basename "$config")
 
 	if [[ $OVERWRITE == 0 ]]; then
-		echo "info add $dotfile -> $dest"
+		echo "info add $config -> $dest"
 	else
-		echo "info overwriting $dotfile -> $dest"
+		echo "info overwriting $config -> $dest"
 	fi
 	[[ $DRY_RUN != 0 ]] && return
 
-	# check that dotfile exists
-	dotfile=$(realpath $dotfile)
-	if [[ ! -f "$dotfile" ]]; then
-		echo "error $dotfile file does not exist"
+	# check that config exists
+	config=$(realpath $config)
+	if [[ ! -f "$config" && ! -d "$config" ]]; then
+		echo "error $config file does not exist"
 		exit 1
 	fi
 
@@ -32,14 +32,14 @@ _add_dotfile() {
 	fi
 
 	if [[ $OVERWRITE == 0 ]]; then
-		ln -s "$dotfile" "$dest"
+		ln -s "$config" "$dest"
 	else
-		ln -s -f "$dotfile" "$dest"
+		ln -s -f "$config" "$dest"
 	fi
 }
 
-_add_dotfile_basic() {
-	_add_dotfile "$1" "$HOME" "."
+_add_config_basic() {
+	_add_config "$1" "$HOME" "."
 }
 
 _setup_local_bin() {
@@ -63,22 +63,23 @@ _setup_local_bin() {
 
 }
 
-_setup_dotfiles() {
-	_add_dotfile_basic alacritty.yml
-	_add_dotfile_basic bash/bashrc
-	_add_dotfile_basic git/gitconfig
-	_add_dotfile_basic git/gitignore
-	_add_dotfile_basic inputrc
-	_add_dotfile_basic nvim/vimrc
-	_add_dotfile nvim/init.lua "$HOME/.config/nvim" ""
-	_add_dotfile_basic psqlrc
-	_add_dotfile_basic sqliterc
-	_add_dotfile_basic tmux.conf
+_setup_configs() {
+	_add_config_basic alacritty.yml
+	_add_config_basic bash/bashrc
+	_add_config_basic git/gitconfig
+	_add_config_basic git/gitignore
+	_add_config_basic inputrc
+	_add_config_basic nvim/vimrc
+	_add_config nvim/init.lua "$HOME/.config/nvim" ""
+	_add_config nvim/my_modules/ "$HOME/.config/nvim/lua" ""
+	_add_config_basic psqlrc
+	_add_config_basic sqliterc
+	_add_config_basic tmux.conf
 }
 
 setup() {
 	_setup_local_bin
-	_setup_dotfiles
+	_setup_configs
 }
 
 usage() {
@@ -89,7 +90,7 @@ usage() {
 		    -h, --help              display help and exit
 		    -n, --dry-run           display actions that would have been done
 		    -p, --bin-path <path>   set path to install local binaries
-		    -o, --overwrite         overwrite dotfile, by default set up fails if dotfile already exists in HOME
+		    -o, --overwrite         overwrite config, by default set up fails if config already exists in HOME
 	_EOF_
 	return
 }
