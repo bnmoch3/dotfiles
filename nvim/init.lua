@@ -54,6 +54,7 @@ require("packer").startup(function(use)
 	use("williamboman/nvim-lsp-installer")
 	use("jose-elias-alvarez/null-ls.nvim")
 	use("neovim/nvim-lspconfig")
+	use("mfussenegger/nvim-jdtls")
 	use({ "folke/trouble.nvim", requires = { "folke/lsp-colors.nvim" } })
 	use("stevearc/aerial.nvim")
 	use("rmagatti/goto-preview")
@@ -726,7 +727,20 @@ null_ls.setup({
 		null_ls.builtins.diagnostics.shellcheck,
 		null_ls.builtins.formatting.shfmt,
 		-- C, C++
-		null_ls.builtins.formatting.clang_format,
+		null_ls.builtins.formatting.clang_format.with({
+			filetypes = { "c", "cpp", "cuda" },
+			args = { "--style=file" },
+			-- args = { '--style="{BasedOnStyle: Mozilla, IndentWidth: 8, Language: Cpp}"' },
+			-- args = { "--sort-includes" },
+		}),
+		null_ls.builtins.formatting.google_java_format.with({
+			command = "java",
+			extra_args = {
+				"-jar",
+				vim.fn.expand("~/LOCAL/pkg/java/google-java-format-1.15.0-all-deps.jar"),
+				"--aosp",
+			},
+		}),
 		-- js, html, css
 		null_ls.builtins.diagnostics.eslint,
 		null_ls.builtins.formatting.prettier.with({

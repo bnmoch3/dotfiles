@@ -72,6 +72,7 @@ _setup_configs() {
 	_add_config_basic nvim/vimrc
 	_add_config nvim/init.lua "$HOME/.config/nvim" ""
 	_add_config nvim/my_modules/ "$HOME/.config/nvim/lua" ""
+	_add_config nvim/ftplugin "$HOME/.config/nvim/" ""
 	_add_config_basic psqlrc
 	_add_config_basic sqliterc
 	_add_config_basic tmux.conf
