@@ -5,7 +5,7 @@
 -- ============================================================================
 -- {{
 function pp(obj)
-	print(vim.inspect(obj))
+	require("my_modules.helpers").pretty_print(obj)
 end
 
 local function nnoremap(shortcut, command, bufnr)
