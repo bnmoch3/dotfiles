@@ -262,9 +262,6 @@ local function setup_null_ls()
 			null_ls.builtins.formatting.black.with({
 				prefer_local = ".venv/bin",
 			}),
-			-- protobuf
-			null_ls.builtins.diagnostics.buf,
-			null_ls.builtins.formatting.buf,
 		},
 		-- format on write
 		on_attach = (function()

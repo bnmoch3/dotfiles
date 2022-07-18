@@ -268,7 +268,7 @@ local nvim_treesitter_configs = require("nvim-treesitter.configs")
 nvim_treesitter_configs.setup({
 	ensure_installed = "all",
 	sync_install = false,
-	highlight = { enable = true },
+	highlight = { enable = true, disable = { "proto" } },
 	-- use external plugin for indentation until fixed
 	-- indent = { enable = true },
 	yati = { enable = true },
