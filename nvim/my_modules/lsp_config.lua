@@ -170,6 +170,14 @@ local custom_lsp_attach = function(client, bufnr)
 
 	-- set up aerial for a code outline window
 	require("aerial").on_attach(client, bufnr)
+
+	-- for showing signature as virtual text
+	-- TODO: show signature hint in statusline
+	require("lsp_signature").on_attach({
+		floating_window = false,
+		hint_prefix = "💡 ",
+		toggle_key = "<C-h>",
+	}, bufnr)
 end
 
 local lspconfig = require("lspconfig")
@@ -309,9 +317,6 @@ function M.setup()
 	nnoremap("\\q", "<cmd>lua require('goto-preview').close_all_win()<CR>")
 	nnoremap("\\p", "<cmd>lua require('goto-preview').goto_preview_references()<CR>")
 	nnoremap("\\d", "<cmd>lua vim.lsp.buf.hover()<CR>") -- for docs
-
-	-- for showing signature as virtual text
-	require("lsp_signature").setup({})
 
 	-- for formatters and linters
 	setup_null_ls()
