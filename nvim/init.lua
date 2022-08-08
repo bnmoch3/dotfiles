@@ -128,8 +128,8 @@ vim.o.tabstop = 4
 vim.o.softtabstop = 4
 vim.o.shiftwidth = 4
 vim.o.expandtab = true
+-- vim.o.autoindent = true
 vim.o.smartindent = true
-vim.o.autoindent = true
 
 -- ignorecase makes all searches case-insensitive
 -- smartcase overrides the ignorecase option if the search pattern contains
@@ -481,15 +481,3 @@ cmp.setup.cmdline(":", {
 
 -- set up LSP stuff
 require("my_modules.lsp_config").setup()
-
--- set up wrapping for markdown
-local markdown_augroup = vim.api.nvim_create_augroup("Markdown", { clear = true })
-vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
-	group = markdown_augroup,
-	pattern = { "*.md" },
-	callback = function(opts)
-		bufnr = opts["buf"]
-		vim.bo.textwidth = 80
-		vim.bo.formatoptions = "tcqawjp]"
-	end,
-})

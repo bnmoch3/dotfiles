@@ -220,6 +220,10 @@ local function setup_null_ls()
 	-- make sure prettier doesn't format yaml
 	null_ls.setup({
 		sources = {
+			null_ls.builtins.formatting.deno_fmt.with({
+				filetypes = { "markdown" },
+				args = { "fmt", "-", "--ext", "md" },
+			}),
 			-- general
 			null_ls.builtins.formatting.trim_whitespace.with({
 				disabled_filetypes = { "markdown" },
