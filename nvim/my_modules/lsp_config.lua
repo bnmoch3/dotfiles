@@ -220,10 +220,6 @@ local function setup_null_ls()
 	-- make sure prettier doesn't format yaml
 	null_ls.setup({
 		sources = {
-			null_ls.builtins.formatting.deno_fmt.with({
-				filetypes = { "markdown" },
-				args = { "fmt", "-", "--ext", "md" },
-			}),
 			-- general
 			null_ls.builtins.formatting.trim_whitespace.with({
 				disabled_filetypes = { "markdown" },
@@ -236,10 +232,12 @@ local function setup_null_ls()
 			null_ls.builtins.formatting.shfmt,
 			-- C, C++
 			null_ls.builtins.formatting.clang_format.with({
-				filetypes = { "c", "cpp", "cuda" },
-				args = { "--style=file" },
-				-- args = { '--style="{BasedOnStyle: Mozilla, IndentWidth: 8, Language: Cpp}"' },
-				-- args = { "--sort-includes" },
+				filetypes = { "c", "cpp", "cuda", "proto" },
+				extra_args = {
+					"--style",
+					"{BasedOnStyle: LLVM, IndentWidth: 4}",
+					"--sort-includes",
+				},
 			}),
 			null_ls.builtins.formatting.google_java_format.with({
 				command = "java",
@@ -273,6 +271,11 @@ local function setup_null_ls()
 			-- python
 			null_ls.builtins.formatting.black.with({
 				prefer_local = ".venv/bin",
+			}),
+			-- markdown
+			null_ls.builtins.formatting.deno_fmt.with({
+				filetypes = { "markdown" },
+				args = { "fmt", "-", "--ext", "md" },
 			}),
 		},
 		-- format on write
