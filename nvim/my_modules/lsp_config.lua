@@ -208,6 +208,9 @@ local lang_servers = {
 	vimls = {},
 	taplo = {},
 	yamlls = {},
+	zls = {
+		cmd = { vim.fn.expand("~") .. "/LOCAL/pkg/zls/zig-out/bin/zls" },
+	},
 }
 
 -- ============================================================================

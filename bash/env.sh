@@ -42,6 +42,11 @@ if [[ -d /usr/local/go ]]; then
 	PATH=$PATH:$(go env GOPATH)/bin
 fi
 
+# zig
+if [[ -d "$HOME/LOCAL/pkg/zig" ]]; then
+	PATH=$PATH:$HOME/LOCAL/pkg/zig
+fi
+
 # pyenv
 if [[ -d "$HOME/.pyenv" ]]; then
 	export PYENV_ROOT="$HOME/.pyenv"
