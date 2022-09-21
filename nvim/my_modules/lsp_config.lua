@@ -236,12 +236,26 @@ local function setup_null_ls()
 			-- C, C++
 			null_ls.builtins.formatting.clang_format.with({
 				filetypes = { "c", "cpp", "cuda", "proto" },
-				extra_args = {
-					"--style",
-					"{BasedOnStyle: LLVM, IndentWidth: 4}",
-					"--sort-includes",
-				},
+				args = {},
+				-- extra_args = {
+				-- 	"--style",
+				-- 	"{BasedOnStyle: LLVM, IndentWidth: 4}",
+				-- 	"--sort-includes",
+				-- },
+				extra_args = function(params)
+					local clang_format_path = table.concat({ params.root, ".clang-format" }, "/")
+					if vim.loop.fs_stat(clang_format_path) ~= nil then
+						return nil
+					else
+						return {
+							"--style",
+							"{BasedOnStyle: LLVM, IndentWidth: 4}",
+							"--sort-includes",
+						}
+					end
+				end,
 			}),
+			-- java
 			null_ls.builtins.formatting.google_java_format.with({
 				command = "java",
 				extra_args = {
@@ -307,6 +321,9 @@ local function setup_null_ls()
 				end
 			end
 		end)(),
+		root_dir = function(fname)
+			return require("my_modules.project_root").find_project_root(fname)
+		end,
 	})
 end
 
