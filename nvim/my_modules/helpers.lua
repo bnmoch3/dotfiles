@@ -13,9 +13,9 @@ function M.nnoremap(shortcut, command, bufnr)
 	end
 end
 
--- function M.inoremap(shortcut, command)
--- 	vim.api.nvim_set_keymap("i", shortcut, command, { noremap = true, silent = true })
--- end
+function M.inoremap(shortcut, command)
+	vim.api.nvim_set_keymap("i", shortcut, command, { noremap = true, silent = true })
+end
 
 function M.vnoremap(shortcut, command)
 	vim.api.nvim_set_keymap("v", shortcut, command, { noremap = true, silent = true })
