@@ -47,6 +47,6 @@ local config = {
 
 -- start new client & server, or attach to existing depending on the `root_dir`
 -- currently only configured for linux
-if vim.fn.has("linux") then
+if vim.fn.has("linux") == 1 then
 	require("jdtls").start_or_attach(config)
 end
