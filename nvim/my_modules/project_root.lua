@@ -19,7 +19,10 @@ _opts.patterns = filetype_patterns
 _opts.stop_at = vim.fn.expand("~")
 
 function M.find_project_root(bufname)
-	local patterns = _opts.patterns[vim.bo.filetype] or _default_patterns
+	local patterns = _opts.patterns[vim.bo.filetype]
+	if patterns == nil then
+		return nil, nil
+	end
 	local buf = bufname or vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
 	local home_dir = vim.fn.expand("~")
 	local get_parent = function(path)
