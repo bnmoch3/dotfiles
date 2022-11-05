@@ -80,6 +80,7 @@ require("packer").startup(function(use)
 
 	-- langs
 	use("ziglang/zig.vim")
+	use("dijkstracula/vim-plang")
 
 	-- Automatically set up your configuration after cloning packer.nvim
 	-- Put this at the end after all plugins
@@ -274,11 +275,217 @@ nvim_treesitter_configs.setup({
 	highlight = { enable = true, disable = { "proto" } },
 	-- use external plugin for indentation until fixed
 	-- indent = { enable = true },
-	yati = { enable = true },
+	-- yati = { enable = true },
+	indent = { enable = true },
 })
 vim.o.foldmethod = "expr"
 vim.o.foldexpr = "nvim_treesitter#foldexpr()"
-vim.o.foldenable = false
+-- vim.o.foldenable = true
+
+-- ============================================================================
+--                              TELESCOPE
+-- ============================================================================
+local telescope = require("telescope")
+local telescope_mappings = {
+	["<C-s>"] = require("telescope.actions").select_horizontal, -- set to <C-s> to be consistent with nvim-tree
+	["<C-e>"] = require("telescope.actions").preview_scrolling_up,
+	["<C-y>"] = require("telescope.actions").preview_scrolling_down,
+	["<C-x>"] = false, -- disable default horizontal split
+	["<C-u>"] = false, -- disable default preview scroll up
+	["<C-d>"] = false, -- disable default preview scroll down
+}
+telescope.setup({
+	defaults = {
+		layout_config = {
+			vertical = { width = 0.5 },
+		},
+		scroll_strategy = "limit",
+		mappings = {
+			i = telescope_mappings,
+			n = telescope_mappings,
+		},
+	},
+})
+nnoremap("<leader>ff", "<cmd>lua require('telescope.builtin').find_files()<cr>")
+nnoremap("<leader>fg", "<cmd>lua require('telescope.builtin').live_grep()<cr>")
+nnoremap("<leader>fb", "<cmd>lua require('telescope.builtin').buffers()<cr>")
+nnoremap("<leader>fh", "<cmd>lua require('telescope.builtin').help_tags()<cr>")
+nnoremap("<leader>fm", "<cmd>lua require('telescope.builtin').marks()<cr>")
+nnoremap("<leader>fr", "<cmd>lua require('telescope.builtin').registers()<cr>")
+nnoremap("<leader>fl", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>")
+nnoremap("<leader>fd", "<cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>")
+
+-- ============================================================================
+--                              DIAGNOSTICS
+-- ============================================================================
+vim.o.signcolumn = "yes:1"
+Toggle_diagnostics = (function()
+	local diagnostics_on = true
+	return function()
+		if diagnostics_on then
+			vim.diagnostic.disable(0)
+			vim.o.signcolumn = "no"
+		else
+			vim.diagnostic.enable(0)
+			vim.o.signcolumn = "yes:1"
+		end
+		diagnostics_on = not diagnostics_on
+	end
+end)()
+
+local severity = { min = vim.diagnostic.severity["WARN"] }
+vim.diagnostic.config({
+	severity_sort = true,
+	underline = { severity = severity },
+	virtual_text = { severity = severity },
+	signs = { severity = severity },
+})
+
+local function set_min_severity_level(opts)
+	local new_severity = { min = vim.diagnostic.severity[opts.args] }
+	local config = vim.diagnostic.config() -- get curr config
+	for _, v in ipairs({ "signs", "underline", "virtual_text" }) do
+		config[v].severity = new_severity
+	end
+	vim.diagnostic.config(config)
+	severity = new_severity
+	-- update LSP handler for publishing diagnostics
+	vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+		vim.lsp.diagnostic.on_publish_diagnostics,
+		config
+	)
+end
+
+local set_min_severity_level_opts = {
+	nargs = 1,
+	complete = function(ArgLeader)
+		local hints = {}
+		local levels = { "ERROR", "WARN", "INFO", "HINT" }
+		for _, level in ipairs(levels) do
+			if ArgLeader and string.find(level, "^" .. string.upper(ArgLeader)) ~= nil then
+				hints[#hints + 1] = level
+			end
+		end
+		return hints
+	end,
+}
+function Goto_diagnostics(direction)
+	local opts = { severity = severity }
+	if direction == "next" then
+		vim.diagnostic.goto_next(opts)
+	elseif direction == "prev" then
+		vim.diagnostic.goto_prev(opts)
+	else
+		error("Invalid direction: " .. tostring(direction))
+	end
+end
+
+require("trouble").setup({
+	mode = "document_diagnostics",
+	action_keys = {
+		open_split = { "<C-s>" },
+		hover = { "h", "l" },
+	},
+})
+
+nnoremap("<Leader>dt", "<cmd>TroubleToggle<cr>")
+nnoremap("<Leader>dq", "<cmd>Trouble quickfix<cr>")
+nnoremap("<Leader>dg", "<cmd>Trouble document_diagnostics<cr>")
+nnoremap("<Leader>dw", "<cmd>Trouble workspace_diagnostics<cr>")
+nnoremap("]d", "zz<cmd>lua Goto_diagnostics('next')<cr>")
+nnoremap("[d", "zz<cmd>lua Goto_diagnostics('prev')<cr>")
+nnoremap("<Leader>dd", "<cmd>lua Toggle_diagnostics()<cr>")
+vim.api.nvim_create_user_command("ToggleDiagnostics", Toggle_diagnostics, { nargs = 0 })
+vim.api.nvim_create_user_command("SetLevel", set_min_severity_level, set_min_severity_level_opts)
+
+-- ============================================================================
+--                              AERIAL
+-- ============================================================================
+require("aerial.bindings").keys = {
+	{
+		"<CR>",
+		"<cmd>lua require'aerial'.select({jump=false})<CR>",
+		"Jump to the symbol under the cursor keep focus in aerial window",
+	},
+	{ "<c-]>", "<cmd>lua require'aerial'.select()<CR>", "Jump to the symbol under the cursor" },
+	{ "<C-v>", "<cmd>lua require'aerial'.select({split='v'})<CR>", "Jump to the symbol in a vertical split" },
+	{ "<C-s>", "<cmd>lua require'aerial'.select({split='h'})<CR>", "Jump to the symbol in a horizontal split" },
+	{ "{", "<cmd>AerialPrev<CR>", "Jump to the previous symbol" },
+	{ "}", "<cmd>AerialNext<CR>", "Jump to the next symbol" },
+	{ "[[", "<cmd>AerialPrevUp<CR>", "Jump up the tree, moving backwards" },
+	{ "]]", "<cmd>AerialNextUp<CR>", "Jump up the tree, moving forwards" },
+	{ "q", "<cmd>AerialClose<CR>", "Close the aerial window" },
+	{ "za", "<cmd>AerialTreeToggle<CR>", "Toggle the symbol under the cursor open/closed" },
+	{ "zA", "<cmd>AerialTreeToggle!<CR>", "Recursive toggle the symbol under the cursor open/closed" },
+	{ "zo", "<cmd>AerialTreeOpen<CR>", "Expand the symbol under the cursor" },
+	{ "zO", "<cmd>AerialTreeOpen!<CR>", "Recursive expand the symbol under the cursor" },
+	{ "zc", "<cmd>AerialTreeClose<CR>", "Collapse the symbol under the cursor" },
+	{ "zC", "<cmd>AerialTreeClose!<CR>", "Recursive collapse the symbol under the cursor" },
+	{ "zR", "<cmd>AerialTreeOpenAll<CR>", "Expand all nodes in the tree" },
+	{ "zM", "<cmd>AerialTreeCloseAll<CR>", "Collapse all nodes in the tree" },
+	{ "r", "<cmd>AerialTreeSyncFolds<CR>", "Sync code folding to the tree (useful if they get out of sync)" },
+}
+
+require("aerial").setup({
+	highlight_on_hover = true,
+	link_tree_to_folds = true,
+	manage_folds = true,
+	show_guides = true,
+	default_bindings = true,
+	on_attach = function(_) -- bufnr arg
+		nnoremap("<Leader>t", "<cmd>AerialToggle<cr>")
+	end,
+})
+
+-- ============================================================================
+--                              AUTO-COMPLETION
+-- ============================================================================
+local cmp = require("cmp")
+local luasnip = require("luasnip")
+
+vim.opt.completeopt = { "menu", "menuone", "noselect" }
+
+cmp.setup({
+	snippet = {
+		expand = function(args)
+			luasnip.lsp_expand(args.body)
+		end,
+	},
+	mapping = cmp.mapping.preset.insert({
+		["<C-b>"] = cmp.mapping.scroll_docs(-4),
+		["<C-f>"] = cmp.mapping.scroll_docs(4),
+		["<C-Space>"] = cmp.mapping.complete(),
+		["<C-e>"] = cmp.mapping.abort(),
+		["<CR>"] = cmp.mapping.confirm({ select = true }),
+	}),
+	sources = cmp.config.sources({
+		{ name = "nvim_lsp" },
+		{ name = "luasnip" },
+	}, {
+		{ name = "buffer" },
+	}),
+})
+
+-- use buffer source for `/`
+cmp.setup.cmdline("/", {
+	mapping = cmp.mapping.preset.cmdline(),
+	sources = {
+		{ name = "buffer" },
+	},
+})
+
+-- use cmdline & path source for ':'
+cmp.setup.cmdline(":", {
+	mapping = cmp.mapping.preset.cmdline(),
+	sources = cmp.config.sources({
+		{ name = "path" },
+	}, {
+		{ name = "cmdline" },
+	}),
+})
+
+-- set up LSP stuff
+require("my_modules.lsp_config").setup()
 
 -- ============================================================================
 --                              TELESCOPE
