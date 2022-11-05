@@ -237,11 +237,6 @@ local function setup_null_ls()
 			null_ls.builtins.formatting.clang_format.with({
 				filetypes = { "c", "cpp", "cuda", "proto" },
 				args = {},
-				-- extra_args = {
-				-- 	"--style",
-				-- 	"{BasedOnStyle: LLVM, IndentWidth: 4}",
-				-- 	"--sort-includes",
-				-- },
 				extra_args = function(params)
 					local clang_format_path = table.concat({ params.root, ".clang-format" }, "/")
 					if vim.loop.fs_stat(clang_format_path) ~= nil then
