@@ -282,7 +282,7 @@ local function setup_null_ls()
 			null_ls.builtins.formatting.taplo,
 			-- python
 			null_ls.builtins.formatting.black.with({
-				prefer_local = ".venv/bin",
+				command = vim.fn.expand("~/LOCAL/dev/python/venv/bin/black"),
 			}),
 			-- markdown
 			null_ls.builtins.formatting.deno_fmt.with({
