@@ -50,3 +50,5 @@ local config = {
 if vim.fn.has("linux") == 1 then
 	require("jdtls").start_or_attach(config)
 end
+
+vim.o.foldmethod = "indent"
