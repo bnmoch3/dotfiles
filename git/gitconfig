@@ -2,9 +2,6 @@
 	name = nm
 	email = nagamocha@gmail.com
 
-[includeIf "gitdir:~/SHAMIRI/"]
-    path = ~/SHAMIRI/.gitconfig.shamiri
-
 [url "git@github.com:"]
 	insteadOf = https://github.com/
 
@@ -58,7 +55,7 @@
 
 [pull]
 	rebase = true
-    
+
 [rerere]
 	enabled = true
 
