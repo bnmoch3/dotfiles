@@ -230,6 +230,8 @@ local function setup_null_ls()
 			null_ls.builtins.formatting.trim_newlines,
 			-- lua
 			null_ls.builtins.formatting.stylua,
+			-- rust
+			null_ls.builtins.formatting.rustfmt,
 			-- bash
 			null_ls.builtins.diagnostics.shellcheck,
 			null_ls.builtins.formatting.shfmt,
@@ -332,6 +334,14 @@ function M.setup()
 		config.capabilities = extend_obj(capabilties, config.capabilities)
 		lspconfig[lang_server].setup(config)
 	end
+
+	-- TODO use common lsp setup
+	local rt = require("rust-tools")
+	rt.setup({
+		server = {
+			on_attach = custom_lsp_attach,
+		},
+	})
 
 	require("goto-preview").setup({})
 	nnoremap("\\d", "<cmd>lua require('goto-preview').goto_preview_definition()<CR>")
