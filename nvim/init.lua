@@ -246,7 +246,6 @@ local nvim_tree_key_mappings = {
 }
 nvim_tree.setup({
 	disable_netrw = true,
-	open_on_setup = true,
 	view = {
 		mappings = {
 			list = nvim_tree_key_mappings,
@@ -291,9 +290,8 @@ local nvim_treesitter_configs = require("nvim-treesitter.configs")
 nvim_treesitter_configs.setup({
 	ensure_installed = "all",
 	sync_install = false,
-	highlight = { enable = true, disable = { "proto" } },
+	-- highlight = { enable = true, disable = { "proto" } },
 	-- use external plugin for indentation until fixed
-	-- indent = { enable = true },
 	-- yati = { enable = true },
 	indent = { enable = true },
 })
@@ -418,7 +416,8 @@ nnoremap("<leader>fh", "<cmd>lua require('telescope.builtin').help_tags()<cr>")
 nnoremap("<leader>fm", "<cmd>lua require('telescope.builtin').marks()<cr>")
 nnoremap("<leader>fr", "<cmd>lua require('telescope.builtin').registers()<cr>")
 nnoremap("<leader>fl", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>")
-nnoremap("<leader>fd", "<cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>")
+nnoremap("<leader>fd", "<cmd>lua require('telescope.builtin').diagnostics()<cr>")
+nnoremap("<leader>fg", "<cmd>lua require('telescope.builtin').git_status()<cr>")
 
 -- ============================================================================
 --                              DIAGNOSTICS
@@ -442,7 +441,7 @@ local severity = { min = vim.diagnostic.severity["WARN"] }
 vim.diagnostic.config({
 	severity_sort = true,
 	underline = { severity = severity },
-    virtual_text = false,
+	virtual_text = false,
 	-- virtual_text = { severity = severity },
 	signs = { severity = severity },
 })
@@ -477,9 +476,9 @@ local set_min_severity_level_opts = {
 }
 function Goto_diagnostics(direction)
 	local opts = {
-        severity = severity, 
-        wrap = false,
-    }
+		severity = severity,
+		wrap = false,
+	}
 	if direction == "next" then
 		vim.diagnostic.goto_next(opts)
 	elseif direction == "prev" then
@@ -490,28 +489,27 @@ function Goto_diagnostics(direction)
 end
 
 function Toggle_diagnostics_curr_line()
-    local cursor_position = vim.api.nvim_win_get_cursor(0)
-    local diagnostics = vim.diagnostic.get(0, {
-        lnum = cursor_position[1] - 1
-    })
-    for index, diagnostic in ipairs(diagnostics) do
-        local message = diagnostic["message"]
-        local ok, extensive_message = pcall(function()
-            return diagnostic["user_data"]["lsp"]["data"]["rendered"]
-        end)
-        if ok then
-            print(extensive_message)
-        else
-            print(message)
-        end
-    end
+	local cursor_position = vim.api.nvim_win_get_cursor(0)
+	local diagnostics = vim.diagnostic.get(0, {
+		lnum = cursor_position[1] - 1,
+	})
+	for index, diagnostic in ipairs(diagnostics) do
+		local message = diagnostic["message"]
+		local ok, extensive_message = pcall(function()
+			return diagnostic["user_data"]["lsp"]["data"]["rendered"]
+		end)
+		if ok then
+			print(extensive_message)
+		else
+			print(message)
+		end
+	end
 end
-
 
 require("trouble").setup({
 	mode = "document_diagnostics",
-    group = true,
-    padding = false,
+	group = true,
+	padding = false,
 	action_keys = {
 		open_split = { "<C-s>" },
 		hover = { "h", "l" },
