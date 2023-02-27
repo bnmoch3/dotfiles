@@ -57,9 +57,9 @@ require("packer").startup(function(use)
 	use("hrsh7th/nvim-cmp")
 
 	-- snippets
-	use("saadparwaiz1/cmp_luasnip")
 	use("L3MON4D3/LuaSnip")
-	use("rafamadriz/friendly-snippets")
+	use("saadparwaiz1/cmp_luasnip")
+	-- use("rafamadriz/friendly-snippets")
 
 	-- themes, styling
 	-- use("chriskempson/base16-vim")
@@ -478,45 +478,6 @@ vim.api.nvim_create_user_command("ToggleDiagnostics", Toggle_diagnostics, { narg
 vim.api.nvim_create_user_command("SetLevel", set_min_severity_level, set_min_severity_level_opts)
 
 -- ============================================================================
---                              AERIAL
--- ============================================================================
-require("aerial.bindings").keys = {
-	{
-		"<CR>",
-		"<cmd>lua require'aerial'.select({jump=false})<CR>",
-		"Jump to the symbol under the cursor keep focus in aerial window",
-	},
-	{ "<c-]>", "<cmd>lua require'aerial'.select()<CR>", "Jump to the symbol under the cursor" },
-	{ "<C-v>", "<cmd>lua require'aerial'.select({split='v'})<CR>", "Jump to the symbol in a vertical split" },
-	{ "<C-s>", "<cmd>lua require'aerial'.select({split='h'})<CR>", "Jump to the symbol in a horizontal split" },
-	{ "{", "<cmd>AerialPrev<CR>", "Jump to the previous symbol" },
-	{ "}", "<cmd>AerialNext<CR>", "Jump to the next symbol" },
-	{ "[[", "<cmd>AerialPrevUp<CR>", "Jump up the tree, moving backwards" },
-	{ "]]", "<cmd>AerialNextUp<CR>", "Jump up the tree, moving forwards" },
-	{ "q", "<cmd>AerialClose<CR>", "Close the aerial window" },
-	{ "za", "<cmd>AerialTreeToggle<CR>", "Toggle the symbol under the cursor open/closed" },
-	{ "zA", "<cmd>AerialTreeToggle!<CR>", "Recursive toggle the symbol under the cursor open/closed" },
-	{ "zo", "<cmd>AerialTreeOpen<CR>", "Expand the symbol under the cursor" },
-	{ "zO", "<cmd>AerialTreeOpen!<CR>", "Recursive expand the symbol under the cursor" },
-	{ "zc", "<cmd>AerialTreeClose<CR>", "Collapse the symbol under the cursor" },
-	{ "zC", "<cmd>AerialTreeClose!<CR>", "Recursive collapse the symbol under the cursor" },
-	{ "zR", "<cmd>AerialTreeOpenAll<CR>", "Expand all nodes in the tree" },
-	{ "zM", "<cmd>AerialTreeCloseAll<CR>", "Collapse all nodes in the tree" },
-	{ "r", "<cmd>AerialTreeSyncFolds<CR>", "Sync code folding to the tree (useful if they get out of sync)" },
-}
-
-require("aerial").setup({
-	highlight_on_hover = true,
-	link_tree_to_folds = true,
-	manage_folds = true,
-	show_guides = true,
-	default_bindings = true,
-	on_attach = function(_) -- bufnr arg
-		nnoremap("<Leader>t", "<cmd>AerialToggle<cr>")
-	end,
-})
-
--- ============================================================================
 --                              AUTO-COMPLETION
 -- ============================================================================
 local cmp = require("cmp")
@@ -546,7 +507,7 @@ cmp.setup({
 })
 
 -- use buffer source for `/`
-cmp.setup.cmdline("/", {
+cmp.setup.cmdline({"/", "?"}, {
 	mapping = cmp.mapping.preset.cmdline(),
 	sources = {
 		{ name = "buffer" },

@@ -325,12 +325,11 @@ end
 function M.setup()
 	require("mason").setup({})
 	-- for autocompletion
-	local capabilties = vim.lsp.protocol.make_client_capabilities()
-	capabilties = require("cmp_nvim_lsp").update_capabilities(capabilties)
+	local capabilties = require("cmp_nvim_lsp").default_capabilities()
 	for lang_server, config in pairs(lang_servers) do
 		config.on_attach = custom_lsp_attach
 		config.capabilities = extend_obj(capabilties, config.capabilities)
-		lspconfig[lang_server].setup(config)
+        lspconfig[lang_server].setup(config)
 	end
 
 	-- TODO use common lsp setup
