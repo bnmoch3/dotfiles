@@ -427,7 +427,8 @@ local severity = { min = vim.diagnostic.severity["WARN"] }
 vim.diagnostic.config({
 	severity_sort = true,
 	underline = { severity = severity },
-	virtual_text = { severity = severity },
+    virtual_text = false,
+	-- virtual_text = { severity = severity },
 	signs = { severity = severity },
 })
 
@@ -460,7 +461,10 @@ local set_min_severity_level_opts = {
 	end,
 }
 function Goto_diagnostics(direction)
-	local opts = { severity = severity }
+	local opts = {
+        severity = severity, 
+        wrap = false,
+    }
 	if direction == "next" then
 		vim.diagnostic.goto_next(opts)
 	elseif direction == "prev" then
@@ -470,8 +474,29 @@ function Goto_diagnostics(direction)
 	end
 end
 
+function Toggle_diagnostics_curr_line()
+    local cursor_position = vim.api.nvim_win_get_cursor(0)
+    local diagnostics = vim.diagnostic.get(0, {
+        lnum = cursor_position[1] - 1
+    })
+    for index, diagnostic in ipairs(diagnostics) do
+        local message = diagnostic["message"]
+        local ok, extensive_message = pcall(function()
+            return diagnostic["user_data"]["lsp"]["data"]["rendered"]
+        end)
+        if ok then
+            print(extensive_message)
+        else
+            print(message)
+        end
+    end
+end
+
+
 require("trouble").setup({
 	mode = "document_diagnostics",
+    group = true,
+    padding = false,
 	action_keys = {
 		open_split = { "<C-s>" },
 		hover = { "h", "l" },
@@ -484,7 +509,8 @@ nnoremap("<Leader>dg", "<cmd>Trouble document_diagnostics<cr>")
 nnoremap("<Leader>dw", "<cmd>Trouble workspace_diagnostics<cr>")
 nnoremap("]d", "zz<cmd>lua Goto_diagnostics('next')<cr>")
 nnoremap("[d", "zz<cmd>lua Goto_diagnostics('prev')<cr>")
-nnoremap("<Leader>dd", "<cmd>lua Toggle_diagnostics()<cr>")
+nnoremap("<Leader>ds", "<cmd>lua Toggle_diagnostics()<cr>")
+nnoremap("<Leader>dd", "<cmd>lua Toggle_diagnostics_curr_line()<cr>")
 vim.api.nvim_create_user_command("ToggleDiagnostics", Toggle_diagnostics, { nargs = 0 })
 vim.api.nvim_create_user_command("SetLevel", set_min_severity_level, set_min_severity_level_opts)
 
