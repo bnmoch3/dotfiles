@@ -66,12 +66,12 @@ local lsp_actions = {
 	},
 	{ -- jumps to the def of symbols under the cursor
 		cmd = "definition",
-		keybinding = { "<Leader>gd", "<C-]>" },
+		keybinding = { "<Leader>gs", "<C-]>" },
 		action = vim.lsp.buf.definition,
 	},
 	{ -- displays information about the symbol under the cursor
 		cmd = { "hover", "doc" },
-		keybinding = "<Leader>gh",
+		keybinding = "<Leader>gd",
 		action = vim.lsp.buf.hover,
 	},
 	{ -- lists all the implementations for the symbol under the cursor
@@ -188,7 +188,7 @@ local lang_servers = {
 	},
 	dockerls = {},
 	tsserver = {},
-	sumneko_lua = {
+	lua_ls = {
 		settings = {
 			Lua = {
 				diagnostics = { globals = { "vim" } },
@@ -323,7 +323,7 @@ local function setup_null_ls()
 end
 
 function M.setup()
-	require("nvim-lsp-installer").setup({})
+	require("mason").setup({})
 	-- for autocompletion
 	local capabilties = vim.lsp.protocol.make_client_capabilities()
 	capabilties = require("cmp_nvim_lsp").update_capabilities(capabilties)
