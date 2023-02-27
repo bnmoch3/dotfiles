@@ -11,7 +11,6 @@ _check_cmds() {
 		cargo      # for rust pkgs
 		rg         # grep alternative
 		fzf        # fuzzy finder
-		patdiff    # diff alternative
 		bat        # cat alternative
 		shellcheck # lint shell scripts
 		delta      # diff alternative
