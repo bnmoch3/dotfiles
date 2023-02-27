@@ -168,9 +168,6 @@ local custom_lsp_attach = function(client, bufnr)
 		}
 	)
 
-	-- set up aerial for a code outline window
-	require("aerial").on_attach(client, bufnr)
-
 	-- for showing signature as virtual text
 	-- TODO: show signature hint in statusline
 	require("lsp_signature").on_attach({

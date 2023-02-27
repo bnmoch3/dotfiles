@@ -286,38 +286,35 @@ vim.o.foldexpr = "nvim_treesitter#foldexpr()"
 -- ============================================================================
 --                              AERIAL
 -- ============================================================================
-require("aerial.bindings").keys = {
-	{
-		"<CR>",
-		"<cmd>lua require'aerial'.select({jump=false})<CR>",
-		"Jump to the symbol under the cursor keep focus in aerial window",
-	},
-	{ "<c-]>", "<cmd>lua require'aerial'.select()<CR>", "Jump to the symbol under the cursor" },
-	{ "<C-v>", "<cmd>lua require'aerial'.select({split='v'})<CR>", "Jump to the symbol in a vertical split" },
-	{ "<C-s>", "<cmd>lua require'aerial'.select({split='h'})<CR>", "Jump to the symbol in a horizontal split" },
-	{ "{", "<cmd>AerialPrev<CR>", "Jump to the previous symbol" },
-	{ "}", "<cmd>AerialNext<CR>", "Jump to the next symbol" },
-	{ "[[", "<cmd>AerialPrevUp<CR>", "Jump up the tree, moving backwards" },
-	{ "]]", "<cmd>AerialNextUp<CR>", "Jump up the tree, moving forwards" },
-	{ "q", "<cmd>AerialClose<CR>", "Close the aerial window" },
-	{ "za", "<cmd>AerialTreeToggle<CR>", "Toggle the symbol under the cursor open/closed" },
-	{ "zA", "<cmd>AerialTreeToggle!<CR>", "Recursive toggle the symbol under the cursor open/closed" },
-	{ "zo", "<cmd>AerialTreeOpen<CR>", "Expand the symbol under the cursor" },
-	{ "zO", "<cmd>AerialTreeOpen!<CR>", "Recursive expand the symbol under the cursor" },
-	{ "zc", "<cmd>AerialTreeClose<CR>", "Collapse the symbol under the cursor" },
-	{ "zC", "<cmd>AerialTreeClose!<CR>", "Recursive collapse the symbol under the cursor" },
-	{ "zR", "<cmd>AerialTreeOpenAll<CR>", "Expand all nodes in the tree" },
-	{ "zM", "<cmd>AerialTreeCloseAll<CR>", "Collapse all nodes in the tree" },
-	{ "r", "<cmd>AerialTreeSyncFolds<CR>", "Sync code folding to the tree (useful if they get out of sync)" },
+local aerial_keymaps =  {
+    -- ["<CR>"]= "<cmd>lua require'aerial'.select({jump=false})<CR>", -- "Jump to the symbol under the cursor keep focus in aerial window",
+    ["<CR>"] = "actions.jump", -- "Jump to the symbol under the cursor keep focus in aerial window",
+	["<c-]>"] = "actions.jump", -- Jump to the symbol under the cursor
+	["<C-v>"] = "actions.jump_vsplit", -- Jump to the symbol in a vertical split
+	["<C-s>"] = "actions.jump_split", -- Jump to the symbol in a horizontal split
+    ["{"] = "actions.prev", -- Jump to the previous symbol
+	["}"]  = "actions.next", -- Jump to the next symbol
+    ["[["] = "actions.prev_up", -- Jump up the tree, moving backwards
+    ["]]"] = "actions.next_up", -- Jump up the tree, moving forwards
+    ["q"] = "actions.close", -- Close the aerial window
+    ["za"] = "actions.tree_toggle", -- Toggle the symbol under the cursor open/closed
+    ["zA"] = "actions.tree_toggle_recursive", -- Recursive toggle the symbol under the cursor open/closed
+    ["zo"] = "actions.tree_open", -- Expand the symbol under the cursor
+    ["zO"] = "actions.tree_open_recursive", -- Recursive expand the symbol under the cursor
+    ["zc"] = "actions.tree_close", -- Collapse the symbol under the cursor
+    ["zC"] = "actions.tree_close_recursive", -- Recursive collapse the symbol under the cursor
+    ["zR"] = "actions.tree_open_all", -- Expand all nodes in the tree
+    ["zM"] = "actions.tree_close_all", -- Collapse all nodes in the tree
+    ["r" ] = "actions.tree_sync_folds", -- Sync code folding to the tree (useful if they get out of sync)
 }
 
 require("aerial").setup({
 	highlight_on_hover = true,
-	link_tree_to_folds = true,
 	manage_folds = true,
+	link_tree_to_folds = true,
 	show_guides = true,
-	default_bindings = true,
-	on_attach = function(_) -- bufnr arg
+    keymaps = aerial_keymaps,
+	on_attach = function(bufnr) -- bufnr arg
 		nnoremap("<Leader>t", "<cmd>AerialToggle<cr>")
 	end,
 })
