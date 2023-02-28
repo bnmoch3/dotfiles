@@ -13,7 +13,6 @@ _check_cmds() {
 		fzf        # fuzzy finder
 		bat        # cat alternative
 		shellcheck # lint shell scripts
-		delta      # diff alternative
 		nvm        # for node version mgmt
 	)
 	local check_nice_to_have=(
