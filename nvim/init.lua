@@ -34,7 +34,6 @@ require("packer").startup(function(use)
 	use("alvan/vim-closetag")
 	use("tpope/vim-commentary") -- for commenting out lines
 	use("tpope/vim-surround") -- for surround selected text with given char
-	-- use("jiangmiao/auto-pairs") -- for autoclosing {},(), [], "", '', ``
 	use("milkypostman/vim-togglelist")
 	use("nvim-lua/plenary.nvim")
 	use("nvim-treesitter/nvim-treesitter")
@@ -45,7 +44,7 @@ require("packer").startup(function(use)
 	use("mfussenegger/nvim-jdtls")
 	use({ "folke/trouble.nvim", requires = { "folke/lsp-colors.nvim" } })
 	use("stevearc/aerial.nvim")
-    use("uztadh/nvim-goto-preview")
+	use("uztadh/nvim-goto-preview")
 	use("ray-x/lsp_signature.nvim")
 	use({ "yioneko/nvim-yati", requires = "nvim-treesitter/nvim-treesitter" })
 
@@ -62,7 +61,6 @@ require("packer").startup(function(use)
 	-- use("rafamadriz/friendly-snippets")
 
 	-- themes, styling
-	-- use("chriskempson/base16-vim")
 	use("RRethy/nvim-base16")
 	use("DanilaMihailov/beacon.nvim") -- temporarily highlight cursor's curr line
 	use("lukas-reineke/indent-blankline.nvim") -- indentation guides
@@ -149,25 +147,46 @@ vim.o.smartcase = true
 -- TODO install filetype
 -- vim.g.did_load_filetypes = 1
 
-require("base16-colorscheme").setup({
-	base00 = "#262626",
-	base01 = "#3a3a3a",
-	base02 = "#4e4e4e",
-	base03 = "#8a8a8a",
-	base04 = "#949494",
-	base05 = "#dab997",
-	base06 = "#d5c4a1",
-	base07 = "#ebdbb2",
-	base08 = "#d75f5f",
-	base09 = "#ff8700",
-	base0A = "#ffaf00",
-	base0B = "#afaf00",
-	base0C = "#85ad85",
-	base0D = "#83adad",
-	base0E = "#d485ad",
-	base0F = "#d65d0e",
-})
--- vim.cmd("colorscheme base16-gruvbox-dark-pale")
+local colorscheme = (function()
+	local white = "#f8f8f8" -- alacritty: white
+	local black_pale = "#212121" -- alacritty: black
+	local black_bright = "#1d1d1d"
+	local grey_light = "#c0c0c0"
+	local grey_comments = "#666666"
+	local grey_highlight = "#333333"
+	local grey_dark = "#212121"
+	local red_pale = "#d75f5f" --alacritty: red
+	local red_bright = "#fa4a43" -- alacritty: ?magenta?
+	local green_pale = "#a1b56c" -- alacritty: green
+	local green_bright = "#89b482" -- alacritty: ?cyan?: alt "#afaf00"
+	local yellow_orange_pale = "#dab997" -- alacritty: yellow
+	local yellow_orange_bright = "#e78a4e"
+	local blue_pale = "#83adad" -- alacritty: blue
+	local blue_bright = "#7cafc2"
+
+	local red = "ff0000" -- for debugging
+
+	return {
+		base00 = black_bright, -- background
+		base01 = grey_dark,
+		base02 = grey_highlight, -- visual highlight
+		base03 = grey_comments, -- comments
+		base04 = grey_comments, -- line number
+		base05 = grey_light, -- text: remainder: haystack
+		base06 = "#ff0000",
+		base07 = "#ff0000",
+		base08 = grey_light, -- some text: keywords such as local, struct names
+		base09 = yellow_orange_pale, -- some text
+		base0A = blue_pale, -- some text
+		base0B = yellow_orange_pale, -- some text: inside quotes, green
+		base0C = yellow_orange_pale,
+		base0D = blue_pale, -- some text: method calls
+		base0E = yellow_orange_pale, -- some text main
+		base0F = grey_light, -- some text: symbols
+	}
+end)()
+
+require("base16-colorscheme").setup(colorscheme)
 vim.o.termguicolors = true
 
 vim.g.beacon_size = 60
@@ -302,26 +321,26 @@ vim.o.foldexpr = "nvim_treesitter#foldexpr()"
 -- ============================================================================
 --                              AERIAL
 -- ============================================================================
-local aerial_keymaps =  {
-    -- ["<CR>"]= "<cmd>lua require'aerial'.select({jump=false})<CR>", -- "Jump to the symbol under the cursor keep focus in aerial window",
-    ["<CR>"] = "actions.jump", -- "Jump to the symbol under the cursor keep focus in aerial window",
+local aerial_keymaps = {
+	-- ["<CR>"]= "<cmd>lua require'aerial'.select({jump=false})<CR>", -- "Jump to the symbol under the cursor keep focus in aerial window",
+	["<CR>"] = "actions.jump", -- "Jump to the symbol under the cursor keep focus in aerial window",
 	["<c-]>"] = "actions.jump", -- Jump to the symbol under the cursor
 	["<C-v>"] = "actions.jump_vsplit", -- Jump to the symbol in a vertical split
 	["<C-s>"] = "actions.jump_split", -- Jump to the symbol in a horizontal split
-    ["{"] = "actions.prev", -- Jump to the previous symbol
-	["}"]  = "actions.next", -- Jump to the next symbol
-    ["[["] = "actions.prev_up", -- Jump up the tree, moving backwards
-    ["]]"] = "actions.next_up", -- Jump up the tree, moving forwards
-    ["q"] = "actions.close", -- Close the aerial window
-    ["za"] = "actions.tree_toggle", -- Toggle the symbol under the cursor open/closed
-    ["zA"] = "actions.tree_toggle_recursive", -- Recursive toggle the symbol under the cursor open/closed
-    ["zo"] = "actions.tree_open", -- Expand the symbol under the cursor
-    ["zO"] = "actions.tree_open_recursive", -- Recursive expand the symbol under the cursor
-    ["zc"] = "actions.tree_close", -- Collapse the symbol under the cursor
-    ["zC"] = "actions.tree_close_recursive", -- Recursive collapse the symbol under the cursor
-    ["zR"] = "actions.tree_open_all", -- Expand all nodes in the tree
-    ["zM"] = "actions.tree_close_all", -- Collapse all nodes in the tree
-    ["r" ] = "actions.tree_sync_folds", -- Sync code folding to the tree (useful if they get out of sync)
+	["{"] = "actions.prev", -- Jump to the previous symbol
+	["}"] = "actions.next", -- Jump to the next symbol
+	["[["] = "actions.prev_up", -- Jump up the tree, moving backwards
+	["]]"] = "actions.next_up", -- Jump up the tree, moving forwards
+	["q"] = "actions.close", -- Close the aerial window
+	["za"] = "actions.tree_toggle", -- Toggle the symbol under the cursor open/closed
+	["zA"] = "actions.tree_toggle_recursive", -- Recursive toggle the symbol under the cursor open/closed
+	["zo"] = "actions.tree_open", -- Expand the symbol under the cursor
+	["zO"] = "actions.tree_open_recursive", -- Recursive expand the symbol under the cursor
+	["zc"] = "actions.tree_close", -- Collapse the symbol under the cursor
+	["zC"] = "actions.tree_close_recursive", -- Recursive collapse the symbol under the cursor
+	["zR"] = "actions.tree_open_all", -- Expand all nodes in the tree
+	["zM"] = "actions.tree_close_all", -- Collapse all nodes in the tree
+	["r"] = "actions.tree_sync_folds", -- Sync code folding to the tree (useful if they get out of sync)
 }
 
 require("aerial").setup({
@@ -329,7 +348,7 @@ require("aerial").setup({
 	manage_folds = true,
 	link_tree_to_folds = true,
 	show_guides = true,
-    keymaps = aerial_keymaps,
+	keymaps = aerial_keymaps,
 	on_attach = function(bufnr) -- bufnr arg
 		nnoremap("<Leader>t", "<cmd>AerialToggle<cr>")
 	end,
@@ -507,7 +526,7 @@ cmp.setup({
 })
 
 -- use buffer source for `/`
-cmp.setup.cmdline({"/", "?"}, {
+cmp.setup.cmdline({ "/", "?" }, {
 	mapping = cmp.mapping.preset.cmdline(),
 	sources = {
 		{ name = "buffer" },
