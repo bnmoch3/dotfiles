@@ -281,7 +281,7 @@ local function setup_null_ls()
 			null_ls.builtins.formatting.taplo,
 			-- python
 			null_ls.builtins.formatting.black.with({
-				-- command = vim.fn.expand("~/LOCAL/dev/python/venv/bin/black"),
+				command = vim.fn.expand("~/LOCAL/dev/python/.venv/bin/black"),
 				extra_args = { "--line-length", "80" },
 			}),
 			-- markdown
