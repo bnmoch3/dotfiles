@@ -340,12 +340,14 @@ function M.setup()
 		},
 	})
 
-	require("goto-preview").setup({})
-	nnoremap("\\d", "<cmd>lua require('goto-preview').goto_preview_definition()<CR>")
+    require("goto-preview").setup({
+        default = false,
+    })
+	nnoremap("\\p", "<cmd>lua require('goto-preview').goto_preview_definition()<CR>")
 	nnoremap("\\i", "<cmd>lua require('goto-preview').goto_preview_implementation()<CR>")
 	nnoremap("\\q", "<cmd>lua require('goto-preview').close_all_win()<CR>")
-	nnoremap("\\p", "<cmd>lua require('goto-preview').goto_preview_references()<CR>")
-	nnoremap("\\d", "<cmd>lua vim.lsp.buf.hover()<CR>") -- for docs
+	nnoremap("\\r", "<cmd>lua require('goto-preview').goto_preview_references()<CR>")
+	nnoremap("\\d", "<cmd>lua require('goto-preview').goto_preview_hover()<CR>")
 
 	-- for formatters and linters
 	setup_null_ls()

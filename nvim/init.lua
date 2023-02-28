@@ -45,7 +45,7 @@ require("packer").startup(function(use)
 	use("mfussenegger/nvim-jdtls")
 	use({ "folke/trouble.nvim", requires = { "folke/lsp-colors.nvim" } })
 	use("stevearc/aerial.nvim")
-	use("rmagatti/goto-preview")
+    use("uztadh/nvim-goto-preview")
 	use("ray-x/lsp_signature.nvim")
 	use({ "yioneko/nvim-yati", requires = "nvim-treesitter/nvim-treesitter" })
 
