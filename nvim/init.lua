@@ -48,7 +48,6 @@ require("packer").startup(function(use)
 	use("stevearc/aerial.nvim")
 	use("uztadh/nvim-goto-preview")
 	use("ray-x/lsp_signature.nvim")
-	use({ "yioneko/nvim-yati", requires = "nvim-treesitter/nvim-treesitter" })
 
 	-- autocompletion
 	use("hrsh7th/cmp-nvim-lsp")
