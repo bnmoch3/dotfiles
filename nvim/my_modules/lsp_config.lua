@@ -281,7 +281,7 @@ local function setup_null_ls()
 			null_ls.builtins.formatting.taplo,
 			-- python
 			null_ls.builtins.formatting.black.with({
-				command = vim.fn.expand("~/LOCAL/dev/python/.venv/bin/black"),
+				command = vim.fn.expand("~/LOCAL/dev/python/venv/bin/black"),
 				extra_args = { "--line-length", "80" },
 			}),
 			-- markdown
@@ -329,7 +329,7 @@ function M.setup()
 	for lang_server, config in pairs(lang_servers) do
 		config.on_attach = custom_lsp_attach
 		config.capabilities = extend_obj(capabilties, config.capabilities)
-        lspconfig[lang_server].setup(config)
+		lspconfig[lang_server].setup(config)
 	end
 
 	-- TODO use common lsp setup
@@ -340,9 +340,9 @@ function M.setup()
 		},
 	})
 
-    require("goto-preview").setup({
-        default = false,
-    })
+	require("goto-preview").setup({
+		default = false,
+	})
 	nnoremap("\\p", "<cmd>lua require('goto-preview').goto_preview_definition()<CR>")
 	nnoremap("\\i", "<cmd>lua require('goto-preview').goto_preview_implementation()<CR>")
 	nnoremap("\\q", "<cmd>lua require('goto-preview').close_all_win()<CR>")
