@@ -8,6 +8,7 @@ function pp(obj)
 	require("my_modules.helpers").pretty_print(obj)
 end
 
+
 local nnoremap = require("my_modules.helpers").nnoremap
 local vnoremap = require("my_modules.helpers").vnoremap
 
@@ -226,51 +227,9 @@ nnoremap("*", "*zz")
 --                              NVIM-TREE
 -- ============================================================================
 local nvim_tree = require("nvim-tree")
-local function nvim_tree_search_files(node)
-	local dir = vim.fn.getcwd()
-	if node.parent ~= nil then
-		dir = node.parent.cwd or node.parent.absolute_path
-	end
-	require("telescope.builtin").find_files({ cwd = dir })
-end
-local nvim_tree_key_mappings = {
-	-- nvim-tree
-	{ key = "?", action = "toggle_help" },
-	{ key = "H", action = "toggle_dotfiles" },
-	{ key = "I", action = "toggle_git_ignored" },
-	{ key = "R", action = "refresh" },
-	{ key = "Q", action = "close" },
-	{ key = "P", action = "parent_node" },
-	{ key = "D", action = "close_node" },
-	{ key = "W", action = "collapse_all" },
-	{ key = "C", action = "cd" },
-	{ key = "U", action = "dir_up" },
-	{ key = "/", action = "search_files", action_cb = nvim_tree_search_files },
-	-- opening files
-	{ key = { "<CR>", "o", "O" }, action = "edit" },
-	{ key = "<C-p>", action = "preview" },
-	{ key = "<C-t>", action = "tabnew" },
-	{ key = "<C-v>", action = "vsplit" },
-	{ key = "<C-s>", action = "split" },
-	{ key = "<C-o>", action = "system_open" },
-	-- handling files
-	{ key = ".", action = "run_file_command" },
-	{ key = "y", action = "copy_absolute_path" },
-	{ key = "i", action = "toggle_file_info" },
-	{ key = "x", action = "cut" },
-	{ key = "c", action = "copy" },
-	{ key = "p", action = "paste" },
-	{ key = "a", action = "create" },
-	{ key = "r", action = "full_rename" },
-	{ key = "d", action = "trash" },
-}
 nvim_tree.setup({
 	disable_netrw = true,
-	view = {
-		mappings = {
-			list = nvim_tree_key_mappings,
-		},
-	},
+    on_attach = require("my_modules.nvim_tree_config").on_attach,
 })
 vim.g.nvim_tree_icons = {
 	git = { unstaged = "", staged = "", unmerged = "", renamed = "", untracked = "", deleted = "" },
