@@ -25,26 +25,20 @@ if [[ -f $HOME/.fzf.bash ]]; then
 	source "$HOME/.fzf.bash"
 fi
 
-# nvm
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # nvm bash_completion
-
 # yarn
 if command -v yarn &>/dev/null; then
 	yarn_bin=$(yarn global bin)
 	PATH=$PATH:$yarn_bin
 fi
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 # go
 if [[ -d /usr/local/go ]]; then
 	PATH=$PATH:/usr/local/go/bin
 	PATH=$PATH:$(go env GOPATH)/bin
-fi
-
-# zig
-if [[ -d "$HOME/LOCAL/pkg/zig" ]]; then
-	PATH=$PATH:$HOME/LOCAL/pkg/zig
 fi
 
 # pyenv
@@ -59,17 +53,8 @@ if [[ -f "$HOME/.cargo/env" ]]; then
 	. "$HOME/.cargo/env"
 fi
 
-# # opam configuration
-if [[ -f $HOME/.opam/opam-init/init.sh ]]; then
-	. $HOME/.opam/opam-init/init.sh
-fi
-
-if [[ -d "$HOME/LOCAL/bin" ]]; then
-	PATH="$HOME/LOCAL/bin:$PATH"
-fi
-
-if [[ -d "$HOME/.local/bin" ]]; then
-	PATH="$HOME/.local/bin:$PATH"
+if [[ -d "$HOME/local/bin" ]]; then
+    PATH="$HOME/local/bin:$PATH"
 fi
 
 export PATH

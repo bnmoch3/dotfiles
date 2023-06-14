@@ -64,7 +64,6 @@ _setup_local_bin() {
 }
 
 _setup_configs() {
-	_add_config_basic alacritty.yml
 	_add_config_basic bash/bashrc
 	_add_config_basic git/gitconfig
 	_add_config_basic git/gitignore
@@ -97,7 +96,7 @@ usage() {
 }
 
 DRY_RUN=0
-BIN_PATH=$HOME/LOCAL/bin
+BIN_PATH=$HOME/local/bin
 OVERWRITE=0
 
 while [[ -n "$1" ]]; do
