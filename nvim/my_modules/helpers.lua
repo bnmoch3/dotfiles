@@ -21,4 +21,8 @@ function M.vnoremap(shortcut, command)
 	vim.api.nvim_set_keymap("v", shortcut, command, { noremap = true, silent = true })
 end
 
+function M.tnoremap(shortcut, command)
+	vim.api.nvim_set_keymap("t", shortcut, command, { noremap = true, silent = true })
+end
+
 return M

@@ -10,6 +10,7 @@ end
 
 local nnoremap = require("my_modules.helpers").nnoremap
 local vnoremap = require("my_modules.helpers").vnoremap
+local tnoremap = require("my_modules.helpers").tnoremap
 
 -- bootstrap packer installation
 local fn = vim.fn
@@ -222,6 +223,16 @@ nnoremap("\\", ":<C-u>nohlsearch<CR>")
 nnoremap("n", "nzz")
 nnoremap("N", "Nzz")
 nnoremap("*", "*zz")
+
+-- ============================================================================
+--                              TERMINAL
+-- ============================================================================
+tnoremap("<C-h>", "<C-\\><C-n><C-w>h")
+tnoremap("<C-j>", "<C-\\><C-n><C-w>j")
+tnoremap("<C-k>", "<C-\\><C-n><C-w>k")
+tnoremap("<C-l>", "<C-\\><C-n><C-w>l")
+tnoremap("<C-^>", "<C-\\><C-n><C-^>")
+tnoremap("", "<C-\\><C-n>")
 -- ============================================================================
 --                              NVIM-TREE
 -- ============================================================================
@@ -387,7 +398,7 @@ nnoremap("<leader>fm", "<cmd>lua require('telescope.builtin').marks()<cr>")
 nnoremap("<leader>fr", "<cmd>lua require('telescope.builtin').registers()<cr>")
 nnoremap("<leader>fl", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>")
 nnoremap("<leader>fd", "<cmd>lua require('telescope.builtin').diagnostics()<cr>")
-nnoremap("<leader>fg", "<cmd>lua require('telescope.builtin').git_status()<cr>")
+nnoremap("<leader>fs", "<cmd>lua require('telescope.builtin').git_status()<cr>")
 
 -- ============================================================================
 --                              DIAGNOSTICS
