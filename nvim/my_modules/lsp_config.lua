@@ -215,11 +215,52 @@ local lang_servers = {
 -- ============================================================================
 local function setup_null_ls()
 	local null_ls = require("null-ls")
+	local methods = require("null-ls.methods")
+	local helpers = require("null-ls.helpers")
+	-- [tool.ruff]
+	-- line-length = 80
+	-- indent-width = 4
+
+	-- [tool.ruff.format]
+	-- docstring-code-format = true
+	-- line-ending = "lf"
+	local function ruff_format()
+		return helpers.make_builtin({
+			name = "ruff",
+			meta = {
+				url = "https://github.com/astral-sh/ruff",
+				description = "An extremely fast Python linter and code formatter, written in Rust.",
+			},
+			method = methods.internal.FORMATTING,
+			filetypes = { "python" },
+			generator_opts = {
+				command = "ruff",
+				args = {
+					"format",
+					"--line-length",
+					"80",
+					"--config",
+					"line-length=80",
+					"--config",
+					"indent-width=4",
+					"--config",
+					'format={"indent-style"="space", "quote-style"="single", "line-ending"="lf", "docstring-code-format"=true }',
+					"-n",
+					"--stdin-filename",
+					"$FILENAME",
+				},
+				to_stdin = true,
+			},
+			factory = helpers.formatter_factory,
+		})
+	end
 	-- add trimwhitespace for python, lua
 	-- add isort for python
 	-- make sure prettier doesn't format yaml
 	null_ls.setup({
 		sources = {
+			-- python
+			ruff_format(),
 			-- general
 			null_ls.builtins.formatting.trim_whitespace.with({
 				disabled_filetypes = { "markdown" },
@@ -279,11 +320,6 @@ local function setup_null_ls()
 			null_ls.builtins.formatting.goimports,
 			-- toml
 			null_ls.builtins.formatting.taplo,
-			-- python
-			null_ls.builtins.formatting.black.with({
-				command = vim.fn.expand("~/LOCAL/dev/python/venv/bin/black"),
-				extra_args = { "--line-length", "80" },
-			}),
 			-- markdown
 			null_ls.builtins.formatting.deno_fmt.with({
 				filetypes = { "markdown" },
