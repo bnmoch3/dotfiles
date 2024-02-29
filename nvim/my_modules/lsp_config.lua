@@ -244,7 +244,7 @@ local function setup_null_ls()
 					"--config",
 					"indent-width=4",
 					"--config",
-					'format={"indent-style"="space", "quote-style"="single", "line-ending"="lf", "docstring-code-format"=true }',
+					'format={"indent-style"="space", "quote-style"="double", "line-ending"="lf", "docstring-code-format"=true }',
 					"-n",
 					"--stdin-filename",
 					"$FILENAME",
