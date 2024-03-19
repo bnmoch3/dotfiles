@@ -49,6 +49,7 @@ require("packer").startup(function(use)
 	use("stevearc/aerial.nvim")
 	use("uztadh/nvim-goto-preview")
 	use("ray-x/lsp_signature.nvim")
+	use({ "michaelb/sniprun", run = "sh ./install.sh" })
 
 	-- autocompletion
 	use("hrsh7th/cmp-nvim-lsp")
@@ -166,7 +167,7 @@ local colorscheme = (function()
 	local blue_pale = "#83adad" -- alacritty: blue
 	local blue_bright = "#7cafc2"
 
-	local red = "ff0000" -- for debugging
+	local red = "#ff0000" -- for debugging
 
 	return {
 		base00 = black_bright, -- background
@@ -224,15 +225,6 @@ nnoremap("n", "nzz")
 nnoremap("N", "Nzz")
 nnoremap("*", "*zz")
 
--- ============================================================================
---                              TERMINAL
--- ============================================================================
-tnoremap("<C-h>", "<C-\\><C-n><C-w>h")
-tnoremap("<C-j>", "<C-\\><C-n><C-w>j")
-tnoremap("<C-k>", "<C-\\><C-n><C-w>k")
-tnoremap("<C-l>", "<C-\\><C-n><C-w>l")
-tnoremap("<C-^>", "<C-\\><C-n><C-^>")
-tnoremap("", "<C-\\><C-n>")
 -- ============================================================================
 --                              NVIM-TREE
 -- ============================================================================
@@ -573,3 +565,69 @@ cmp.setup.cmdline(":", {
 
 -- set up LSP stuff
 require("my_modules.lsp_config").setup()
+
+-- ============================================================================
+--                              TERMINAL
+-- ============================================================================
+tnoremap("<C-h>", "<C-\\><C-n><C-w>h")
+tnoremap("<C-j>", "<C-\\><C-n><C-w>j")
+tnoremap("<C-k>", "<C-\\><C-n><C-w>k")
+tnoremap("<C-l>", "<C-\\><C-n><C-w>l")
+tnoremap("<C-^>", "<C-\\><C-n><C-^>")
+tnoremap("", "<C-\\><C-n>")
+-- ============================================================================
+--                              SNIP RUN
+-- ============================================================================
+local grey_dark = "#212121"
+local green_pale = "#a1b56c" -- alacritty: green
+local red = "#ff0000"
+require("sniprun").setup({
+	--# you can combo different display modes as desired and with the 'Ok' or 'Err' suffix
+	--# to filter only sucessful runs (or errored-out runs respectively)
+	display = {
+		-- "Classic", --# display results in the command-line  area
+		-- "VirtualTextOk", --# display ok results as virtual text (multiline is shortened)
+		"VirtualTextOk", --# display results as virtual text
+		-- "TempFloatingWindow", --# display results in a floating window
+		-- "LongTempFloatingWindowOk", --# same as above, but only long results. To use with VirtualText[Ok/Err]
+		"Terminal", --# display results in a vertical split
+	},
+
+	live_display = { "VirtualTextOk" }, --# display mode used in live_mode
+
+	display_options = {
+		terminal_scrollback = vim.o.scrollback, --# change terminal display scrollback lines
+		terminal_line_number = true, --# whether show line number in terminal window
+		terminal_signcolumn = true, --# whether show signcolumn in terminal window
+		terminal_position = "vertical", --# or "horizontal", to open as horizontal split instead of vertical split
+		terminal_width = 45, --# change the terminal display option width (if vertical)
+		terminal_height = 20, --# change the terminal display option height (if horizontal)
+		notification_timeout = 5, --# timeout for nvim_notify output
+	},
+
+	--# You can use the same keys to customize whether a sniprun producing
+	--# no output should display nothing or '(no output)'
+	show_no_output = {
+		"Classic",
+		"TempFloatingWindow", --# implies LongTempFloatingWindow, which has no effect on its own
+	},
+
+	--# customize highlight groups (setting this overrides colorscheme)
+	snipruncolors = {
+		SniprunVirtualTextOk = { bg = grey_dark, fg = green_pale, ctermbg = "Cyan", ctermfg = "Black" },
+		SniprunFloatingWinOk = { fg = "#66eeff", ctermfg = "Cyan" },
+		SniprunVirtualTextErr = { bg = "#881515", fg = "#000000", ctermbg = "DarkRed", cterfg = "Black" },
+		SniprunFloatingWinErr = { fg = "#881515", ctermfg = "DarkRed" },
+	},
+
+	live_mode_toggle = "off", --# live mode toggle, see Usage - Running for more info
+	inline_messages = false, --# boolean toggle for a one-line way to display messages
+	--# to workaround sniprun not being able to display anything
+	borders = "single", --# display borders around floating windows: 'none', 'single', 'double', or 'shadow'
+})
+-- nnoremap("<C-s>s", "<Plug>SnipRunOperator")
+nnoremap("<C-s>i", "<Plug>SnipInfo")
+nnoremap("<C-s>q", "<Plug>SnipClose")
+nnoremap("<C-s>d", "<Plug>SnipReplMemoryClean")
+nnoremap("<C-s>r", "<Plug>SnipReset")
+vnoremap("r", "<Plug>SnipRun")
