@@ -103,6 +103,10 @@ function activate() {
 	fi
 }
 
+function kerl_activate() {
+	. /usr/local/lib/erlang/26.2.4/activate
+}
+
 function find1() {
 	dir=
 	if [[ ! "$1" =~ ^-.* ]]; then

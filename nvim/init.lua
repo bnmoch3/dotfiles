@@ -49,6 +49,9 @@ require("packer").startup(function(use)
 	use("stevearc/aerial.nvim")
 	use("uztadh/nvim-goto-preview")
 	use("ray-x/lsp_signature.nvim")
+	use("akinsho/toggleterm.nvim")
+	-- use("JuliaEditorSupport/julia-vim") -- vim support for Julia
+	use("kdheepak/JuliaFormatter.vim") -- julia formatter
 
 	-- autocompletion
 	use("hrsh7th/cmp-nvim-lsp")
@@ -74,9 +77,10 @@ require("packer").startup(function(use)
 	use("kshenoy/vim-signature") -- for toggling, displaying and navigating marks
 	use("tpope/vim-unimpaired") -- tim-pope's, for quick navigation of lists
 	use("ap/vim-buftabline") -- display buffer list on tabline
-	use("kyazdani42/nvim-web-devicons")
-	use({ "kyazdani42/nvim-tree.lua", requires = { "kyazdani42/nvim-web-devicons" } })
-	use({ "nvim-lualine/lualine.nvim", requires = { "kyazdani42/nvim-web-devicons" } })
+	use("nvim-tree/nvim-web-devicons")
+	use("onsails/lspkind.nvim")
+	use("nvim-tree/nvim-tree.lua")
+	use("nvim-lualine/lualine.nvim")
 	use({ "nvim-telescope/telescope.nvim", requires = { "nvim-lua/plenary.nvim" } })
 
 	-- langs
@@ -318,7 +322,7 @@ lualine.setup({
 		lualine_y = { { "diagnostics", sections = { "error", "warn" } }, "diff", "branch" },
 		lualine_z = { "" },
 	},
-	extensions = { "quickfix" },
+	extensions = { "quickfix", "toggleterm" },
 })
 
 -- ============================================================================
@@ -328,13 +332,13 @@ local nvim_treesitter_configs = require("nvim-treesitter.configs")
 nvim_treesitter_configs.setup({
 	ensure_installed = "all",
 	sync_install = false,
-	-- highlight = { enable = true, disable = { "proto" } },
+	highlight = { enable = true, disable = { "proto" } },
 	-- use external plugin for indentation until fixed
 	-- yati = { enable = true },
 	indent = { enable = true },
 })
-vim.o.foldmethod = "expr"
-vim.o.foldexpr = "nvim_treesitter#foldexpr()"
+vim.o.foldmethod = "indent"
+-- vim.o.foldexpr = "nvim_treesitter#foldexpr()"
 -- vim.o.foldenable = true
 
 -- ============================================================================
@@ -368,9 +372,59 @@ require("aerial").setup({
 	link_tree_to_folds = true,
 	show_guides = true,
 	keymaps = aerial_keymaps,
+	nerd_font = "auto",
 	on_attach = function(bufnr) -- bufnr arg
-		nnoremap("<Leader>t", "<cmd>AerialToggle<cr>")
+		nnoremap("<Leader>a", "<cmd>AerialToggle<cr>")
 	end,
+})
+require("lspkind").init({
+	-- DEPRECATED (use mode instead): enables text annotations
+	--
+	-- default: true
+	-- with_text = true,
+
+	-- defines how annotations are shown
+	-- default: symbol
+	-- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
+	mode = "symbol_text",
+
+	-- default symbol map
+	-- can be either 'default' (requires nerd-fonts font) or
+	-- 'codicons' for codicon preset (requires vscode-codicons font)
+	--
+	-- default: 'default'
+	preset = "codicons",
+
+	-- override preset symbols
+	--
+	-- default: {}
+	symbol_map = {
+		Text = "*",
+		Method = "*",
+		Function = "*",
+		Constructor = "",
+		Field = "*",
+		Variable = "*",
+		Class = "*",
+		Interface = "",
+		Module = "",
+		Property = "*",
+		Unit = "*",
+		Value = "*",
+		Enum = "",
+		Keyword = "*",
+		Snippet = "",
+		Color = "*",
+		File = "*",
+		Reference = "*",
+		Folder = "*",
+		EnumMember = "",
+		Constant = "*",
+		Struct = "*",
+		Event = "",
+		Operator = "*",
+		TypeParameter = "$",
+	},
 })
 
 -- ============================================================================
@@ -574,5 +628,25 @@ tnoremap("<C-k>", "<C-\\><C-n><C-w>k")
 tnoremap("<C-l>", "<C-\\><C-n><C-w>l")
 tnoremap("<C-^>", "<C-\\><C-n><C-^>")
 tnoremap("", "<C-\\><C-n>")
+require("toggleterm").setup({
+	shade_terminals = false,
+	start_in_insert = true,
+	hide_numbers = true,
+	-- direction = "float",
+})
+
+nnoremap("<Leader>tt", ":ToggleTerm name=xterminal direction=horizontal<CR>")
+nnoremap("<Leader>tf", ":ToggleTerm name=xterminal direction=float<CR>")
+vnoremap("r", ":ToggleTermSendVisualLines<CR>")
+nnoremap("<Leader>r", ":ToggleTermSendCurrentLine<CR>")
+
+local termGroup = vim.api.nvim_create_augroup("TermGroup", { clear = true })
+vim.api.nvim_create_autocmd({ "BufEnter" }, {
+	callback = function()
+		vim.cmd("startinsert")
+	end,
+	pattern = { "term://*" },
+	group = termGroup,
+})
 -- ============================================================================
 -- ============================================================================

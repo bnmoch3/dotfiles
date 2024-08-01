@@ -64,6 +64,10 @@ if [[ -f $HOME/.opam/opam-init/init.sh ]]; then
 	. $HOME/.opam/opam-init/init.sh
 fi
 
+# encore
+export ENCORE_INSTALL="/home/bnm/.encore"
+PATH="$ENCORE_INSTALL/bin:$PATH"
+
 if [[ -d "$HOME/LOCAL/bin" ]]; then
 	PATH="$HOME/LOCAL/bin:$PATH"
 fi
@@ -71,5 +75,15 @@ fi
 if [[ -d "$HOME/.local/bin" ]]; then
 	PATH="$HOME/.local/bin:$PATH"
 fi
+
+# erlang
+. /usr/local/lib/erlang/26.2.4/activate
+
+# elixir
+PATH="/$HOME/LOCAL/pkg/elixir-1.16.2/bin:$PATH"
+
+# cuda
+PATH="/usr/local/cuda/bin:$PATH"
+export LD_LIBRARY_PATH="/usr/local/cuda-12.3/lib64:$LD_LIBRARY_PATH"
 
 export PATH

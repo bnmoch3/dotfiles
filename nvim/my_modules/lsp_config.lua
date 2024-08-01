@@ -205,6 +205,10 @@ local lang_servers = {
 	vimls = {},
 	taplo = {},
 	yamlls = {},
+	julials = {},
+	elixirls = {
+		cmd = { vim.fn.stdpath("data") .. "/mason/packages/elixir-ls/language_server.sh" },
+	},
 	zls = {
 		cmd = { vim.fn.expand("~") .. "/LOCAL/pkg/zls/zig-out/bin/zls" },
 	},
@@ -325,6 +329,8 @@ local function setup_null_ls()
 				filetypes = { "markdown" },
 				args = { "fmt", "-", "--ext", "md" },
 			}),
+			-- elixir
+			null_ls.builtins.formatting.mix,
 		},
 		-- format on write
 		on_attach = (function()
