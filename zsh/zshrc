@@ -1,0 +1,78 @@
+#!/usr/bin/zsh
+
+# only run in interactive shells
+[[ -o interactive ]] || return
+
+# permissions for new files created
+umask 077
+
+
+# history
+HISTFILE=~/.zsh_history
+HISTSIZE=10000 # maximum events for internal history
+SAVEHIST=10000 # maximum events in history file
+
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
+setopt APPEND_HISTORY
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+
+# vim mode
+bindkey -v
+export KEYTIMEOUT=1
+zmodload zsh/complist
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey -M vicmd v edit-command-line
+
+# dir colors
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  [[ -x /usr/bin/dircolors ]] && eval "$(dircolors -b)"
+  alias ls='ls --color=auto'
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  [[ -x /usr/local/bin/gdircolors ]] && eval "$(gdircolors -b)"
+  alias ls='ls --color=auto'
+fi
+
+# aliases
+alias ll='ls -alF'
+if command -v exa &>/dev/null; then
+    alias ll='exa -1l --group-directories-first -h --git'
+else
+    alias ll='ls -alF'
+fi
+alias l1='ls -1'
+
+# source environment and functions
+source "$HOME/dotfiles/zsh/functions.zsh"
+
+
+# enable Zsh completion
+autoload -Uz compinit
+compinit
+
+# directory stack
+setopt AUTO_PUSHD # push the current directory visited on to the stack.
+setopt PUSHD_IGNORE_DUPS # do not store duplirate directories in the stack.
+setopt PUSHD_SILENT # do not print the directory stack after using pushd or popd.
+# enables quick directory jumping using the directory stack:
+# - `alias d='dirs -v'` shows recently visited dirs, numbered.
+# - aliases 1–9 let you jump to the Nth dir with `cd +N`, e.g. `2` jumps to dir #2.
+# - increase `{1..9}` to `{1..100}` to support deeper stacks.
+alias d='dirs -v'
+for index ({1..9}) alias "$index"="cd +${index}"; unset index
+
+# external files
+fpath=("$HOME/dotfiles/zsh/external" $fpath)
+
+# auto complete hidden files
+comp_options+=(globdots)
+source "$HOME/dotfiles/zsh/external/completion.zsh"
+#
+# prompt
+autoload -Uz prompt_purification_setup; prompt_purification_setup

@@ -1,0 +1,63 @@
+#
+# Set editor to nvim if available
+if command -v nvim &>/dev/null; then
+	export EDITOR="nvim"
+else
+	export EDITOR="vim"
+fi
+
+export PSQL_EDITOR="$EDITOR"
+export MANPAGER='nvim +Man!'
+
+# Use bat as pager if available
+if command -v bat &>/dev/null; then
+	export PAGER=bat
+fi
+
+# FZF options with ripgrep
+if command -v rg &>/dev/null; then
+	export FZF_DEFAULT_COMMAND='rg --files'
+	export FZF_DEFAULT_OPTS='-m'
+fi
+
+# General FZF options
+export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --height 80% --layout=reverse --border --margin=1"
+
+# Load FZF if present
+[[ -f "$HOME/.fzf.zsh" ]] && source "$HOME/.fzf.zsh"
+
+# nvm
+export NVM_DIR="$HOME/.nvm"
+[[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+[[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
+
+# yarn global bin
+if command -v yarn &>/dev/null; then
+	export PATH="$PATH:$(yarn global bin)"
+fi
+
+# Go
+if [[ -d /usr/local/go ]]; then
+	export PATH="$PATH:/usr/local/go/bin"
+	export PATH="$PATH:$(go env GOPATH)/bin"
+fi
+
+# zig
+[[ -d "$HOME/LOCAL/pkg/zig" ]] && export PATH="$PATH:$HOME/LOCAL/pkg/zig"
+
+# cargo
+[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+
+# opam
+[[ -f "$HOME/.opam/opam-init/init.sh" ]] && source "$HOME/.opam/opam-init/init.sh"
+
+# local bin directories
+[[ -d "$HOME/LOCAL/bin" ]] && export PATH="$HOME/LOCAL/bin:$PATH"
+[[ -d "$HOME/.local/bin" ]] && export PATH="$HOME/.local/bin:$PATH"
+
+# CUDA
+export PATH="/usr/local/cuda/bin:$PATH"
+export LD_LIBRARY_PATH="/usr/local/cuda-12.3/lib64:$LD_LIBRARY_PATH"
+
+# VCPKG
+export VCPKG_ROOT="$HOME/LOCAL/bin/vcpkg"
