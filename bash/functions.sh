@@ -129,3 +129,7 @@ function daymode() {
 		redshift -x
 	fi
 }
+
+function todo() {
+	nvim "/home/bnm/TODO.txt"
+}
