@@ -82,6 +82,8 @@ require("packer").startup(function(use)
 	use("nvim-tree/nvim-tree.lua")
 	use("nvim-lualine/lualine.nvim")
 	use({ "nvim-telescope/telescope.nvim", requires = { "nvim-lua/plenary.nvim" } })
+	-- for fuzzy search in telescope
+	use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" })
 
 	-- langs
 	use("ziglang/zig.vim")
@@ -329,17 +331,21 @@ lualine.setup({
 --                              TREE-SITTER
 -- ============================================================================
 local nvim_treesitter_configs = require("nvim-treesitter.configs")
+require("nvim-treesitter.install").prefer_git = true
+--
 nvim_treesitter_configs.setup({
 	ensure_installed = "all",
+	ignore_install = { "ipkg" }, -- repository deleted: https://github.com/srghma/tree-sitter-ipkg
+	auto_install = false,
 	sync_install = false,
 	highlight = { enable = true, disable = { "proto" } },
 	-- use external plugin for indentation until fixed
-	-- yati = { enable = true },
+	yati = { enable = true },
 	indent = { enable = true },
 })
 vim.o.foldmethod = "indent"
--- vim.o.foldexpr = "nvim_treesitter#foldexpr()"
--- vim.o.foldenable = true
+vim.o.foldexpr = "nvim_treesitter#foldexpr()"
+vim.o.foldenable = true
 
 -- ============================================================================
 --                              AERIAL
@@ -450,14 +456,24 @@ telescope.setup({
 			n = telescope_mappings,
 		},
 	},
+	extensions = {
+		fzf = {
+			fuzzy = true, -- false will only do exact matching
+			override_generic_sorter = true, -- override the generic sorter
+			override_file_sorter = true, -- override the file sorter
+			case_mode = "smart_case", -- or "ignore_case" or "respect_case"
+			-- the default case_mode is "smart_case"
+		},
+	},
 })
+telescope.load_extension("fzf")
 nnoremap("<leader>ff", "<cmd>lua require('telescope.builtin').find_files()<cr>")
 nnoremap("<leader>fg", "<cmd>lua require('telescope.builtin').live_grep()<cr>")
 nnoremap("<leader>fb", "<cmd>lua require('telescope.builtin').buffers()<cr>")
 nnoremap("<leader>fh", "<cmd>lua require('telescope.builtin').help_tags()<cr>")
 nnoremap("<leader>fm", "<cmd>lua require('telescope.builtin').marks()<cr>")
 nnoremap("<leader>fr", "<cmd>lua require('telescope.builtin').registers()<cr>")
-nnoremap("<leader>fl", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>")
+nnoremap("<leader>fl", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find({})<cr>")
 nnoremap("<leader>fd", "<cmd>lua require('telescope.builtin').diagnostics()<cr>")
 nnoremap("<leader>fs", "<cmd>lua require('telescope.builtin').git_status()<cr>")
 
