@@ -8,6 +8,8 @@ fi
 
 export PSQL_EDITOR=$EDITOR
 
+export MANPAGER='nvim +Man!'
+
 # pager, use bat if present
 if command -v bat >/dev/null; then
 	export PAGER=bat
@@ -47,13 +49,6 @@ if [[ -d "$HOME/LOCAL/pkg/zig" ]]; then
 	PATH=$PATH:$HOME/LOCAL/pkg/zig
 fi
 
-# pyenv
-if [[ -d "$HOME/.pyenv" ]]; then
-	export PYENV_ROOT="$HOME/.pyenv"
-	PATH=$PATH:$PYENV_ROOT/bin
-	eval "$(pyenv init -)"
-fi
-
 # source cargo
 if [[ -f "$HOME/.cargo/env" ]]; then
 	. "$HOME/.cargo/env"
@@ -85,5 +80,7 @@ PATH="/$HOME/LOCAL/pkg/elixir-1.16.2/bin:$PATH"
 # cuda
 PATH="/usr/local/cuda/bin:$PATH"
 export LD_LIBRARY_PATH="/usr/local/cuda-12.3/lib64:$LD_LIBRARY_PATH"
+
+export VCPKG_ROOT=/home/bnm/LOCAL/bin/vcpkg
 
 export PATH
