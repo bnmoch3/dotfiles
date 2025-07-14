@@ -178,6 +178,7 @@ local custom_lsp_attach = function(client, bufnr)
 end
 
 local lspconfig = require("lspconfig")
+local util = require("lspconfig.util")
 local lang_servers = {
 	pyright = {},
 	gopls = {},
@@ -187,13 +188,17 @@ local lang_servers = {
 		},
 	},
 	dockerls = {},
-	tsserver = {},
+	ts_ls = {},
 	lua_ls = {
+		root_dir = util.root_pattern(".git", ".luarc.json", "init.lua"), -- <-- Add this
 		settings = {
 			Lua = {
-				diagnostics = { globals = { "vim" } },
+				diagnostics = {
+					globals = { "vim" },
+				},
 				disable = { "lowercase-global" },
 				workspace = {
+					checkThirdParty = false, -- Add this to suppress other warnings
 					library = {
 						[vim.fn.expand("$VIMRUNTIME/lua")] = true,
 						[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
