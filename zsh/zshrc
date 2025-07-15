@@ -73,6 +73,8 @@ fpath=("$HOME/dotfiles/zsh/external" $fpath)
 # auto complete hidden files
 comp_options+=(globdots)
 source "$HOME/dotfiles/zsh/external/completion.zsh"
-#
+
+eval "$(atuin init zsh --disable-up-arrow)"
+
 # prompt
-autoload -Uz prompt_purification_setup; prompt_purification_setup
+eval "$(starship init zsh)"
