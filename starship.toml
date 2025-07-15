@@ -1,0 +1,40 @@
+[character]
+success_symbol = "[>](blue bold)"
+error_symbol = "[>](red bold)"
+
+[package]
+disabled = true
+
+[git_branch]
+style = "dimmed blue"
+
+[git_status]
+style = "bold yellow"
+format = '[*](bold blue) '
+conflicted = ""
+ahead = ""
+behind = ""
+diverged = ""
+untracked = "*"
+stashed = "*"
+modified = "*"
+staged = "*"
+renamed = "*"
+deleted = "*"
+
+[directory]
+style = "blue"
+truncation_length = 3
+truncate_to_repo = true
+
+[python]
+symbol = " "
+format = '\([$symbol venv]($style)\) '
+style = 'bold green'
+version_format = ''
+pyenv_version_name = true
+
+# Make sure detection is only triggered by active virtualenvs
+detect_extensions = []
+detect_files = []
+detect_folders = []
