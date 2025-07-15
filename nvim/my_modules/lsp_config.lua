@@ -208,7 +208,11 @@ local lang_servers = {
 		},
 	},
 	vimls = {},
-	taplo = {},
+	taplo = {
+		capabilities = {
+			offsetEncoding = { "utf-8" },
+		},
+	},
 	yamlls = {},
 	julials = {},
 	elixirls = {
@@ -222,152 +226,6 @@ local lang_servers = {
 -- ============================================================================
 --                              FORMATTING, LINTING
 -- ============================================================================
-local function setup_null_ls()
-	local null_ls = require("null-ls")
-	local methods = require("null-ls.methods")
-	local helpers = require("null-ls.helpers")
-	-- [tool.ruff]
-	-- line-length = 80
-	-- indent-width = 4
-
-	-- [tool.ruff.format]
-	-- docstring-code-format = true
-	-- line-ending = "lf"
-	local function ruff_format()
-		return helpers.make_builtin({
-			name = "ruff",
-			meta = {
-				url = "https://github.com/astral-sh/ruff",
-				description = "An extremely fast Python linter and code formatter, written in Rust.",
-			},
-			method = methods.internal.FORMATTING,
-			filetypes = { "python" },
-			generator_opts = {
-				command = "ruff",
-				args = {
-					"format",
-					"--line-length",
-					"80",
-					"--config",
-					"line-length=80",
-					"--config",
-					"indent-width=4",
-					"--config",
-					'format={"indent-style"="space", "quote-style"="double", "line-ending"="lf", "docstring-code-format"=true }',
-					"-n",
-					"--stdin-filename",
-					"$FILENAME",
-				},
-				to_stdin = true,
-			},
-			factory = helpers.formatter_factory,
-		})
-	end
-	-- add trimwhitespace for python, lua
-	-- add isort for python
-	-- make sure prettier doesn't format yaml
-	null_ls.setup({
-		sources = {
-			-- python
-			ruff_format(),
-			-- general
-			null_ls.builtins.formatting.trim_whitespace.with({
-				disabled_filetypes = { "markdown" },
-			}),
-			null_ls.builtins.formatting.trim_newlines,
-			-- lua
-			null_ls.builtins.formatting.stylua,
-			-- rust
-			null_ls.builtins.formatting.rustfmt,
-			-- bash
-			null_ls.builtins.diagnostics.shellcheck,
-			null_ls.builtins.formatting.shfmt,
-			-- C, C++
-			null_ls.builtins.formatting.clang_format.with({
-				filetypes = { "c", "cpp", "cuda", "proto" },
-				args = {},
-				extra_args = function(params)
-					local clang_format_path = table.concat({ params.root, ".clang-format" }, "/")
-					if vim.loop.fs_stat(clang_format_path) ~= nil then
-						return nil
-					else
-						return {
-							"--style",
-							"{BasedOnStyle: LLVM, IndentWidth: 4}",
-							"--sort-includes",
-						}
-					end
-				end,
-			}),
-			-- java
-			null_ls.builtins.formatting.google_java_format.with({
-				command = "java",
-				extra_args = {
-					"-jar",
-					vim.fn.expand("~/LOCAL/pkg/java/google-java-format-1.15.0-all-deps.jar"),
-					"--aosp",
-				},
-			}),
-			-- js, html, css
-			null_ls.builtins.diagnostics.eslint,
-			null_ls.builtins.formatting.prettier.with({
-				filetypes = {
-					"html",
-					"javascript",
-					"json",
-					"javascriptreact",
-					"typescript",
-					"typescriptreact",
-					"yaml",
-					"css",
-				},
-			}),
-			-- docker
-			null_ls.builtins.diagnostics.hadolint,
-			-- go
-			null_ls.builtins.formatting.gofmt,
-			null_ls.builtins.formatting.goimports,
-			-- toml
-			null_ls.builtins.formatting.taplo,
-			-- markdown
-			null_ls.builtins.formatting.deno_fmt.with({
-				filetypes = { "markdown" },
-				args = { "fmt", "-", "--ext", "md" },
-			}),
-			-- elixir
-			null_ls.builtins.formatting.mix,
-		},
-		-- format on write
-		on_attach = (function()
-			-- only use null-ls for formatting
-			local lsp_formatting = function(bufnr)
-				vim.lsp.buf.format({
-					filter = function(client)
-						return client.name == "null-ls"
-					end,
-					bufnr = bufnr,
-				})
-			end
-
-			local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
-			return function(client, bufnr)
-				if client.supports_method("textDocument/formatting") then
-					vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
-					vim.api.nvim_create_autocmd("BufWritePre", {
-						group = augroup,
-						buffer = bufnr,
-						callback = function()
-							lsp_formatting(bufnr)
-						end,
-					})
-				end
-			end
-		end)(),
-		root_dir = function(fname)
-			return require("my_modules.project_root").find_project_root(fname)
-		end,
-	})
-end
 
 function M.setup()
 	require("mason").setup({})
@@ -395,9 +253,6 @@ function M.setup()
 	nnoremap("\\q", "<cmd>lua require('goto-preview').close_all_win()<CR>")
 	nnoremap("\\r", "<cmd>lua require('goto-preview').goto_preview_references()<CR>")
 	nnoremap("\\d", "<cmd>lua require('goto-preview').goto_preview_hover()<CR>")
-
-	-- for formatters and linters
-	setup_null_ls()
 end
 
 return M
