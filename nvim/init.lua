@@ -49,8 +49,6 @@ require("packer").startup(function(use)
 	use("bnmoch3/nvim-goto-preview")
 	use("ray-x/lsp_signature.nvim")
 	use("akinsho/toggleterm.nvim")
-	-- use("JuliaEditorSupport/julia-vim") -- vim support for Julia
-	use("kdheepak/JuliaFormatter.vim") -- julia formatter
 
 	-- autocompletion
 	use("hrsh7th/cmp-nvim-lsp")
@@ -87,6 +85,9 @@ require("packer").startup(function(use)
 	-- langs
 	use("ziglang/zig.vim")
 	use("dijkstracula/vim-plang")
+
+	use("stevearc/conform.nvim")
+	use("j-hui/fidget.nvim")
 
 	-- Automatically set up your configuration after cloning packer.nvim
 	-- Put this at the end after all plugins
@@ -512,10 +513,8 @@ local function set_min_severity_level(opts)
 	vim.diagnostic.config(config)
 	severity = new_severity
 	-- update LSP handler for publishing diagnostics
-	vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-		vim.lsp.diagnostic.on_publish_diagnostics,
-		config
-	)
+	vim.lsp.handlers["textDocument/publishDiagnostics"] =
+		vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, config)
 end
 
 local set_min_severity_level_opts = {
@@ -633,7 +632,6 @@ cmp.setup.cmdline(":", {
 
 -- set up LSP stuff
 require("my_modules.lsp_config").setup()
-
 -- ============================================================================
 --                              TERMINAL
 -- ============================================================================
@@ -662,6 +660,46 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
 	end,
 	pattern = { "term://*" },
 	group = termGroup,
+})
+
+-- ============================================================================
+--                              FORMATTING
+-- ============================================================================
+vim.keymap.set({ "n", "v" }, "<leader>c", function()
+	require("conform").format({
+		lsp_format = "fallback",
+		async = false,
+		timeout_ms = 1000,
+	})
+end, { desc = "Format buffer with Conform" })
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+	pattern = "*",
+	callback = function(args)
+		require("conform").format({ bufnr = args.buf })
+	end,
+})
+
+require("conform").setup({
+	lsp_fallback = false,
+	formatters_by_ft = {
+		lua = { "stylua", lsp_format = "fallback" },
+		proto = { "buf" },
+		markdown = { "deno_fmt" },
+		python = { "ruff_organize_imports", "ruff_fix", "ruff_format" },
+		toml = { "taplo" },
+		yaml = { "yamlfmt" },
+		sql = { "sqlfmt" },
+		sh = { "shfmt" },
+		go = function(bufnr)
+			if require("conform").get_formatter_info("gofumpt", bufnr).available then
+				return { "goimports", "gofumpt" }
+			else
+				return { "goimports" }
+			end
+		end,
+		["*"] = { "trim_whitespace", "trim_newlines" },
+	},
 })
 -- ============================================================================
 -- ============================================================================
