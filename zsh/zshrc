@@ -56,6 +56,9 @@ source "$HOME/dotfiles/zsh/functions.zsh"
 autoload -Uz compinit
 compinit
 
+# deno
+. "/home/bnm/.deno/env"
+
 # directory stack
 setopt AUTO_PUSHD # push the current directory visited on to the stack.
 setopt PUSHD_IGNORE_DUPS # do not store duplirate directories in the stack.

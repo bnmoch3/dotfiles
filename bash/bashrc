@@ -68,3 +68,4 @@ alias l1='ls -1'
 
 # to invoke the P checker directly (for P language)
 alias pmc='coyote test'
+. "/home/bnm/.deno/env"
