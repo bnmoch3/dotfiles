@@ -1,3 +1,5 @@
+if [[ -o interactive ]]; then
+
 #
 # Set editor to nvim if available
 if command -v nvim &>/dev/null; then
@@ -61,3 +63,5 @@ export LD_LIBRARY_PATH="/usr/local/cuda-12.3/lib64:$LD_LIBRARY_PATH"
 
 # VCPKG
 export VCPKG_ROOT="$HOME/LOCAL/bin/vcpkg"
+
+fi
