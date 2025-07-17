@@ -217,10 +217,11 @@ vnoremap("<localleader>v", "b")
 nnoremap("<localleader>t", ":TagbarToggle<CR>")
 
 -- add key combos for navigating between split windows
-nnoremap("<C-J>", " <C-W><C-J> ")
-nnoremap("<C-K>", " <C-W><C-K> ")
-nnoremap("<C-L>", " <C-W><C-L> ")
-nnoremap("<C-H>", " <C-W><C-H> ")
+nnoremap("<c-h>", "<cmd>TmuxNavigateLeft<CR>")
+nnoremap("<c-j>", "<cmd>TmuxNavigateDown<CR>")
+nnoremap("<c-k>", "<cmd>TmuxNavigateUp<CR>")
+nnoremap("<c-l>", "<cmd>TmuxNavigateRight<CR>")
+nnoremap("<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>")
 
 -- for clearing highlighting after a search
 nnoremap("\\", ":<C-u>nohlsearch<CR>")
