@@ -311,9 +311,6 @@ nvim_tree.setup({
 	disable_netrw = true,
 	on_attach = nvim_tree_on_attach,
 })
-vim.g.nvim_tree_icons = {
-	git = { unstaged = "", staged = "", unmerged = "", renamed = "", untracked = "", deleted = "" },
-}
 nnoremap("<C-n>n", ":NvimTreeToggle<CR>")
 
 -- ============================================================================
@@ -673,6 +670,31 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
 	pattern = { "term://*" },
 	group = termGroup,
 })
+
+local Terminal = require("toggleterm.terminal").Terminal
+
+local lazygit = Terminal:new({
+	cmd = "lazygit",
+	direction = "float",
+	hidden = true,
+	start_in_insert = true,
+	on_open = function(term)
+		if os.getenv("TMUX") then
+			vim.fn.system("tmux resize-pane -Z") -- Zoom tmux pane
+		end
+		vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<Esc>", "<Esc>", { noremap = true, silent = true })
+		-- vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<Esc>", "<Nop>", { noremap = true, silent = true })
+	end,
+	on_close = function()
+		if os.getenv("TMUX") then
+			vim.fn.system("tmux resize-pane -Z") -- Un-zoom tmux pane
+		end
+	end,
+})
+
+vim.keymap.set("n", "<leader>gg", function()
+	lazygit:toggle()
+end, { desc = "Toggle Lazygit (zoomed)" })
 
 -- ============================================================================
 --                              FORMATTING
