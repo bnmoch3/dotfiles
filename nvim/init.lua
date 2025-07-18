@@ -221,7 +221,6 @@ nnoremap("<c-h>", "<cmd>TmuxNavigateLeft<CR>")
 nnoremap("<c-j>", "<cmd>TmuxNavigateDown<CR>")
 nnoremap("<c-k>", "<cmd>TmuxNavigateUp<CR>")
 nnoremap("<c-l>", "<cmd>TmuxNavigateRight<CR>")
-nnoremap("<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>")
 
 -- for clearing highlighting after a search
 nnoremap("\\", ":<C-u>nohlsearch<CR>")
