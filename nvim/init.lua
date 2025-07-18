@@ -672,29 +672,74 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
 })
 
 local Terminal = require("toggleterm.terminal").Terminal
+local function create_zoomed_toggle_term(cmd)
+	local did_zoom = false
 
-local lazygit = Terminal:new({
-	cmd = "lazygit",
-	direction = "float",
-	hidden = true,
-	start_in_insert = true,
-	on_open = function(term)
-		if os.getenv("TMUX") then
-			vim.fn.system("tmux resize-pane -Z") -- Zoom tmux pane
-		end
-		vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<Esc>", "<Esc>", { noremap = true, silent = true })
-		-- vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<Esc>", "<Nop>", { noremap = true, silent = true })
-	end,
-	on_close = function()
-		if os.getenv("TMUX") then
-			vim.fn.system("tmux resize-pane -Z") -- Un-zoom tmux pane
-		end
-	end,
-})
+	local function is_tmux_zoomed()
+		local output = vim.fn.system("tmux display-message -p '#{window_zoomed_flag}'")
+		return vim.fn.trim(output) == "1"
+	end
 
+	return Terminal:new({
+		cmd = cmd,
+		direction = "float",
+		hidden = true,
+		start_in_insert = true,
+		on_open = function(term)
+			if os.getenv("TMUX") then
+				if not is_tmux_zoomed() then
+					vim.fn.system("tmux resize-pane -Z")
+					did_zoom = true
+				else
+					did_zoom = false
+				end
+			end
+			vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<Esc>", "<Esc>", { noremap = true, silent = true })
+		end,
+		on_close = function()
+			if os.getenv("TMUX") and did_zoom then
+				vim.fn.system("tmux resize-pane -Z")
+			end
+		end,
+	})
+end
+
+local function create_zoomed_toggle_term(cmd)
+	local did_zoom = false
+
+	local function is_tmux_zoomed()
+		local output = vim.fn.system("tmux display-message -p '#{window_zoomed_flag}'")
+		return vim.fn.trim(output) == "1"
+	end
+
+	return Terminal:new({
+		cmd = cmd,
+		direction = "float",
+		hidden = true,
+		start_in_insert = true,
+		on_open = function(term)
+			if os.getenv("TMUX") then
+				if not is_tmux_zoomed() then
+					vim.fn.system("tmux resize-pane -Z")
+					did_zoom = true
+				else
+					did_zoom = false
+				end
+			end
+			vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<Esc>", "<Esc>", { noremap = true, silent = true })
+		end,
+		on_close = function()
+			if os.getenv("TMUX") and did_zoom then
+				vim.fn.system("tmux resize-pane -Z")
+			end
+		end,
+	})
+end
+
+local lazygit = create_zoomed_toggle_term("lazygit")
 vim.keymap.set("n", "<leader>gg", function()
 	lazygit:toggle()
-end, { desc = "Toggle Lazygit (zoomed)" })
+end, { desc = "Lazygit (zoom-safe)" })
 
 -- ============================================================================
 --                              FORMATTING
