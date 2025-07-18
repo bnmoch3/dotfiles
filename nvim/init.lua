@@ -86,8 +86,8 @@ require("packer").startup(function(use)
 	use("ziglang/zig.vim")
 	use("dijkstracula/vim-plang")
 
+	use("mfussenegger/nvim-lint")
 	use("stevearc/conform.nvim")
-	use("j-hui/fidget.nvim")
 	-- use("j-hui/fidget.nvim")
 
 	-- Automatically set up your configuration after cloning packer.nvim
@@ -771,6 +771,7 @@ require("conform").setup({
 		yaml = { "yamlfmt" },
 		sql = { "sqlfmt" },
 		sh = { "shfmt" },
+		javascript = { "biome" },
 		go = function(bufnr)
 			if require("conform").get_formatter_info("gofumpt", bufnr).available then
 				return { "goimports", "gofumpt" }
@@ -781,5 +782,37 @@ require("conform").setup({
 		["*"] = { "trim_whitespace", "trim_newlines" },
 	},
 })
+-- ============================================================================
+--                              LINTING
+-- ============================================================================
+require("lint").linters_by_ft = {
+	python = { "ruff" },
+	lua = { "luacheck" },
+	make = { "checkmake" },
+	sh = { "shellchec" },
+	dockerfile = { "hadolint" },
+	go = { "golangcilint" },
+}
+
+vim.api.nvim_create_user_command("Linters", function()
+	local lint = require("lint")
+	local ft = vim.bo.filetype
+	local configured = lint.linters_by_ft[ft]
+
+	if configured == nil or vim.tbl_isempty(configured) then
+		print("No linters configured for filetype: " .. ft)
+	else
+		print("Linters for " .. ft .. ": " .. table.concat(configured, ", "))
+	end
+end, {})
+
+vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+	callback = function()
+		-- try_lint without arguments runs the linters defined in `linters_by_ft`
+		-- for the current filetype
+		require("lint").try_lint()
+	end,
+})
+
 -- ============================================================================
 -- ============================================================================
