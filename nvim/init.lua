@@ -206,6 +206,18 @@ vim.g.indentLine_char = "|"
 vim.g.indent_blankline_user_treesitter = true
 vim.g.indent_blankline_show_first_indent_level = false
 
+-- Disable concealment and ensure all folds are open when editing:
+-- JSON, JSONC,Markdown files.
+-- This helps to always see raw syntax (e.g. backticks, quotes, Unicode
+-- escapes) and avoids starting with folded sections.
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "json", "jsonc", "markdown" },
+	callback = function()
+		vim.wo.conceallevel = 0
+		vim.wo.foldlevel = 99
+	end,
+})
+
 -- ============================================================================
 --                              KEYMAPS
 -- ============================================================================
