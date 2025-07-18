@@ -88,6 +88,7 @@ require("packer").startup(function(use)
 
 	use("stevearc/conform.nvim")
 	use("j-hui/fidget.nvim")
+	-- use("j-hui/fidget.nvim")
 
 	-- Automatically set up your configuration after cloning packer.nvim
 	-- Put this at the end after all plugins
