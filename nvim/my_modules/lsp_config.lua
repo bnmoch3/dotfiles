@@ -187,8 +187,9 @@ local lang_servers = {
 			offsetEncoding = "utf-8",
 		},
 	},
-	dockerls = {},
 	ts_ls = {},
+	dockerls = {},
+	buf_ls = {},
 	lua_ls = {
 		root_dir = util.root_pattern(".git", ".luarc.json", "init.lua"), -- <-- Add this
 		settings = {
