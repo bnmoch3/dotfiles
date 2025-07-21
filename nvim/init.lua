@@ -4,6 +4,7 @@
 --                              HELPERS
 -- ============================================================================
 -- {{
+
 function pp(obj)
 	require("my_modules.helpers").pretty_print(obj)
 end
@@ -491,43 +492,47 @@ nnoremap("<leader>fs", "<cmd>lua require('telescope.builtin').git_status()<cr>")
 --                              DIAGNOSTICS
 -- ============================================================================
 vim.o.signcolumn = "yes:1"
-Toggle_diagnostics = (function()
-	local diagnostics_on = true
-	return function()
-		if diagnostics_on then
-			vim.diagnostic.disable(0)
-			vim.o.signcolumn = "no"
-		else
-			vim.diagnostic.enable(0)
-			vim.o.signcolumn = "yes:1"
-		end
-		diagnostics_on = not diagnostics_on
-	end
-end)()
 
-local severity = { min = vim.diagnostic.severity["WARN"] }
+local function toggle_diagnostics()
+	local bufnr = vim.api.nvim_get_current_buf()
+	if vim.diagnostic.is_enabled({ bufnr = bufnr }) then
+		vim.diagnostic.enable(false, { bufnr = bufnr })
+	else
+		vim.diagnostic.enable(true, { bufnr = bufnr })
+	end
+end
+
+local _severity = vim.diagnostic.severity.WARN -- default min severity
+vim.g._diagnostic_min_severity = { min = _severity }
 vim.diagnostic.config({
+	float = { source = "if_many" },
 	severity_sort = true,
-	underline = { severity = severity },
-	virtual_text = false,
-	-- virtual_text = { severity = severity },
-	signs = { severity = severity },
+	underline = { severity = _severity },
+	virtual_text = { severity = _severity },
+	signs = { severity = _severity },
 })
 
 local function set_min_severity_level(opts)
-	local new_severity = { min = vim.diagnostic.severity[opts.args] }
-	local config = vim.diagnostic.config() -- get curr config
-	for _, v in ipairs({ "signs", "underline", "virtual_text" }) do
-		config[v].severity = new_severity
+	local level_name = string.upper(opts.args)
+	local severity_val = vim.diagnostic.severity[level_name]
+	if not severity_val then
+		error("Invalid severity level: " .. opts.args .. ". Use one of: ERROR, WARN, INFO, HINT")
 	end
-	vim.diagnostic.config(config)
-	severity = new_severity
-	-- update LSP handler for publishing diagnostics
-	vim.lsp.handlers["textDocument/publishDiagnostics"] =
-		vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, config)
+	local new_severity = { min = severity_val }
+	vim.g._diagnostic_min_severity = new_severity
+
+	-- Update existing diagnostic config to respect the new severity
+	local curr_config = vim.diagnostic.config()
+	for _, field in ipairs({ "signs", "underline", "virtual_text" }) do
+		if type(curr_config[field]) == "table" then
+			curr_config[field].severity = new_severity
+		end
+	end
+	vim.diagnostic.config(curr_config)
 end
 
-local set_min_severity_level_opts = {
+-- completion for severity levels when configuring as Command
+local opts_set_min_severity_level = {
 	nargs = 1,
 	complete = function(ArgLeader)
 		local hints = {}
@@ -540,37 +545,44 @@ local set_min_severity_level_opts = {
 		return hints
 	end,
 }
-function Goto_diagnostics(direction)
-	local opts = {
-		severity = severity,
-		wrap = false,
-	}
-	if direction == "next" then
-		vim.diagnostic.goto_next(opts)
-	elseif direction == "prev" then
-		vim.diagnostic.goto_prev(opts)
-	else
+
+-- jump to next/prev diagnostic matching current min severity
+local function goto_diagnostics(direction)
+	local count = ({ next = 1, prev = -1 })[direction]
+	if not count then
 		error("Invalid direction: " .. tostring(direction))
+	end
+
+	return function()
+		local severity = vim.g._diagnostic_min_severity or { min = _severity }
+		vim.diagnostic.jump({
+			count = count,
+			float = true,
+			wrap = false,
+			severity = severity,
+		})
 	end
 end
 
-function Toggle_diagnostics_curr_line()
-	local cursor_position = vim.api.nvim_win_get_cursor(0)
-	local diagnostics = vim.diagnostic.get(0, {
-		lnum = cursor_position[1] - 1,
-	})
-	for index, diagnostic in ipairs(diagnostics) do
-		local message = diagnostic["message"]
-		local ok, extensive_message = pcall(function()
-			return diagnostic["user_data"]["lsp"]["data"]["rendered"]
-		end)
-		if ok then
-			print(extensive_message)
-		else
-			print(message)
-		end
+local function toggle_diagnostics_curr_line()
+	if vim.b.diagnostic_float_win and vim.api.nvim_win_is_valid(vim.b.diagnostic_float_win) then
+		vim.api.nvim_win_close(vim.b.diagnostic_float_win, true)
+		vim.b.diagnostic_float_win = nil
+	else
+		local opts = { scope = "line", source = true }
+		local _, winid = vim.diagnostic.open_float(opts)
+		vim.b.diagnostic_float_win = winid
 	end
 end
+
+vim.api.nvim_create_autocmd("CursorHold", {
+	callback = function()
+		if not vim.b.diagnostic_float_win or not vim.api.nvim_win_is_valid(vim.b.diagnostic_float_win) then
+			local _, winid = vim.diagnostic.open_float({ scope = "line", source = true })
+			vim.b.diagnostic_float_win = winid
+		end
+	end,
+})
 
 require("trouble").setup({
 	mode = "document_diagnostics",
@@ -586,12 +598,23 @@ nnoremap("<Leader>dt", "<cmd>TroubleToggle<cr>")
 nnoremap("<Leader>dq", "<cmd>Trouble quickfix<cr>")
 nnoremap("<Leader>dg", "<cmd>Trouble document_diagnostics<cr>")
 nnoremap("<Leader>dw", "<cmd>Trouble workspace_diagnostics<cr>")
-nnoremap("]d", "zz<cmd>lua Goto_diagnostics('next')<cr>")
-nnoremap("[d", "zz<cmd>lua Goto_diagnostics('prev')<cr>")
-nnoremap("<Leader>ds", "<cmd>lua Toggle_diagnostics()<cr>")
-nnoremap("<Leader>dd", "<cmd>lua Toggle_diagnostics_curr_line()<cr>")
-vim.api.nvim_create_user_command("ToggleDiagnostics", Toggle_diagnostics, { nargs = 0 })
-vim.api.nvim_create_user_command("SetLevel", set_min_severity_level, set_min_severity_level_opts)
+
+vim.keymap.set("n", "]d", goto_diagnostics("next"), { silent = true, desc = "Next diagnostic" })
+
+vim.keymap.set("n", "[d", goto_diagnostics("prev"), { silent = true, desc = "Previous diagnostic" })
+
+vim.keymap.set("n", "<Leader>ds", toggle_diagnostics, {
+	silent = true,
+	desc = "Toggle diagnostics per buffer",
+})
+
+vim.keymap.set("n", "<Leader>dd", toggle_diagnostics_curr_line, {
+	silent = true,
+	desc = "Toggle diagnostics on current line",
+})
+
+vim.api.nvim_create_user_command("ToggleDiagnostics", toggle_diagnostics, { nargs = 0 })
+vim.api.nvim_create_user_command("SetDiagnosticsLevel", set_min_severity_level, opts_set_min_severity_level)
 
 -- ============================================================================
 --                              AUTO-COMPLETION
@@ -806,7 +829,7 @@ vim.api.nvim_create_user_command("Linters", function()
 	end
 end, {})
 
-vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave", "BufWritePost" }, {
 	callback = function()
 		-- try_lint without arguments runs the linters defined in `linters_by_ft`
 		-- for the current filetype
@@ -816,3 +839,4 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 
 -- ============================================================================
 -- ============================================================================
+--
