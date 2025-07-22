@@ -376,10 +376,12 @@ nnoremap("<leader>fr", "<cmd>lua require('telescope.builtin').registers()<cr>")
 nnoremap("<leader>fl", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find({})<cr>")
 nnoremap("<leader>fd", "<cmd>lua require('telescope.builtin').diagnostics()<cr>")
 nnoremap("<leader>fs", "<cmd>lua require('telescope.builtin').git_status()<cr>")
+
 -- ============================================================================
 --                              FIDGET NOTIFY
 -- ============================================================================
 require("fidget").setup()
+
 -- ============================================================================
 --                              DIAGNOSTICS
 -- ============================================================================
@@ -497,11 +499,14 @@ local trouble = require("trouble")
 trouble.setup({
 	keys = {
 		["p"] = "toggle_preview", -- 'p' to toggle preview
-		["<cr>"] = "jump", -- enter for jumping
+		["<cr>"] = "jump", -- default behavior for other modes
 	},
 	modes = {
 		symbols = {
 			auto_preview = false, -- disable auto to make toggle meaningful
+			keys = {
+				["<cr>"] = "jump_close",
+			},
 		},
 	},
 	mode = "document_diagnostics",
