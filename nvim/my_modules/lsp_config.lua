@@ -59,11 +59,6 @@ local lsp_actions = {
 		keybinding = nil,
 		action = vim.lsp.buf.document_symbol,
 	},
-	{ -- retrieves completion items at curr cursor pos, can only be used in insert mode
-		cmd = "complete",
-		keybinding = nil,
-		action = vim.lsp.buf.completion,
-	},
 	{ -- jumps to the def of symbols under the cursor
 		cmd = "definition",
 		keybinding = { "<Leader>gs", "<C-]>" },
@@ -116,7 +111,7 @@ local lsp_actions = {
 	},
 }
 
-local custom_lsp_attach = function(client, bufnr)
+local custom_lsp_attach = function(_client, bufnr)
 	-- set up keyboard shortcuts
 	for _, v in ipairs(lsp_actions) do
 		flatten_apply(v.keybinding, function(keybinding)
@@ -190,15 +185,22 @@ local lang_servers = {
 	ts_ls = {},
 	buf_ls = {},
 	lua_ls = {
-		root_dir = util.root_pattern(".git", ".luarc.json", "init.lua"), -- <-- Add this
+		root_dir = util.root_pattern(".git", ".luarc.json", "init.lua"),
 		settings = {
 			Lua = {
 				diagnostics = {
-					globals = { "vim" },
+					globals = { "vim", "pp" },
+					unusedLocalExclude = { "_*" },
+					-- You can also disable specific diagnostics entirely:
+					disable = {
+						"lowercase-global",
+						"unused-local",
+						"unused-function",
+						"unused-vararg", -- if you want to ignore unused ... args too
+					},
 				},
-				disable = { "lowercase-global" },
 				workspace = {
-					checkThirdParty = false, -- Add this to suppress other warnings
+					checkThirdParty = false,
 					library = {
 						[vim.fn.expand("$VIMRUNTIME/lua")] = true,
 						[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,

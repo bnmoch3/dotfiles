@@ -5,7 +5,8 @@
 -- ============================================================================
 -- {{
 
-function pp(obj)
+-- luacheck: ignore pp
+local function pp(obj)
 	require("my_modules.helpers").pretty_print(obj)
 end
 
@@ -82,6 +83,18 @@ require("packer").startup(function(use)
 	use("simrat39/rust-tools.nvim")
 	use("mfussenegger/nvim-jdtls")
 	use("ziglang/zig.vim")
+	use({
+		"folke/lazydev.nvim",
+		ft = "lua",
+		config = function()
+			require("lazydev").setup({
+				library = {
+					-- Load luvit types when the `vim.uv` word is found
+					{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
+				},
+			})
+		end,
+	})
 
 	-- diagnostics, linting, formatting
 	use("mfussenegger/nvim-lint")
@@ -155,6 +168,9 @@ vim.o.smartcase = true
 -- vim.g.did_load_filetypes = 1
 
 local colorscheme = (function()
+	-- luacheck: ignore white black_pale black_bright grey_light grey_comments grey_highlight grey_dark
+	-- luacheck: ignore red_pale red_bright green_pale green_bright yellow_orange_pale yellow_orange_bright
+	-- luacheck: ignore blue_pale blue_bright red
 	local white = "#f8f8f8" -- alacritty: white
 	local black_pale = "#212121" -- alacritty: black
 	local black_bright = "#1d1d1d"
@@ -204,18 +220,6 @@ vim.g.beacon_ignore_filetypes = { "qf", "NvimTree" }
 vim.g.indentLine_char = "|"
 vim.g.indent_blankline_user_treesitter = true
 vim.g.indent_blankline_show_first_indent_level = false
-
--- Disable concealment and ensure all folds are open when editing:
--- JSON, JSONC,Markdown files.
--- This helps to always see raw syntax (e.g. backticks, quotes, Unicode
--- escapes) and avoids starting with folded sections.
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "json", "jsonc", "markdown" },
-	callback = function()
-		vim.wo.conceallevel = 0
-		vim.wo.foldlevel = 99
-	end,
-})
 
 -- ============================================================================
 --                              KEYMAPS
@@ -328,9 +332,29 @@ nvim_treesitter_configs.setup({
 	yati = { enable = true },
 	indent = { enable = true },
 })
+
+-- ============================================================================
+--                              FOLDING
+-- ============================================================================
+
 vim.o.foldmethod = "indent"
-vim.o.foldexpr = "nvim_treesitter#foldexpr()"
-vim.o.foldenable = true
+vim.o.foldnestmax = 3
+vim.o.foldminlines = 1
+vim.o.foldenable = false -- disable fold on startup
+vim.o.foldlevelstart = 99
+vim.o.foldlevel = 99
+
+-- Disable concealment and ensure all folds are open when editing:
+-- JSON, JSONC,Markdown files.
+-- This helps to always see raw syntax (e.g. backticks, quotes, Unicode
+-- escapes) and avoids starting with folded sections.
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "json", "jsonc", "markdown" },
+	callback = function()
+		vim.wo.conceallevel = 0
+		vim.wo.foldlevel = 99
+	end,
+})
 
 -- ============================================================================
 --                              TELESCOPE
@@ -390,7 +414,6 @@ vim.g._diagnostic_min_severity = _default_severity
 
 vim.diagnostic.config({
 	float = { source = "if_many" },
-	severity_sort = true,
 	underline = { severity = _default_severity },
 	virtual_text = false,
 	signs = { severity = _default_severity },
@@ -433,9 +456,13 @@ local function set_min_severity_level(opts)
 
 	-- Update existing diagnostic config to respect the new severity
 	local curr_config = vim.diagnostic.config()
+	if curr_config == nil then
+		return
+	end
 	for _, field in ipairs({ "signs", "underline", "virtual_text" }) do
-		if type(curr_config[field]) == "table" then
-			curr_config[field].severity = new_severity
+		local field_config = curr_config[field]
+		if type(field_config) == "table" then
+			field_config.severity = new_severity
 		end
 	end
 	vim.diagnostic.config(curr_config)
@@ -673,37 +700,6 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
 })
 
 local Terminal = require("toggleterm.terminal").Terminal
-local function create_zoomed_toggle_term(cmd)
-	local did_zoom = false
-
-	local function is_tmux_zoomed()
-		local output = vim.fn.system("tmux display-message -p '#{window_zoomed_flag}'")
-		return vim.fn.trim(output) == "1"
-	end
-
-	return Terminal:new({
-		cmd = cmd,
-		direction = "float",
-		hidden = true,
-		start_in_insert = true,
-		on_open = function(term)
-			if os.getenv("TMUX") then
-				if not is_tmux_zoomed() then
-					vim.fn.system("tmux resize-pane -Z")
-					did_zoom = true
-				else
-					did_zoom = false
-				end
-			end
-			vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<Esc>", "<Esc>", { noremap = true, silent = true })
-		end,
-		on_close = function()
-			if os.getenv("TMUX") and did_zoom then
-				vim.fn.system("tmux resize-pane -Z")
-			end
-		end,
-	})
-end
 
 local function create_zoomed_toggle_term(cmd)
 	local did_zoom = false
