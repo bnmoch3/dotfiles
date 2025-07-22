@@ -45,7 +45,6 @@ require("packer").startup(function(use)
 	use("simrat39/rust-tools.nvim")
 	use("mfussenegger/nvim-jdtls")
 	use({ "folke/trouble.nvim", requires = { "folke/lsp-colors.nvim" } })
-	use("stevearc/aerial.nvim")
 	use("bnmoch3/nvim-goto-preview")
 	use("ray-x/lsp_signature.nvim")
 	use("akinsho/toggleterm.nvim")
@@ -330,7 +329,6 @@ lualine.setup({
 		lualine_a = { "mode" },
 		lualine_b = { "filename" },
 		lualine_c = { "filetype" },
-		lualine_x = { "aerial" },
 		lualine_y = { { "diagnostics", sections = { "error", "warn" } }, "diff", "branch" },
 		lualine_z = { "" },
 	},
@@ -356,92 +354,6 @@ nvim_treesitter_configs.setup({
 vim.o.foldmethod = "indent"
 vim.o.foldexpr = "nvim_treesitter#foldexpr()"
 vim.o.foldenable = true
-
--- ============================================================================
---                              AERIAL
--- ============================================================================
-local aerial_keymaps = {
-	-- ["<CR>"]= "<cmd>lua require'aerial'.select({jump=false})<CR>", -- "Jump to the symbol under the cursor keep focus in aerial window",
-	["<CR>"] = "actions.jump", -- "Jump to the symbol under the cursor keep focus in aerial window",
-	["<c-]>"] = "actions.jump", -- Jump to the symbol under the cursor
-	["<C-v>"] = "actions.jump_vsplit", -- Jump to the symbol in a vertical split
-	["<C-s>"] = "actions.jump_split", -- Jump to the symbol in a horizontal split
-	["{"] = "actions.prev", -- Jump to the previous symbol
-	["}"] = "actions.next", -- Jump to the next symbol
-	["[["] = "actions.prev_up", -- Jump up the tree, moving backwards
-	["]]"] = "actions.next_up", -- Jump up the tree, moving forwards
-	["q"] = "actions.close", -- Close the aerial window
-	["za"] = "actions.tree_toggle", -- Toggle the symbol under the cursor open/closed
-	["zA"] = "actions.tree_toggle_recursive", -- Recursive toggle the symbol under the cursor open/closed
-	["zo"] = "actions.tree_open", -- Expand the symbol under the cursor
-	["zO"] = "actions.tree_open_recursive", -- Recursive expand the symbol under the cursor
-	["zc"] = "actions.tree_close", -- Collapse the symbol under the cursor
-	["zC"] = "actions.tree_close_recursive", -- Recursive collapse the symbol under the cursor
-	["zR"] = "actions.tree_open_all", -- Expand all nodes in the tree
-	["zM"] = "actions.tree_close_all", -- Collapse all nodes in the tree
-	["r"] = "actions.tree_sync_folds", -- Sync code folding to the tree (useful if they get out of sync)
-}
-
-require("aerial").setup({
-	highlight_on_hover = true,
-	manage_folds = true,
-	link_tree_to_folds = true,
-	show_guides = true,
-	keymaps = aerial_keymaps,
-	nerd_font = "auto",
-	on_attach = function(bufnr) -- bufnr arg
-		nnoremap("<Leader>a", "<cmd>AerialToggle<cr>")
-	end,
-})
-require("lspkind").init({
-	-- DEPRECATED (use mode instead): enables text annotations
-	--
-	-- default: true
-	-- with_text = true,
-
-	-- defines how annotations are shown
-	-- default: symbol
-	-- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
-	mode = "symbol_text",
-
-	-- default symbol map
-	-- can be either 'default' (requires nerd-fonts font) or
-	-- 'codicons' for codicon preset (requires vscode-codicons font)
-	--
-	-- default: 'default'
-	preset = "codicons",
-
-	-- override preset symbols
-	--
-	-- default: {}
-	symbol_map = {
-		Text = "*",
-		Method = "*",
-		Function = "*",
-		Constructor = "",
-		Field = "*",
-		Variable = "*",
-		Class = "*",
-		Interface = "",
-		Module = "",
-		Property = "*",
-		Unit = "*",
-		Value = "*",
-		Enum = "",
-		Keyword = "*",
-		Snippet = "",
-		Color = "*",
-		File = "*",
-		Reference = "*",
-		Folder = "*",
-		EnumMember = "",
-		Constant = "*",
-		Struct = "*",
-		Event = "",
-		Operator = "*",
-		TypeParameter = "$",
-	},
-})
 
 -- ============================================================================
 --                              TELESCOPE
