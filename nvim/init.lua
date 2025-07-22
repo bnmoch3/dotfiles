@@ -33,6 +33,7 @@ vim.api.nvim_create_user_command("Todo", "e ~/TODO.txt", {})
 --                              PLUGINS
 -- ============================================================================
 require("packer").startup(function(use)
+	-- tools
 	use("wbthomason/packer.nvim")
 	use("alvan/vim-closetag")
 	use("tpope/vim-commentary") -- for commenting out lines
@@ -42,8 +43,6 @@ require("packer").startup(function(use)
 	use("nvim-treesitter/nvim-treesitter")
 	use("williamboman/mason.nvim")
 	use("neovim/nvim-lspconfig")
-	use("simrat39/rust-tools.nvim")
-	use("mfussenegger/nvim-jdtls")
 	use({ "folke/trouble.nvim", requires = { "folke/lsp-colors.nvim" } })
 	use("bnmoch3/nvim-goto-preview")
 	use("ray-x/lsp_signature.nvim")
@@ -66,7 +65,6 @@ require("packer").startup(function(use)
 	use("DanilaMihailov/beacon.nvim") -- temporarily highlight cursor's curr line
 	use("lukas-reineke/indent-blankline.nvim") -- indentation guides
 
-	use("preservim/tagbar")
 	use("christoomey/vim-tmux-navigator") -- add tmux navigation compatibility
 	vim.g.tmux_navigator_save_on_switch = true
 	vim.g.tmux_navigator_disable_when_zoomed = true
@@ -78,13 +76,14 @@ require("packer").startup(function(use)
 	use("nvim-tree/nvim-tree.lua")
 	use("nvim-lualine/lualine.nvim")
 	use({ "nvim-telescope/telescope.nvim", requires = { "nvim-lua/plenary.nvim" } })
-	-- for fuzzy search in telescope
-	use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" })
+	use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" }) -- for fuzzy search in telescope
 
 	-- langs
+	use("simrat39/rust-tools.nvim")
+	use("mfussenegger/nvim-jdtls")
 	use("ziglang/zig.vim")
-	use("dijkstracula/vim-plang")
 
+	-- diagnostics, linting, formatting
 	use("mfussenegger/nvim-lint")
 	use("stevearc/conform.nvim")
 	use("j-hui/fidget.nvim")
