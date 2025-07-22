@@ -101,6 +101,12 @@ require("packer").startup(function(use)
 	use("stevearc/conform.nvim")
 	use("j-hui/fidget.nvim")
 
+	-- git
+	use({
+		"lewis6991/gitsigns.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+	})
+
 	-- Automatically set up your configuration after cloning packer.nvim
 	-- Put this at the end after all plugins
 	if packer_bootstrap then
@@ -409,25 +415,54 @@ require("fidget").setup()
 --                              DIAGNOSTICS
 -- ============================================================================
 vim.o.signcolumn = "yes:1"
-local _default_severity = { min = vim.diagnostic.severity.WARN } -- default min severity
-vim.g._diagnostic_min_severity = _default_severity
 
+-- Let's be more explicit about severity levels
+local default_severity = { min = vim.diagnostic.severity.WARN }
+vim.g._diagnostic_min_severity = default_severity
+
+-- Simplified diagnostic config - let's test without the handler override first
 vim.diagnostic.config({
 	float = { source = "if_many" },
-	underline = { severity = _default_severity },
+	underline = { severity = vim.diagnostic.severity.ERROR },
 	virtual_text = false,
-	signs = { severity = _default_severity },
+	signs = {
+		severity = default_severity,
+		text = {
+			[vim.diagnostic.severity.ERROR] = "E",
+			[vim.diagnostic.severity.WARN] = "W",
+			[vim.diagnostic.severity.INFO] = "",
+			[vim.diagnostic.severity.HINT] = "",
+		},
+	},
 	severity_sort = true,
+})
+
+-- git signs
+require("gitsigns").setup({
+	sign_priority = 5,
 })
 
 local function toggle_diagnostics()
 	local bufnr = vim.api.nvim_get_current_buf()
+	local gitsigns = require("gitsigns")
+	local notify = require("fidget.notification").notify
+
 	if vim.diagnostic.is_enabled({ bufnr = bufnr }) then
 		vim.diagnostic.enable(false, { bufnr = bufnr })
+		gitsigns.toggle_signs(true) -- Enable git signs
+		notify("Diagnostics OFF, Git signs ON")
 	else
 		vim.diagnostic.enable(true, { bufnr = bufnr })
+		gitsigns.toggle_signs(false) -- Disable git signs
+		notify("Diagnostics ON, Git signs OFF")
 	end
 end
+
+-- start with diagnostics off, git signs on
+vim.schedule(function()
+	local gitsigns = require("gitsigns")
+	gitsigns.toggle_signs(false)
+end)
 
 vim.g._diagnostic_virtual_text_enabled = false
 local function toggle_virtual_text_diagnostics()
@@ -491,7 +526,7 @@ local function goto_diagnostics(direction)
 	end
 
 	return function()
-		local severity = vim.g._diagnostic_min_severity or _default_severity
+		local severity = vim.g._diagnostic_min_severity or default_severity
 		vim.diagnostic.jump({
 			count = count,
 			float = true,
