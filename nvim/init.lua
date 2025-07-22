@@ -398,7 +398,10 @@ nnoremap("<leader>fr", "<cmd>lua require('telescope.builtin').registers()<cr>")
 nnoremap("<leader>fl", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find({})<cr>")
 nnoremap("<leader>fd", "<cmd>lua require('telescope.builtin').diagnostics()<cr>")
 nnoremap("<leader>fs", "<cmd>lua require('telescope.builtin').git_status()<cr>")
-
+-- ============================================================================
+--                              FIDGET NOTIFY
+-- ============================================================================
+require("fidget").setup()
 -- ============================================================================
 --                              DIAGNOSTICS
 -- ============================================================================
