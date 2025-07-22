@@ -406,6 +406,17 @@ require("fidget").setup()
 --                              DIAGNOSTICS
 -- ============================================================================
 vim.o.signcolumn = "yes:1"
+local _default_severity = { min = vim.diagnostic.severity.WARN } -- default min severity
+vim.g._diagnostic_min_severity = _default_severity
+
+vim.diagnostic.config({
+	float = { source = "if_many" },
+	severity_sort = true,
+	underline = { severity = _default_severity },
+	virtual_text = false,
+	signs = { severity = _default_severity },
+	severity_sort = true,
+})
 
 local function toggle_diagnostics()
 	local bufnr = vim.api.nvim_get_current_buf()
@@ -416,15 +427,21 @@ local function toggle_diagnostics()
 	end
 end
 
-local _severity = vim.diagnostic.severity.WARN -- default min severity
-vim.g._diagnostic_min_severity = { min = _severity }
-vim.diagnostic.config({
-	float = { source = "if_many" },
-	severity_sort = true,
-	underline = { severity = _severity },
-	virtual_text = { severity = _severity },
-	signs = { severity = _severity },
-})
+vim.g._diagnostic_virtual_text_enabled = false
+local function toggle_virtual_text_diagnostics()
+	vim.g._diagnostic_virtual_text_enabled = not vim.g._diagnostic_virtual_text_enabled
+
+	local vt_config = vim.g._diagnostic_virtual_text_enabled and { severity = vim.g._diagnostic_min_severity } or false
+	vim.diagnostic.config({ virtual_text = vt_config })
+	-- vim.notify("virtual_text " .. (vim.g._diagnostic_virtual_text_enabled and "enabled" or "disabled"))
+
+	local fidget_notify = require("fidget.notification").notify
+	fidget_notify(
+		"virtual_text diagnostics: " .. (vim.g._diagnostic_virtual_text_enabled and "enabled" or "disabled"),
+		vim.log.levels.INFO,
+		{ title = "Diagnostics" }
+	)
+end
 
 local function set_min_severity_level(opts)
 	local level_name = string.upper(opts.args)
@@ -468,7 +485,7 @@ local function goto_diagnostics(direction)
 	end
 
 	return function()
-		local severity = vim.g._diagnostic_min_severity or { min = _severity }
+		local severity = vim.g._diagnostic_min_severity or _default_severity
 		vim.diagnostic.jump({
 			count = count,
 			float = true,
@@ -498,7 +515,17 @@ vim.api.nvim_create_autocmd("CursorHold", {
 	end,
 })
 
-require("trouble").setup({
+local trouble = require("trouble")
+trouble.setup({
+	keys = {
+		["p"] = "toggle_preview", -- 'p' to toggle preview
+		["<cr>"] = "jump", -- enter for jumping
+	},
+	modes = {
+		symbols = {
+			auto_preview = false, -- disable auto to make toggle meaningful
+		},
+	},
 	mode = "document_diagnostics",
 	group = true,
 	padding = false,
@@ -506,12 +533,18 @@ require("trouble").setup({
 		open_split = { "<C-s>" },
 		hover = { "h", "l" },
 	},
+	multiline = true,
 })
 
-nnoremap("<Leader>dt", "<cmd>TroubleToggle<cr>")
-nnoremap("<Leader>dq", "<cmd>Trouble quickfix<cr>")
-nnoremap("<Leader>dg", "<cmd>Trouble document_diagnostics<cr>")
-nnoremap("<Leader>dw", "<cmd>Trouble workspace_diagnostics<cr>")
+vim.keymap.set("n", "<Leader>dt", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Diagnostics (Trouble)" })
+vim.keymap.set("n", "<Leader>dq", "<cmd>Trouble qflist toggle<cr>", { desc = "Quickfix List (Trouble)" })
+vim.keymap.set(
+	"n",
+	"<Leader>dd",
+	"<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
+	{ desc = "Document Diagnostics (Trouble)" }
+)
+vim.keymap.set("n", "<Leader>dw", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Workspace Diagnostics (Trouble)" })
 
 vim.keymap.set("n", "]d", goto_diagnostics("next"), { silent = true, desc = "Next diagnostic" })
 
@@ -522,9 +555,25 @@ vim.keymap.set("n", "<Leader>ds", toggle_diagnostics, {
 	desc = "Toggle diagnostics per buffer",
 })
 
-vim.keymap.set("n", "<Leader>dd", toggle_diagnostics_curr_line, {
+vim.keymap.set("n", "<Leader>dl", toggle_diagnostics_curr_line, {
 	silent = true,
 	desc = "Toggle diagnostics on current line",
+})
+vim.keymap.set("n", "<Leader>dv", toggle_virtual_text_diagnostics, {
+	desc = "Toggle virtual_text diagnostics",
+	silent = true,
+})
+vim.keymap.set("n", "<Leader>da", function()
+	trouble.toggle("symbols", {
+		pinned = true,
+		win = {
+			relative = "win",
+			position = "right",
+		},
+	})
+end, {
+	desc = "Toggle virtual_text diagnostics",
+	silent = true,
 })
 
 vim.api.nvim_create_user_command("ToggleDiagnostics", toggle_diagnostics, { nargs = 0 })
