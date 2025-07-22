@@ -314,28 +314,6 @@ nvim_tree.setup({
 nnoremap("<C-n>n", ":NvimTreeToggle<CR>")
 
 -- ============================================================================
---                              LUALINE
--- ============================================================================
-local lualine = require("lualine")
-lualine.setup({
-	options = {
-		theme = "gruvbox",
-		disabled_filetypes = { "packer", "NvimTree" },
-		component_separators = { left = "|", right = "|" },
-		section_separators = { left = "", right = "" },
-		globalstatus = true,
-	},
-	sections = {
-		lualine_a = { "mode" },
-		lualine_b = { "filename" },
-		lualine_c = { "filetype" },
-		lualine_y = { { "diagnostics", sections = { "error", "warn" } }, "diff", "branch" },
-		lualine_z = { "" },
-	},
-	extensions = { "quickfix", "toggleterm" },
-})
-
--- ============================================================================
 --                              TREE-SITTER
 -- ============================================================================
 local nvim_treesitter_configs = require("nvim-treesitter.configs")
@@ -578,6 +556,38 @@ end, {
 
 vim.api.nvim_create_user_command("ToggleDiagnostics", toggle_diagnostics, { nargs = 0 })
 vim.api.nvim_create_user_command("SetDiagnosticsLevel", set_min_severity_level, opts_set_min_severity_level)
+
+-- ============================================================================
+--                              LUALINE
+-- ============================================================================
+local lualine = require("lualine")
+
+local symbols = trouble.statusline({
+	mode = "lsp_document_symbols",
+	groups = {},
+	title = false,
+	filter = { range = true }, -- this makes it update based on cursor position
+	format = "{kind_icon}{symbol.name:Normal}", -- change format to reduce verbosity
+	hl_group = "lualine_c_normal",
+})
+
+lualine.setup({
+	options = {
+		theme = "gruvbox",
+		disabled_filetypes = { "packer", "NvimTree" },
+		component_separators = { left = "|", right = "|" },
+		section_separators = { left = "", right = "" },
+		globalstatus = true,
+	},
+	sections = {
+		lualine_a = { "mode" },
+		lualine_b = { "filename" },
+		lualine_c = { "filetype", { symbols.get, cond = symbols.has } },
+		lualine_y = { { "diagnostics", sections = { "error", "warn" } }, "diff", "branch" },
+		lualine_z = { "" },
+	},
+	extensions = { "quickfix", "toggleterm" },
+})
 
 -- ============================================================================
 --                              AUTO-COMPLETION
