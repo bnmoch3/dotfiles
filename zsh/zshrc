@@ -1,4 +1,5 @@
 #!/usr/bin/zsh
+# zmodload zsh/zprof
 
 # only run in interactive shells
 [[ -o interactive ]] || return
@@ -77,6 +78,9 @@ comp_options+=(globdots)
 # load completion styles after compinit
 source "$HOME/dotfiles/zsh/external/completion.zsh"
 
+# auto virtual environment activation
+source "$HOME/dotfiles/zsh/auto-venv.zsh"
+
 # function autoloading (instead of sourcing)
 fpath=("$HOME/dotfiles/zsh/external" "$HOME/dotfiles/zsh" $fpath)
 autoload -Uz nv tms tmr tmk pwdd cwdd del open activate find1 nightmode daymode todo
@@ -106,5 +110,9 @@ fzf() {
   fzf "$@"
 }
 
+
+
 eval "$(atuin init zsh --disable-up-arrow)" &!
 eval "$(starship init zsh)"
+
+# zprof
