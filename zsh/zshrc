@@ -81,9 +81,8 @@ source "$HOME/dotfiles/zsh/external/completion.zsh"
 # auto virtual environment activation
 source "$HOME/dotfiles/zsh/auto-venv.zsh"
 
-# function autoloading (instead of sourcing)
-fpath=("$HOME/dotfiles/zsh/external" "$HOME/dotfiles/zsh" $fpath)
-autoload -Uz nv tms tmr tmk pwdd cwdd del open activate find1 nightmode daymode todo
+# functions
+source "$HOME/dotfiles/zsh/functions.zsh"
 
 # lazy load nvm
 export NVM_DIR="$HOME/.nvm"
