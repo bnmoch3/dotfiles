@@ -6,13 +6,10 @@
 -- {{
 
 -- luacheck: ignore pp
+-- for debugging stuff
 local function pp(obj)
-	require("my_modules.helpers").pretty_print(obj)
+	print(vim.inspect(obj))
 end
-
-local nnoremap = require("my_modules.helpers").nnoremap
-local vnoremap = require("my_modules.helpers").vnoremap
-local tnoremap = require("my_modules.helpers").tnoremap
 
 -- bootstrap packer installation
 local install_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
@@ -149,8 +146,8 @@ vim.o.incsearch = true
 
 -- quickfix
 vim.g.toggle_list_no_mappings = true
-nnoremap("<localleader>q", "<cmd>call ToggleQuickfixList()<cr>")
-nnoremap("<localleader>l", "<cmd>call ToggleLocationList()<cr>")
+vim.keymap.set("n", "<localleader>q", "<cmd>call ToggleQuickfixList()<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<localleader>l", "<cmd>call ToggleLocationList()<cr>", { noremap = true, silent = true })
 
 -- indenting
 vim.o.tabstop = 4
@@ -231,25 +228,22 @@ vim.g.indent_blankline_show_first_indent_level = false
 --                              KEYMAPS
 -- ============================================================================
 -- for toggling visual selection
-nnoremap("<localleader>v", "viw")
-vnoremap("<localleader>v", "b")
+vim.keymap.set("n", "<localleader>v", "viw", { noremap = true, silent = true, desc = "Select inner word" })
+vim.keymap.set("v", "<localleader>v", "b", { noremap = true, silent = true, desc = "Move back word" })
 
--- for toggling tagbar
-nnoremap("<localleader>t", ":TagbarToggle<CR>")
-
--- add key combos for navigating between split windows
-nnoremap("<c-h>", "<cmd>TmuxNavigateLeft<CR>")
-nnoremap("<c-j>", "<cmd>TmuxNavigateDown<CR>")
-nnoremap("<c-k>", "<cmd>TmuxNavigateUp<CR>")
-nnoremap("<c-l>", "<cmd>TmuxNavigateRight<CR>")
+-- add key combos for navigating between split windows while in normal mode
+vim.keymap.set("n", "<c-h>", "<cmd>TmuxNavigateLeft<CR>", { noremap = true, silent = true, desc = "Navigate left" })
+vim.keymap.set("n", "<c-j>", "<cmd>TmuxNavigateDown<CR>", { noremap = true, silent = true, desc = "Navigate down" })
+vim.keymap.set("n", "<c-k>", "<cmd>TmuxNavigateUp<CR>", { noremap = true, silent = true, desc = "Navigate up" })
+vim.keymap.set("n", "<c-l>", "<cmd>TmuxNavigateRight<CR>", { noremap = true, silent = true, desc = "Navigate right" })
 
 -- for clearing highlighting after a search
-nnoremap("\\", ":<C-u>nohlsearch<CR>")
+vim.keymap.set("n", "\\", ":<C-u>nohlsearch<CR>", { noremap = true, silent = true, desc = "Clear search highlight" })
 
 -- center to line when searching
-nnoremap("n", "nzz")
-nnoremap("N", "Nzz")
-nnoremap("*", "*zz")
+vim.keymap.set("n", "n", "nzz", { noremap = true, silent = true, desc = "Next search result (centered)" })
+vim.keymap.set("n", "N", "Nzz", { noremap = true, silent = true, desc = "Previous search result (centered)" })
+vim.keymap.set("n", "*", "*zz", { noremap = true, silent = true, desc = "Search word under cursor (centered)" })
 
 -- ============================================================================
 --                              NVIM-TREE
@@ -320,7 +314,7 @@ nvim_tree.setup({
 	disable_netrw = true,
 	on_attach = nvim_tree_on_attach,
 })
-nnoremap("<C-n>n", ":NvimTreeToggle<CR>")
+vim.keymap.set("n", "<C-n>n", ":NvimTreeToggle<CR>", { noremap = true, silent = true, desc = "Toggle Nvim Tree" })
 
 -- ============================================================================
 --                              TREE-SITTER
@@ -396,15 +390,57 @@ telescope.setup({
 	},
 })
 telescope.load_extension("fzf")
-nnoremap("<leader>ff", "<cmd>lua require('telescope.builtin').find_files()<cr>")
-nnoremap("<leader>fg", "<cmd>lua require('telescope.builtin').live_grep()<cr>")
-nnoremap("<leader>fb", "<cmd>lua require('telescope.builtin').buffers()<cr>")
-nnoremap("<leader>fh", "<cmd>lua require('telescope.builtin').help_tags()<cr>")
-nnoremap("<leader>fm", "<cmd>lua require('telescope.builtin').marks()<cr>")
-nnoremap("<leader>fr", "<cmd>lua require('telescope.builtin').registers()<cr>")
-nnoremap("<leader>fl", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find({})<cr>")
-nnoremap("<leader>fd", "<cmd>lua require('telescope.builtin').diagnostics()<cr>")
-nnoremap("<leader>fs", "<cmd>lua require('telescope.builtin').git_status()<cr>")
+vim.keymap.set(
+	"n",
+	"<leader>ff",
+	require("telescope.builtin").find_files,
+	{ noremap = true, silent = true, desc = "Find files" }
+)
+vim.keymap.set(
+	"n",
+	"<leader>fg",
+	require("telescope.builtin").live_grep,
+	{ noremap = true, silent = true, desc = "Live grep" }
+)
+vim.keymap.set(
+	"n",
+	"<leader>fb",
+	require("telescope.builtin").buffers,
+	{ noremap = true, silent = true, desc = "Find buffers" }
+)
+vim.keymap.set(
+	"n",
+	"<leader>fh",
+	require("telescope.builtin").help_tags,
+	{ noremap = true, silent = true, desc = "Find help tags" }
+)
+vim.keymap.set(
+	"n",
+	"<leader>fm",
+	require("telescope.builtin").marks,
+	{ noremap = true, silent = true, desc = "Find marks" }
+)
+vim.keymap.set(
+	"n",
+	"<leader>fr",
+	require("telescope.builtin").registers,
+	{ noremap = true, silent = true, desc = "Find registers" }
+)
+vim.keymap.set("n", "<leader>fl", function()
+	require("telescope.builtin").current_buffer_fuzzy_find({})
+end, { noremap = true, silent = true, desc = "Fuzzy find in buffer" })
+vim.keymap.set(
+	"n",
+	"<leader>fd",
+	require("telescope.builtin").diagnostics,
+	{ noremap = true, silent = true, desc = "Find diagnostics" }
+)
+vim.keymap.set(
+	"n",
+	"<leader>fs",
+	require("telescope.builtin").git_status,
+	{ noremap = true, silent = true, desc = "Git status" }
+)
 
 -- ============================================================================
 --                              FIDGET NOTIFY
@@ -707,6 +743,10 @@ require("my_modules.lsp_config").setup()
 -- ============================================================================
 --                              TERMINAL
 -- ============================================================================
+local function tnoremap(shortcut, command)
+	vim.api.nvim_set_keymap("t", shortcut, command, { noremap = true, silent = true })
+end
+
 tnoremap("<C-h>", "<C-\\><C-n><C-w>h")
 tnoremap("<C-j>", "<C-\\><C-n><C-w>j")
 tnoremap("<C-k>", "<C-\\><C-n><C-w>k")
@@ -720,10 +760,30 @@ require("toggleterm").setup({
 	-- direction = "float",
 })
 
-nnoremap("<Leader>tt", ":ToggleTerm name=xterminal direction=horizontal<CR>")
-nnoremap("<Leader>tf", ":ToggleTerm name=xterminal direction=float<CR>")
-vnoremap("r", ":ToggleTermSendVisualLines<CR>")
-nnoremap("<Leader>r", ":ToggleTermSendCurrentLine<CR>")
+vim.keymap.set(
+	"n",
+	"<Leader>tt",
+	":ToggleTerm name=xterminal direction=horizontal<CR>",
+	{ noremap = true, silent = true, desc = "Toggle horizontal terminal" }
+)
+vim.keymap.set(
+	"n",
+	"<Leader>tf",
+	":ToggleTerm name=xterminal direction=float<CR>",
+	{ noremap = true, silent = true, desc = "Toggle floating terminal" }
+)
+vim.keymap.set(
+	"v",
+	"r",
+	":ToggleTermSendVisualLines<CR>",
+	{ noremap = true, silent = true, desc = "Send visual lines to terminal" }
+)
+vim.keymap.set(
+	"n",
+	"<Leader>r",
+	":ToggleTermSendCurrentLine<CR>",
+	{ noremap = true, silent = true, desc = "Send current line to terminal" }
+)
 
 local termGroup = vim.api.nvim_create_augroup("TermGroup", { clear = true })
 vim.api.nvim_create_autocmd({ "BufEnter" }, {

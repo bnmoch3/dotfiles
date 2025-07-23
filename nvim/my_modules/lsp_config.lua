@@ -4,8 +4,6 @@ local M = {}
 --                              LSP
 -- ============================================================================
 
-local nnoremap = require("my_modules.helpers").nnoremap
-
 local function extend_obj(o, with_obj)
 	if with_obj == nil then
 		return o
@@ -117,7 +115,12 @@ local custom_lsp_attach = function(_client, bufnr)
 		flatten_apply(v.keybinding, function(keybinding)
 			if keybinding ~= nil and keybinding ~= "" then
 				local cmd = listify(v.cmd)[1]
-				nnoremap(keybinding, "<cmd>Lsp " .. cmd .. "<cr>")
+				vim.keymap.set(
+					"n",
+					keybinding,
+					"<cmd>Lsp " .. cmd .. "<cr>",
+					{ noremap = true, silent = true, desc = "LSP: " .. cmd }
+				)
 			end
 		end)
 	end
@@ -250,11 +253,36 @@ function M.setup()
 	require("goto-preview").setup({
 		default = false,
 	})
-	nnoremap("\\p", "<cmd>lua require('goto-preview').goto_preview_definition()<CR>")
-	nnoremap("\\i", "<cmd>lua require('goto-preview').goto_preview_implementation()<CR>")
-	nnoremap("\\q", "<cmd>lua require('goto-preview').close_all_win()<CR>")
-	nnoremap("\\r", "<cmd>lua require('goto-preview').goto_preview_references()<CR>")
-	nnoremap("\\d", "<cmd>lua require('goto-preview').goto_preview_hover()<CR>")
+	vim.keymap.set(
+		"n",
+		"\\p",
+		require("goto-preview").goto_preview_definition,
+		{ noremap = true, silent = true, desc = "Preview definition" }
+	)
+	vim.keymap.set(
+		"n",
+		"\\i",
+		require("goto-preview").goto_preview_implementation,
+		{ noremap = true, silent = true, desc = "Preview implementation" }
+	)
+	vim.keymap.set(
+		"n",
+		"\\q",
+		require("goto-preview").close_all_win,
+		{ noremap = true, silent = true, desc = "Close all preview windows" }
+	)
+	vim.keymap.set(
+		"n",
+		"\\r",
+		require("goto-preview").goto_preview_references,
+		{ noremap = true, silent = true, desc = "Preview references" }
+	)
+	vim.keymap.set(
+		"n",
+		"\\d",
+		require("goto-preview").goto_preview_hover,
+		{ noremap = true, silent = true, desc = "Preview hover" }
+	)
 end
 
 return M
