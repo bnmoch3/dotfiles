@@ -102,14 +102,8 @@ if [[ -d "$HOME/.deno" ]]; then
     }
 fi
 
-# fzf (lazy load)
-fzf() {
-  [[ -f "$HOME/.fzf.zsh" ]] && source "$HOME/.fzf.zsh"
-  unfunction fzf
-  fzf "$@"
-}
-
-
+# fzf
+[[ -f "$HOME/.fzf.zsh" ]] && source "$HOME/.fzf.zsh"
 
 eval "$(atuin init zsh --disable-up-arrow)"
 eval "$(starship init zsh)"
