@@ -127,7 +127,7 @@ function M.setup()
 	-- toggle off shell while in terminal mode
 	vim.keymap.set(
 		"t",
-		"<C-q>",
+		"<A-q>", -- alt-q
 		"<Cmd>ToggleTerm name=xterminal direction=horizontal<CR>",
 		{ noremap = true, silent = true, desc = "Toggle off terminal while in terminal mode" }
 	)
