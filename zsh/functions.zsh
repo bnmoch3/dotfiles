@@ -112,9 +112,9 @@ daymode() {
 	[[ "$OSTYPE" == linux-gnu* ]] && redshift -x
 }
 
-# quick open TODO
+# quick open TODO, move to last line
 todo() {
-	nvim "$HOME/TODO.txt"
+	nvim + "$HOME/TODO.txt"
 }
 
 hello_world() {
