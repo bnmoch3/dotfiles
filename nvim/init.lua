@@ -4,7 +4,7 @@
 --                              HELPERS
 -- ============================================================================
 -- {{
-
+local terminal_config = require("my_modules.terminal_config")
 -- luacheck: ignore pp
 -- for debugging stuff
 local function pp(obj)
@@ -64,8 +64,10 @@ require("packer").startup(function(use)
 	use("lukas-reineke/indent-blankline.nvim") -- indentation guides
 
 	use("christoomey/vim-tmux-navigator") -- add tmux navigation compatibility
-	vim.g.tmux_navigator_save_on_switch = true
+	vim.g.tmux_navigator_no_mappings = 1
 	vim.g.tmux_navigator_disable_when_zoomed = true
+	vim.g.tmux_navigator_save_on_switch = true
+
 	use("kshenoy/vim-signature") -- for toggling, displaying and navigating marks
 	use("tpope/vim-unimpaired") -- tim-pope's, for quick navigation of lists
 	use("ap/vim-buftabline") -- display buffer list on tabline
@@ -688,7 +690,7 @@ lualine.setup({
 		lualine_y = { { "diagnostics", sections = { "error", "warn" } }, "diff", "branch" },
 		lualine_z = { "" },
 	},
-	extensions = { "quickfix", "toggleterm" },
+	extensions = { "quickfix", terminal_config.toggleterm_extension },
 })
 
 -- ============================================================================
@@ -737,106 +739,15 @@ cmp.setup.cmdline(":", {
 		{ name = "cmdline" },
 	}),
 })
+-- ============================================================================
+--                              MY MODULES
+-- ============================================================================
 
 -- set up LSP stuff
 require("my_modules.lsp_config").setup()
--- ============================================================================
---                              TERMINAL
--- ============================================================================
-local function tnoremap(shortcut, command)
-	vim.api.nvim_set_keymap("t", shortcut, command, { noremap = true, silent = true })
-end
 
-tnoremap("<C-h>", "<C-\\><C-n><C-w>h")
-tnoremap("<C-j>", "<C-\\><C-n><C-w>j")
-tnoremap("<C-k>", "<C-\\><C-n><C-w>k")
-tnoremap("<C-l>", "<C-\\><C-n><C-w>l")
-tnoremap("<C-^>", "<C-\\><C-n><C-^>")
-tnoremap("", "<C-\\><C-n>")
-require("toggleterm").setup({
-	shade_terminals = false,
-	start_in_insert = true,
-	hide_numbers = true,
-	-- direction = "float",
-})
-
-vim.keymap.set(
-	"n",
-	"<Leader>tt",
-	":ToggleTerm name=xterminal direction=horizontal<CR>",
-	{ noremap = true, silent = true, desc = "Toggle horizontal terminal" }
-)
-vim.keymap.set(
-	"n",
-	"<Leader>tf",
-	":ToggleTerm name=xterminal direction=float<CR>",
-	{ noremap = true, silent = true, desc = "Toggle floating terminal" }
-)
-vim.keymap.set(
-	"v",
-	"r",
-	":ToggleTermSendVisualLines<CR>",
-	{ noremap = true, silent = true, desc = "Send visual lines to terminal" }
-)
-vim.keymap.set(
-	"n",
-	"<Leader>r",
-	":ToggleTermSendCurrentLine<CR>",
-	{ noremap = true, silent = true, desc = "Send current line to terminal" }
-)
-
-local termGroup = vim.api.nvim_create_augroup("TermGroup", { clear = true })
-vim.api.nvim_create_autocmd({ "BufEnter" }, {
-	callback = function()
-		vim.cmd("startinsert")
-	end,
-	pattern = { "term://*" },
-	group = termGroup,
-})
-
-local Terminal = require("toggleterm.terminal").Terminal
-
-local function create_zoomed_toggle_term(cmd)
-	local did_zoom = false
-
-	local function is_tmux_zoomed()
-		local output = vim.fn.system("tmux display-message -p '#{window_zoomed_flag}'")
-		return vim.fn.trim(output) == "1"
-	end
-
-	return Terminal:new({
-		cmd = cmd,
-		direction = "float",
-		hidden = true,
-		start_in_insert = true,
-		on_open = function(term)
-			if os.getenv("TMUX") then
-				if not is_tmux_zoomed() then
-					vim.fn.system("tmux resize-pane -Z")
-					did_zoom = true
-				else
-					did_zoom = false
-				end
-			end
-			vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<Esc>", "<Esc>", { noremap = true, silent = true })
-		end,
-		on_close = function()
-			if os.getenv("TMUX") and did_zoom then
-				vim.fn.system("tmux resize-pane -Z")
-			end
-		end,
-	})
-end
-
-local todo = create_zoomed_toggle_term("nvim + ~/TODO.txt")
-vim.api.nvim_create_user_command("Todo", function()
-	todo:toggle()
-end, { desc = "Open my TODO list" })
-
-local lazygit = create_zoomed_toggle_term("lazygit")
-vim.keymap.set("n", "<leader>gg", function()
-	lazygit:toggle()
-end, { desc = "Lazygit (zoom-safe)" })
+-- set up terminal stuff
+terminal_config.setup()
 
 -- ============================================================================
 --                              FORMATTING
