@@ -5,6 +5,7 @@
 -- ============================================================================
 -- {{
 local terminal_config = require("my_modules.terminal_config")
+
 -- luacheck: ignore pp
 -- for debugging stuff
 local function pp(obj)
@@ -799,7 +800,10 @@ require("lint").linters_by_ft = {
 	sh = { "shellcheck" },
 	dockerfile = { "hadolint" },
 	go = { "golangcilint" },
+	javascript = { "biome" },
 }
+local biome_linter = require("my_modules.biome_linter")
+require("lint").linters.biome = biome_linter
 
 vim.api.nvim_create_user_command("Linters", function()
 	local lint = require("lint")
