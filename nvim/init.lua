@@ -796,7 +796,7 @@ require("lint").linters_by_ft = {
 	python = { "ruff" },
 	lua = { "luacheck" },
 	make = { "checkmake" },
-	sh = { "shellchec" },
+	sh = { "shellcheck" },
 	dockerfile = { "hadolint" },
 	go = { "golangcilint" },
 }
