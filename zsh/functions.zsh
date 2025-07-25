@@ -7,6 +7,19 @@ nv() {
 
 # start or attach to a tmux session
 tms() {
+    # --- venv guard: drop any active python venv so tmux doesn't inherit it ---
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        if typeset -f deactivate >/dev/null 2>&1; then
+            local _ps1="$PS1"
+            deactivate 2>/dev/null
+            PS1="$_ps1"
+        else
+            # crude but effective fallback
+            PATH="${PATH#${VIRTUAL_ENV}/bin:}"
+            unset VIRTUAL_ENV PYTHONHOME _OLD_VIRTUAL_PATH _OLD_VIRTUAL_PYTHONHOME
+        fi
+    fi
+    # --------------------------------------------------------------------------
 	local session_name
 	if [[ -z $1 ]]; then
 		read "session_name?tmux session name: "
