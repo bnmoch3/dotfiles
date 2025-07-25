@@ -27,6 +27,9 @@ if [[ -d /usr/local/go ]]; then
 	[[ -d "$(go env GOPATH 2>/dev/null)/bin" ]] && export PATH="$PATH:$(go env GOPATH)/bin"
 fi
 
+# node
+[[ -d "$HOME/LOCAL/pkg/node" ]] && export PATH="$PATH:$HOME/LOCAL/pkg/node/bin"
+
 # zig
 [[ -d "$HOME/LOCAL/pkg/zig" ]] && export PATH="$PATH:$HOME/LOCAL/pkg/zig"
 
