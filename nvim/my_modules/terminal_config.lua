@@ -124,10 +124,10 @@ function M.setup()
 		{ noremap = true, silent = true, desc = "Toggle horizontal terminal" }
 	)
 
-	-- toggle off shell while in terminal mode
+	-- toggle off shell while in terminal mode or normal mode
 	vim.keymap.set(
-		"t",
-		"<A-q>", -- alt-q
+		{ "t", "n" },
+		"<A-t>", -- alt-t
 		"<Cmd>ToggleTerm name=xterminal direction=horizontal<CR>",
 		{ noremap = true, silent = true, desc = "Toggle off terminal while in terminal mode" }
 	)
