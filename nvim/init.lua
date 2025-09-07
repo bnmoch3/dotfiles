@@ -159,6 +159,16 @@ vim.o.shiftwidth = 4
 vim.o.expandtab = true
 -- vim.o.autoindent = true
 vim.o.smartindent = true
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "html", "css", "javascript", "typescript", "json", "markdown" },
+	callback = function()
+		vim.opt_local.tabstop = 2
+		vim.opt_local.softtabstop = 2
+		vim.opt_local.shiftwidth = 2
+		vim.opt_local.wrap = true
+		-- vim.opt_local.expandtab = true
+	end,
+})
 
 -- ignorecase makes all searches case-insensitive
 -- smartcase overrides the ignorecase option if the search pattern contains
@@ -780,6 +790,11 @@ require("conform").setup({
 		sql = { "sqlfmt" },
 		sh = { "shfmt" },
 		javascript = { "biome" },
+		typescript = { "biome" },
+		html = { "biome" },
+		css = { "biome" },
+		jsonc = { "biome" },
+		json = { "biome" },
 		go = function(bufnr)
 			if require("conform").get_formatter_info("gofumpt", bufnr).available then
 				return { "goimports", "gofumpt" }
@@ -801,6 +816,7 @@ require("lint").linters_by_ft = {
 	dockerfile = { "hadolint" },
 	go = { "golangcilint" },
 	javascript = { "biome" },
+	typescript = { "biome" },
 }
 local biome_linter = require("my_modules.biome_linter")
 require("lint").linters.biome = biome_linter
