@@ -160,7 +160,7 @@ vim.o.expandtab = true
 -- vim.o.autoindent = true
 vim.o.smartindent = true
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "html", "css", "javascript", "typescript", "json", "markdown" },
+	pattern = { "html", "css", "javascript", "typescript", "json", "markdown", "typescriptreact" },
 	callback = function()
 		vim.opt_local.tabstop = 2
 		vim.opt_local.softtabstop = 2
@@ -774,6 +774,11 @@ end, { desc = "Format buffer with Conform" })
 vim.api.nvim_create_autocmd("BufWritePre", {
 	pattern = "*",
 	callback = function(args)
+		local filename = vim.api.nvim_buf_get_name(args.buf)
+		-- quick fix to prevent sqlfmt running on tern migration files
+		if filename:match("migrations/") then
+			return
+		end
 		require("conform").format({ bufnr = args.buf })
 	end,
 })
