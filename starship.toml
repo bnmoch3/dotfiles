@@ -34,6 +34,9 @@ style = 'bold green'
 version_format = ''
 pyenv_version_name = true
 
+[gcloud]
+disabled = true
+
 # Make sure detection is only triggered by active virtualenvs
 detect_extensions = []
 detect_files = []
