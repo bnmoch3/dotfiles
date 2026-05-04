@@ -86,9 +86,9 @@ _setup_configs() {
 
     # --- alacritty (config path differs by os) ---
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        _link "alacritty.yml" "$HOME/.config/alacritty/alacritty.yml"
+        _link "alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
     else
-        _link "alacritty.yml" "$HOME/.alacritty.yml"
+        _link "alacritty.toml" "$HOME/.alacritty.toml"
     fi
 
     # --- atuin ---
