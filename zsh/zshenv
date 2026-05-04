@@ -47,6 +47,9 @@ fi
 # VCPKG
 export VCPKG_ROOT="$HOME/LOCAL/bin/vcpkg"
 
+# Bob: manage nvim versions
+[[ -d "$HOME/.local/share/bob/nvim-bin" ]] && export PATH="$HOME/.local/share/bob/nvim-bin:$PATH"
+
 # cargo
 [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
