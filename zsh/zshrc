@@ -89,9 +89,13 @@ export NVM_DIR="$HOME/.nvm"
 nvm() {
     unfunction nvm
     [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-    [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
     nvm "$@"
 }
+
+# stub node tools to trigger nvm load on first use
+for cmd in node npm yarn npx prettier eslint; do
+    eval "function $cmd() { unset -f $cmd; [ -s \"\$NVM_DIR/nvm.sh\" ] && source \"\$NVM_DIR/nvm.sh\"; $cmd \"\$@\"; }"
+done
 
 # deno (lazy load)
 if [[ -d "$HOME/.deno" ]]; then

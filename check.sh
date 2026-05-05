@@ -11,6 +11,10 @@ _green() { printf '\033[0;32m%s\033[0m' "$*"; }
 _yellow() { printf '\033[0;33m%s\033[0m' "$*"; }
 _bold() { printf '\033[1m%s\033[0m' "$*"; }
 
+# load nvm so node/npm/yarn are available for checking
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+
 # ---------------------------------------------------------------------------
 # version checking
 # ---------------------------------------------------------------------------
