@@ -16,11 +16,11 @@ if command -v bat >/dev/null; then
 fi
 
 # FZF options
-export FZF_DEFAULT_OPTS='--height 80% --layout=reverse --border --margin=1'
+# FZF options
+export FZF_DEFAULT_OPTS='--height 80% --layout=reverse --border --margin=1 -m'
 
 if type rg &>/dev/null; then
-    export FZF_DEFAULT_COMMANND='rg --files'
-    export FZF_DEFAULT_OPTS='-m'
+    export FZF_DEFAULT_COMMAND='rg --files'
 fi
 
 if [[ -f $HOME/.fzf.bash ]]; then
