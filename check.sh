@@ -64,10 +64,10 @@ MUST_HAVE_CMDS=(
     "atuin"      # shell history
     "git-lfs"    # git large file storage
     "shellcheck" # shell script linter
+    "uv"         # python version manager, package installer
 )
 
 NICE_TO_HAVE_CMDS=(
-    "uv"        # python version manager, package installer
     "deno"      # deno runtime
     "goimports" # go import management
     "prettier"  # js/html/json formatter
