@@ -73,6 +73,7 @@ MUST_HAVE_CMDS=(
 
 NICE_TO_HAVE_CMDS=(
     "deno"      # deno runtime
+    "fd"        # fast file finder
     "goimports" # go import management
     "prettier"  # js/html/json formatter
     "eslint"    # js linter
