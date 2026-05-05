@@ -24,11 +24,11 @@ export FZF_DEFAULT_COMMAND='rg --files'
 export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS -m"
 
 # path additions
-# Go
-if [[ -d /usr/local/go ]]; then
-	export PATH="$PATH:/usr/local/go/bin"
-	[[ -d "$(go env GOPATH 2>/dev/null)/bin" ]] && export PATH="$PATH:$(go env GOPATH)/bin"
-fi
+# Go (manual install, linux)
+[[ -d /usr/local/go ]] && export PATH="$PATH:/usr/local/go/bin"
+
+# Go tools (GOPATH/bin, both platforms)
+[[ -d "$(go env GOPATH 2>/dev/null)/bin" ]] && export PATH="$PATH:$(go env GOPATH)/bin"
 
 # node
 [[ -d "$HOME/LOCAL/pkg/node" ]] && export PATH="$PATH:$HOME/LOCAL/pkg/node/bin"
