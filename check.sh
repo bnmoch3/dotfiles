@@ -6,10 +6,10 @@
 # ---------------------------------------------------------------------------
 # colors
 # ---------------------------------------------------------------------------
-_red()    { printf '\033[0;31m%s\033[0m' "$*"; }
-_green()  { printf '\033[0;32m%s\033[0m' "$*"; }
+_red() { printf '\033[0;31m%s\033[0m' "$*"; }
+_green() { printf '\033[0;32m%s\033[0m' "$*"; }
 _yellow() { printf '\033[0;33m%s\033[0m' "$*"; }
-_bold()   { printf '\033[1m%s\033[0m' "$*"; }
+_bold() { printf '\033[1m%s\033[0m' "$*"; }
 
 # ---------------------------------------------------------------------------
 # version checking
@@ -17,16 +17,16 @@ _bold()   { printf '\033[1m%s\033[0m' "$*"; }
 _get_version() {
     local cmd=$1
     case "$cmd" in
-        nvim)       "$cmd" --version 2>&1 | head -1 ;;
-        go)         "$cmd" version    2>&1 | head -1 ;;
-        node)       "$cmd" --version  2>&1 | head -1 ;;
-        cargo)      "$cmd" --version  2>&1 | head -1 ;;
-        python3)    "$cmd" --version  2>&1 | head -1 ;;
-        bob)        "$cmd" --version  2>&1 | head -1 ;;
-        starship)   "$cmd" --version  2>&1 | head -1 ;;
-        atuin)      "$cmd" --version  2>&1 | head -1 ;;
-        git-lfs)    "$cmd" version    2>&1 | head -1 ;;
-        *)          echo "" ;;
+    nvim) "$cmd" --version 2>&1 | head -1 ;;
+    go) "$cmd" version 2>&1 | head -1 ;;
+    node) "$cmd" --version 2>&1 | head -1 ;;
+    cargo) "$cmd" --version 2>&1 | head -1 ;;
+    python3) "$cmd" --version 2>&1 | head -1 ;;
+    bob) "$cmd" --version 2>&1 | head -1 ;;
+    starship) "$cmd" --version 2>&1 | head -1 ;;
+    atuin) "$cmd" --version 2>&1 | head -1 ;;
+    git-lfs) "$cmd" version 2>&1 | head -1 ;;
+    *) echo "" ;;
     esac
 }
 
@@ -49,44 +49,44 @@ _check_trash() {
 # tool lists
 # ---------------------------------------------------------------------------
 MUST_HAVE_CMDS=(
-    "tmux"          # terminal multiplexer
-    "nvim"          # editor
-    "bob"           # neovim version manager
-    "go"            # golang
-    "node"          # node.js
-    "npm"           # node package manager
-    "yarn"          # node package manager (alt)
-    "cargo"         # rust package manager
-    "rg"            # ripgrep - grep alternative, used in fzf
-    "fzf"           # fuzzy finder
-    "bat"           # cat alternative, used as pager
-    "starship"      # prompt
-    "atuin"         # shell history
-    "git-lfs"       # git large file storage
-    "shellcheck"    # shell script linter
+    "tmux"       # terminal multiplexer
+    "nvim"       # editor
+    "bob"        # neovim version manager
+    "go"         # golang
+    "node"       # node.js
+    "npm"        # node package manager
+    "yarn"       # node package manager (alt)
+    "cargo"      # rust package manager
+    "rg"         # ripgrep - grep alternative, used in fzf
+    "fzf"        # fuzzy finder
+    "bat"        # cat alternative, used as pager
+    "starship"   # prompt
+    "atuin"      # shell history
+    "git-lfs"    # git large file storage
+    "shellcheck" # shell script linter
 )
 
 NICE_TO_HAVE_CMDS=(
-    "pyenv"         # python version manager
-    "deno"          # deno runtime
-    "goimports"     # go import management
-    "prettier"      # js/html/json formatter
-    "eslint"        # js linter
-    "shfmt"         # shell formatter
-    "eza"           # ls alternative (maintained exa fork)
-    "procs"         # ps alternative
-    "tldr"          # cheatsheets
-    "duf"           # df alternative
-    "gping"         # ping alternative
-    "entr"          # run cmd on file change
-    "sqlite3"       # sqlite cli
-    "luacheck"      # lua linter (for neovim config)
-    "lazygit"       # terminal ui for git
-    "delta"         # better git diff pager
-    "jq"            # json processor
-    "zoxide"        # smarter cd
-    "btop"          # system monitor
-    "yazi"          # terminal file manager
+    "uv"        # python version manager, package installer
+    "deno"      # deno runtime
+    "goimports" # go import management
+    "prettier"  # js/html/json formatter
+    "eslint"    # js linter
+    "shfmt"     # shell formatter
+    "eza"       # ls alternative (maintained exa fork)
+    "procs"     # ps alternative
+    "tldr"      # cheatsheets
+    "duf"       # df alternative
+    "gping"     # ping alternative
+    "entr"      # run cmd on file change
+    "sqlite3"   # sqlite cli
+    "luacheck"  # lua linter (for neovim config)
+    "lazygit"   # terminal ui for git
+    "delta"     # better git diff pager
+    "jq"        # json processor
+    "zoxide"    # smarter cd
+    "btop"      # system monitor
+    "yazi"      # terminal file manager
 )
 
 SPECIAL_CHECKS=(
@@ -132,11 +132,13 @@ _check_cmds() {
     done
 
     echo ""
-    _bold "=== dotfiles check ==="; echo ""
+    _bold "=== dotfiles check ==="
+    echo ""
     echo "os: $OSTYPE"
     echo ""
 
-    _bold "must-have (installed):"; echo ""
+    _bold "must-have (installed):"
+    echo ""
     if [[ ${#ok_must[@]} -eq 0 ]]; then
         echo "  (none)"
     else
@@ -152,7 +154,8 @@ _check_cmds() {
     fi
     echo ""
 
-    _bold "nice-to-have (installed):"; echo ""
+    _bold "nice-to-have (installed):"
+    echo ""
     if [[ ${#ok_nice[@]} -eq 0 && ${#ok_special[@]} -eq 0 ]]; then
         echo "  (none)"
     else
@@ -163,7 +166,8 @@ _check_cmds() {
     echo ""
 
     if [[ ${#missing_must[@]} -gt 0 || ${#missing_special[@]} -gt 0 ]]; then
-        _bold "must-have ($(_red "MISSING")):"; echo ""
+        _bold "must-have ($(_red "MISSING")):"
+        echo ""
         for cmd in "${missing_must[@]}"; do
             printf '  %s\n' "$(_red "✗ $cmd")"
         done
@@ -174,16 +178,17 @@ _check_cmds() {
     fi
 
     if [[ ${#missing_nice[@]} -gt 0 ]]; then
-        _bold "nice-to-have (not installed):"; echo ""
+        _bold "nice-to-have (not installed):"
+        echo ""
         for cmd in "${missing_nice[@]}"; do
             printf '  %s\n' "$(_yellow "- $cmd")"
         done
         echo ""
     fi
 
-    local total_must=$(( ${#MUST_HAVE_CMDS[@]} + ${#SPECIAL_CHECKS[@]} ))
-    local ok_total=$(( ${#ok_must[@]} + ${#ok_special[@]} ))
-    local missing_total=$(( ${#missing_must[@]} + ${#missing_special[@]} ))
+    local total_must=$((${#MUST_HAVE_CMDS[@]} + ${#SPECIAL_CHECKS[@]}))
+    local ok_total=$((${#ok_must[@]} + ${#ok_special[@]}))
+    local missing_total=$((${#missing_must[@]} + ${#missing_special[@]}))
 
     _bold "summary: "
     if [[ $missing_total -eq 0 ]]; then
