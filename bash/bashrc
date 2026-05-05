@@ -31,15 +31,15 @@ set -o vi
 
 # Enable bash completion
 if ! shopt -oq posix; then # turn off posix compliance
-	if [ -f /usr/share/bash-completion/bash_completion ]; then
-		source /usr/share/bash-completion/bash_completion
-	fi
+    if [ -f /usr/share/bash-completion/bash_completion ]; then
+        source /usr/share/bash-completion/bash_completion
+    fi
 fi
 
 # add all other completions
 for f in ~/dotfiles/bash/completions/*.bash; do
-	# shellcheck disable=SC1090
-	source "$f"
+    # shellcheck disable=SC1090
+    source "$f"
 done
 
 # source common env vars
@@ -50,19 +50,19 @@ source "$HOME/dotfiles/bash/functions.sh"
 
 # enable color support of ls and also add handy aliases
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-	[[ -x /usr/bin/dircolors ]] && eval "$(dircolors -b)"
-	alias ls='ls --color=auto'
+    [[ -x /usr/bin/dircolors ]] && eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-	[[ -x /usr/local/bin/gdircolors ]] && eval "$(gdircolors -b)"
-	alias ls='ls --color=auto'
+    [[ -x /usr/local/bin/gdircolors ]] && eval "$(gdircolors -b)"
+    alias ls='ls --color=auto'
 fi
 
 # some more ls aliases
 alias ll='ls -alF'
 if command -v eza &>/dev/null; then
-	alias ll='eza -1l --group-directories-first -h --git'
+    alias ll='eza -1l --group-directories-first -h --git'
 else
-	alias ll='ls -alF'
+    alias ll='ls -alF'
 fi
 alias l1='ls -1'
 

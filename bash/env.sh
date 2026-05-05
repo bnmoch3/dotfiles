@@ -1,9 +1,9 @@
 #!/usr/bin/bash
 
 if command -v "nvim" >/dev/null; then
-	EDITOR="nvim"
+    EDITOR="nvim"
 else
-	EDITOR="vim"
+    EDITOR="vim"
 fi
 
 export PSQL_EDITOR=$EDITOR
@@ -12,19 +12,19 @@ export MANPAGER='nvim +Man!'
 
 # pager, use bat if present
 if command -v bat >/dev/null; then
-	export PAGER=bat
+    export PAGER=bat
 fi
 
 # FZF options
-if type rg &>/dev/null; then
-	export FZF_DEFAULT_COMMANND='rg --files'
-	export FZF_DEFAULT_OPTS='-m'
-fi
-
 export FZF_DEFAULT_OPTS='--height 80% --layout=reverse --border --margin=1'
 
+if type rg &>/dev/null; then
+    export FZF_DEFAULT_COMMANND='rg --files'
+    export FZF_DEFAULT_OPTS='-m'
+fi
+
 if [[ -f $HOME/.fzf.bash ]]; then
-	source "$HOME/.fzf.bash"
+    source "$HOME/.fzf.bash"
 fi
 
 # nvm
@@ -34,53 +34,46 @@ export NVM_DIR="$HOME/.nvm"
 
 # yarn
 if command -v yarn &>/dev/null; then
-	yarn_bin=$(yarn global bin)
-	PATH=$PATH:$yarn_bin
+    yarn_bin=$(yarn global bin)
+    PATH=$PATH:$yarn_bin
 fi
 
 # go
 if [[ -d /usr/local/go ]]; then
-	PATH=$PATH:/usr/local/go/bin
-	PATH=$PATH:$(go env GOPATH)/bin
+    PATH=$PATH:/usr/local/go/bin
+    PATH=$PATH:$(go env GOPATH)/bin
 fi
 
 # zig
 if [[ -d "$HOME/LOCAL/pkg/zig" ]]; then
-	PATH=$PATH:$HOME/LOCAL/pkg/zig
+    PATH=$PATH:$HOME/LOCAL/pkg/zig
 fi
 
 # source cargo
 if [[ -f "$HOME/.cargo/env" ]]; then
-	. "$HOME/.cargo/env"
+    . "$HOME/.cargo/env"
 fi
 
 # # opam configuration
 if [[ -f $HOME/.opam/opam-init/init.sh ]]; then
-	. $HOME/.opam/opam-init/init.sh
+    . $HOME/.opam/opam-init/init.sh
 fi
 
-# encore
-export ENCORE_INSTALL="/home/bnm/.encore"
-PATH="$ENCORE_INSTALL/bin:$PATH"
-
+# local bin
 if [[ -d "$HOME/LOCAL/bin" ]]; then
-	PATH="$HOME/LOCAL/bin:$PATH"
+    PATH="$HOME/LOCAL/bin:$PATH"
 fi
 
+# local bin
 if [[ -d "$HOME/.local/bin" ]]; then
-	PATH="$HOME/.local/bin:$PATH"
+    PATH="$HOME/.local/bin:$PATH"
 fi
-
-# erlang
-. /usr/local/lib/erlang/26.2.4/activate
-
-# elixir
-PATH="/$HOME/LOCAL/pkg/elixir-1.16.2/bin:$PATH"
 
 # cuda
-PATH="/usr/local/cuda/bin:$PATH"
-export LD_LIBRARY_PATH="/usr/local/cuda-12.3/lib64:$LD_LIBRARY_PATH"
+# cuda (linux only)
+[[ -d "/usr/local/cuda/bin" ]] && PATH="/usr/local/cuda/bin:$PATH"
+[[ -d "/usr/local/cuda-12.3/lib64" ]] && export LD_LIBRARY_PATH="/usr/local/cuda-12.3/lib64:$LD_LIBRARY_PATH"
 
-export VCPKG_ROOT=/home/bnm/LOCAL/bin/vcpkg
+export VCPKG_ROOT="$HOME/LOCAL/bin/vcpkg"
 
 export PATH

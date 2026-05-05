@@ -1,3 +1,6 @@
+# prevent accidental pip installs outside a venv
+export PIP_REQUIRE_VIRTUALENV=true
+
 if [[ -o interactive ]]; then
 
 # Set editor to nvim if available
