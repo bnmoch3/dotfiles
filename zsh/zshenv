@@ -1,6 +1,9 @@
 # prevent accidental pip installs outside a venv
 export PIP_REQUIRE_VIRTUALENV=true
 
+# ensure node is available for non-interactive contexts (e.g. Mason in nvim)
+export PATH="$HOME/.nvm/versions/node/$(ls $HOME/.nvm/versions/node | tail -1)/bin:$PATH"
+
 if [[ -o interactive ]]; then
 
 # Set editor to nvim if available
