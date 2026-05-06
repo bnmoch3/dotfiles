@@ -12,6 +12,7 @@
 	editor = nvim
 	autocrlf = input
     excludesfile=~/.gitignore
+    pager = delta
 
 [color]
     status = always
@@ -51,12 +52,15 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 
-[core]
-    pager = delta
+[pager]
+    diff = delta
+    log = delta
+    show = delta
 
 [delta]
     navigate = true
     line-numbers = true
+    pager = less
 
 [interactive]
     diffFilter = delta --color-only
