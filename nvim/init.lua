@@ -2,10 +2,12 @@
 
 -- suppress lspconfig deprecation warning until we migrate to vim.lsp.config
 vim.deprecate = (function(original)
-    return function(name, alternative, version, plugin, backtrace)
-        if plugin == "nvim-lspconfig" then return end
-        return original(name, alternative, version, plugin, backtrace)
-    end
+	return function(name, alternative, version, plugin, backtrace)
+		if plugin == "nvim-lspconfig" then
+			return
+		end
+		return original(name, alternative, version, plugin, backtrace)
+	end
 end)(vim.deprecate)
 
 -- ============================================================================
@@ -47,7 +49,7 @@ require("packer").startup(function(use)
 	use("tpope/vim-surround") -- for surround selected text with given char
 	use("milkypostman/vim-togglelist")
 	use("nvim-lua/plenary.nvim")
-	use({"nvim-treesitter/nvim-treesitter", branch = "master" })
+	use({ "nvim-treesitter/nvim-treesitter", branch = "master" })
 	use("williamboman/mason.nvim")
 	use("neovim/nvim-lspconfig")
 	use({ "folke/trouble.nvim", requires = { "folke/lsp-colors.nvim" } })
@@ -110,15 +112,15 @@ require("packer").startup(function(use)
 	use("j-hui/fidget.nvim")
 
 	-- git
-    use({
-        "lewis6991/gitsigns.nvim",
-        event = { "BufReadPre", "BufNewFile" },
-        config = function()
-            require("gitsigns").setup({
-                sign_priority = 5,
-            })
-        end,
-    })
+	use({
+		"lewis6991/gitsigns.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+		config = function()
+			require("gitsigns").setup({
+				sign_priority = 5,
+			})
+		end,
+	})
 
 	-- Automatically set up your configuration after cloning packer.nvim
 	-- Put this at the end after all plugins
@@ -517,9 +519,11 @@ end
 
 -- start with diagnostics off, git signs on
 vim.schedule(function()
-    local ok, gitsigns = pcall(require, "gitsigns")
-    if not ok then return end
-    gitsigns.toggle_signs(false)
+	local ok, gitsigns = pcall(require, "gitsigns")
+	if not ok then
+		return
+	end
+	gitsigns.toggle_signs(false)
 end)
 
 vim.g._diagnostic_virtual_text_enabled = false
