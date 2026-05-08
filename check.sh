@@ -66,6 +66,7 @@ MUST_HAVE_CMDS=(
 
 NICE_TO_HAVE_CMDS=(
     "deno"      # deno runtime
+    "pandoc"    # docs
     "biome"     # format js
     "fd"        # fast file finder
     "goimports" # go import management
