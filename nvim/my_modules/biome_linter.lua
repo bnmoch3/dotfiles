@@ -6,11 +6,14 @@ local severity_map = {
 }
 
 local M = {
-	cmd = function()
-		local binary_name = "biome"
-		-- TODO: add usage of project's biome if present i.e. ./node_modules/.bin/biome
-		return binary_name
-	end,
+    cmd = function()
+        -- prefer project-local biome to avoid version mismatches
+        local local_biome = vim.fn.fnamemodify("./node_modules/.bin/biome", ":p")
+        if vim.fn.executable(local_biome) == 1 then
+            return local_biome
+        end
+        return "biome"
+    end,
 	args = { "lint", "--reporter=json" },
 	stdin = false,
 	append_fname = true,
