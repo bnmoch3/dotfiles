@@ -20,9 +20,8 @@ if command -v bat &>/dev/null; then
 fi
 
 # assume fzf & rg are present
-export FZF_DEFAULT_OPTS="--height 80% --layout=reverse --border --margin=1"
+export FZF_DEFAULT_OPTS="--height 80% --layout=reverse --border --margin=1 -m"
 export FZF_DEFAULT_COMMAND='rg --files'
-export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS -m"
 
 # path additions
 # Go (manual install, linux)
