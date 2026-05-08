@@ -31,12 +31,6 @@ export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS -m"
 # Go tools (GOPATH/bin, both platforms)
 [[ -d "$(go env GOPATH 2>/dev/null)/bin" ]] && export PATH="$PATH:$(go env GOPATH)/bin"
 
-# node
-[[ -d "$HOME/LOCAL/pkg/node" ]] && export PATH="$PATH:$HOME/LOCAL/pkg/node/bin"
-
-# zig
-[[ -d "$HOME/LOCAL/pkg/zig" ]] && export PATH="$PATH:$HOME/LOCAL/pkg/zig"
-
 # yarn global bin hardcoded for performance (output from `yarn global bin`)
 [[ -d "$HOME/.yarn/bin" ]] && export PATH="$PATH:$HOME/.yarn/bin"
 

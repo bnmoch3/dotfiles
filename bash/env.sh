@@ -39,11 +39,6 @@ if [[ -d /usr/local/go ]]; then
     PATH=$PATH:$(go env GOPATH)/bin
 fi
 
-# zig
-if [[ -d "$HOME/LOCAL/pkg/zig" ]]; then
-    PATH=$PATH:$HOME/LOCAL/pkg/zig
-fi
-
 # source cargo
 if [[ -f "$HOME/.cargo/env" ]]; then
     . "$HOME/.cargo/env"
@@ -68,7 +63,5 @@ fi
 # cuda (linux only)
 [[ -d "/usr/local/cuda/bin" ]] && PATH="/usr/local/cuda/bin:$PATH"
 [[ -d "/usr/local/cuda-12.3/lib64" ]] && export LD_LIBRARY_PATH="/usr/local/cuda-12.3/lib64:$LD_LIBRARY_PATH"
-
-export VCPKG_ROOT="$HOME/LOCAL/bin/vcpkg"
 
 export PATH
