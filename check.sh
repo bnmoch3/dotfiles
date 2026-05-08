@@ -11,10 +11,6 @@ _green() { printf '\033[0;32m%s\033[0m' "$*"; }
 _yellow() { printf '\033[0;33m%s\033[0m' "$*"; }
 _bold() { printf '\033[1m%s\033[0m' "$*"; }
 
-# load nvm so node/npm/yarn are available for checking
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-
 # ---------------------------------------------------------------------------
 # version checking
 # ---------------------------------------------------------------------------
@@ -37,10 +33,6 @@ _get_version() {
 # ---------------------------------------------------------------------------
 # special-case detections
 # ---------------------------------------------------------------------------
-_check_nvm() {
-    [[ -d "${NVM_DIR:-$HOME/.nvm}" ]]
-}
-
 _check_trash() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
         command -v trash &>/dev/null
@@ -55,6 +47,7 @@ _check_trash() {
 MUST_HAVE_CMDS=(
     "tmux"       # terminal multiplexer
     "nvim"       # editor
+    "mise"       # mise version manager
     "bob"        # neovim version manager
     "go"         # golang
     "node"       # node.js
@@ -96,7 +89,6 @@ NICE_TO_HAVE_CMDS=(
 )
 
 SPECIAL_CHECKS=(
-    "nvm:_check_nvm"
     "trash:_check_trash"
 )
 

@@ -84,19 +84,6 @@ source "$HOME/dotfiles/zsh/auto-venv.zsh"
 # functions
 source "$HOME/dotfiles/zsh/functions.zsh"
 
-# lazy load nvm
-export NVM_DIR="$HOME/.nvm"
-nvm() {
-    unfunction nvm
-    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-    nvm "$@"
-}
-
-# stub node tools to trigger nvm load on first use
-for cmd in node npm yarn npx prettier eslint; do
-    eval "function $cmd() { unset -f $cmd; [ -s \"\$NVM_DIR/nvm.sh\" ] && source \"\$NVM_DIR/nvm.sh\"; $cmd \"\$@\"; }"
-done
-
 # deno (lazy load)
 if [[ -d "$HOME/.deno" ]]; then
     deno() {
@@ -120,3 +107,5 @@ eval "$(starship init zsh)"
 
 # zoxide (smarter cd)
 eval "$(zoxide init zsh)"
+
+eval "$($HOME/.local/bin/mise activate zsh)"
