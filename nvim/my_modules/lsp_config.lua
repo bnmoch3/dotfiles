@@ -163,11 +163,12 @@ end
 -- ============================================================================
 --                              RUSTACEANVIM
 -- ============================================================================
-vim.g.rustaceanvim = vim.tbl_deep_extend("force", vim.g.rustaceanvim or {}, {
+vim.g.rustaceanvim = {
 	server = {
 		on_attach = custom_lsp_attach,
+		capabilities = require("cmp_nvim_lsp").default_capabilities(),
 	},
-})
+}
 
 -- ============================================================================
 --                              SERVER CONFIGS
@@ -206,12 +207,6 @@ local server_configs = {
 	taplo = {
 		capabilities = { offsetEncoding = { "utf-8" } },
 	},
-	elixirls = {
-		cmd = { vim.fn.stdpath("data") .. "/mason/packages/elixir-ls/language_server.sh" },
-	},
-	zls = {
-		cmd = { vim.fn.expand("~") .. "/LOCAL/pkg/zls/zig-out/bin/zls" },
-	},
 }
 
 function M.setup()
@@ -247,21 +242,6 @@ function M.setup()
 		"vimls",
 		"taplo",
 		"yamlls",
-		"julials",
-		"elixirls",
-		"zls",
-	})
-
-	-- Update rustaceanvim capabilities now that cmp_nvim_lsp is available.
-	-- rustaceanvim reads vim.g.rustaceanvim at startup; we set it before the
-	-- plugin loads (above), but capabilities need the cmp integration which
-	-- isn't available at module load time. If you find rust-analyzer lacks
-	-- completion sources, move this block before require("lazy").setup() by
-	-- making cmp_nvim_lsp a hard dependency loaded first.
-	vim.g.rustaceanvim = vim.tbl_deep_extend("force", vim.g.rustaceanvim or {}, {
-		server = {
-			capabilities = capabilities,
-		},
 	})
 
 	-- goto-preview

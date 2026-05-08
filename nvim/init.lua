@@ -100,8 +100,6 @@ require("lazy").setup({
 
 	-- langs
 	{ "mrcjkb/rustaceanvim", version = "^5", lazy = false },
-	{ "mfussenegger/nvim-jdtls" },
-	{ "ziglang/zig.vim" },
 	{
 		"folke/lazydev.nvim",
 		ft = "lua",
