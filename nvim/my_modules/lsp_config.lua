@@ -4,16 +4,6 @@ local M = {}
 --                              LSP
 -- ============================================================================
 
-local function extend_obj(o, with_obj)
-	if with_obj == nil then
-		return o
-	end
-	for k, v in pairs(with_obj) do
-		o[k] = v
-	end
-	return o
-end
-
 local function listify(val)
 	if type(val) ~= "table" then
 		return { val }
@@ -35,16 +25,12 @@ local function flatten_apply(val, fn)
 	fn(val)
 end
 
--- ============================================================================
---                              LSP
--- ============================================================================
-
 --[[
-- stop all clients, then reload the buffer
-    :lua vim.lsp.stop_client(vim.lsp.get_active_clients())
+- stop all clients, then reload the buffer:
+    :lua vim.lsp.stop_client(vim.lsp.get_clients())
 
-- default handlers used when creating a new client:
-    :lua print(vim.inspect(vim.tbl_keys(vim.lsp.handlers)))
+- list active clients:
+    :lua print(vim.inspect(vim.lsp.get_clients()))
 --]]
 local lsp_actions = {
 	{ -- resolve document highlights for current text document pos.
@@ -167,7 +153,6 @@ local custom_lsp_attach = function(_client, bufnr)
 	)
 
 	-- for showing signature as virtual text
-	-- TODO: show signature hint in statusline
 	require("lsp_signature").on_attach({
 		floating_window = false,
 		hint_prefix = "💡 ",
@@ -175,31 +160,37 @@ local custom_lsp_attach = function(_client, bufnr)
 	}, bufnr)
 end
 
-local lspconfig = require("lspconfig")
-local util = require("lspconfig.util")
-local lang_servers = {
-	pyright = {},
-	gopls = {},
-	clangd = {
-		capabilities = {
-			offsetEncoding = "utf-8",
-		},
+-- ============================================================================
+--                              RUSTACEANVIM
+-- ============================================================================
+vim.g.rustaceanvim = vim.tbl_deep_extend("force", vim.g.rustaceanvim or {}, {
+	server = {
+		on_attach = custom_lsp_attach,
 	},
-	ts_ls = {},
-	buf_ls = {},
+})
+
+-- ============================================================================
+--                              SERVER CONFIGS
+-- ============================================================================
+-- Servers that need non-default configuration.
+-- Servers with no extra config don't need an entry here at all; just add them
+-- to the enable list in M.setup().
+local server_configs = {
+	clangd = {
+		capabilities = { offsetEncoding = "utf-8" },
+	},
 	lua_ls = {
-		root_dir = util.root_pattern(".git", ".luarc.json", "init.lua"),
+		root_markers = { ".git", ".luarc.json", "init.lua" },
 		settings = {
 			Lua = {
 				diagnostics = {
 					globals = { "vim", "pp" },
 					unusedLocalExclude = { "_*" },
-					-- You can also disable specific diagnostics entirely:
 					disable = {
 						"lowercase-global",
 						"unused-local",
 						"unused-function",
-						"unused-vararg", -- if you want to ignore unused ... args too
+						"unused-vararg",
 					},
 				},
 				workspace = {
@@ -212,14 +203,9 @@ local lang_servers = {
 			},
 		},
 	},
-	vimls = {},
 	taplo = {
-		capabilities = {
-			offsetEncoding = { "utf-8" },
-		},
+		capabilities = { offsetEncoding = { "utf-8" } },
 	},
-	yamlls = {},
-	julials = {},
 	elixirls = {
 		cmd = { vim.fn.stdpath("data") .. "/mason/packages/elixir-ls/language_server.sh" },
 	},
@@ -228,28 +214,57 @@ local lang_servers = {
 	},
 }
 
--- ============================================================================
---                              FORMATTING, LINTING
--- ============================================================================
-
 function M.setup()
 	require("mason").setup({})
-	-- for autocompletion
-	local capabilties = require("cmp_nvim_lsp").default_capabilities()
-	for lang_server, config in pairs(lang_servers) do
-		config.on_attach = custom_lsp_attach
-		config.capabilities = extend_obj(capabilties, config.capabilities)
-		lspconfig[lang_server].setup(config)
+
+	local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+	-- Global defaults: on_attach and capabilities for every server.
+	-- Individual vim.lsp.config() calls below override/extend these per-server.
+	vim.lsp.config("*", {
+		on_attach = custom_lsp_attach,
+		capabilities = capabilities,
+	})
+
+	-- Apply per-server overrides
+	for server, config in pairs(server_configs) do
+		-- Merge capabilities if the server provides extras (e.g. clangd offsetEncoding)
+		if config.capabilities then
+			config.capabilities = vim.tbl_deep_extend("force", capabilities, config.capabilities)
+		end
+		vim.lsp.config(server, config)
 	end
 
-	-- TODO use common lsp setup
-	local rt = require("rust-tools")
-	rt.setup({
+	-- Enable servers. rust_analyzer is intentionally absent: rustaceanvim
+	-- manages it and will error if you also call vim.lsp.enable for it.
+	vim.lsp.enable({
+		"pyright",
+		"gopls",
+		"clangd",
+		"ts_ls",
+		"buf_ls",
+		"lua_ls",
+		"vimls",
+		"taplo",
+		"yamlls",
+		"julials",
+		"elixirls",
+		"zls",
+	})
+
+	-- Update rustaceanvim capabilities now that cmp_nvim_lsp is available.
+	-- rustaceanvim reads vim.g.rustaceanvim at startup; we set it before the
+	-- plugin loads (above), but capabilities need the cmp integration which
+	-- isn't available at module load time. If you find rust-analyzer lacks
+	-- completion sources, move this block before require("lazy").setup() by
+	-- making cmp_nvim_lsp a hard dependency loaded first.
+	vim.g.rustaceanvim = vim.tbl_deep_extend("force", vim.g.rustaceanvim or {}, {
 		server = {
-			on_attach = custom_lsp_attach,
+			capabilities = capabilities,
 		},
 	})
 
+	-- goto-preview
 	require("goto-preview").setup({
 		default = false,
 	})

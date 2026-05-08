@@ -1,19 +1,8 @@
 -- MY INIT.LUA
 
--- suppress lspconfig deprecation warning until we migrate to vim.lsp.config
-vim.deprecate = (function(original)
-	return function(name, alternative, version, plugin, backtrace)
-		if plugin == "nvim-lspconfig" then
-			return
-		end
-		return original(name, alternative, version, plugin, backtrace)
-	end
-end)(vim.deprecate)
-
 -- ============================================================================
 --                              HELPERS
 -- ============================================================================
--- {{
 local terminal_config = require("my_modules.terminal_config")
 
 -- luacheck: ignore pp
@@ -22,112 +11,137 @@ local function pp(obj)
 	print(vim.inspect(obj))
 end
 
--- bootstrap packer installation
-local install_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
-local packer_bootstrap = nil
-if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-	packer_bootstrap = vim.fn.system({
-		"git",
-		"clone",
-		"--depth",
-		"1",
-		"https://github.com/wbthomason/packer.nvim",
-		install_path,
-	})
-end
+-- disable unused providers to suppress warnings
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
 
 vim.api.nvim_create_user_command("Todo", "e ~/TODO.txt", {})
 
 -- ============================================================================
---                              PLUGINS
+--                              PLUGINS (lazy.nvim)
 -- ============================================================================
-require("packer").startup(function(use)
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.uv.fs_stat(lazypath) then
+	vim.fn.system({
+		"git",
+		"clone",
+		"--filter=blob:none",
+		"https://github.com/folke/lazy.nvim.git",
+		"--branch=stable",
+		lazypath,
+	})
+end
+vim.opt.rtp:prepend(lazypath)
+
+require("lazy").setup({
 	-- tools
-	use("wbthomason/packer.nvim")
-	use("alvan/vim-closetag")
-	use("tpope/vim-commentary") -- for commenting out lines
-	use("tpope/vim-surround") -- for surround selected text with given char
-	use("milkypostman/vim-togglelist")
-	use("nvim-lua/plenary.nvim")
-	use({ "nvim-treesitter/nvim-treesitter", branch = "master" })
-	use("williamboman/mason.nvim")
-	use("neovim/nvim-lspconfig")
-	use({ "folke/trouble.nvim", requires = { "folke/lsp-colors.nvim" } })
-	use("bnmoch3/nvim-goto-preview")
-	use("ray-x/lsp_signature.nvim")
-	use("akinsho/toggleterm.nvim")
+	{ "alvan/vim-closetag" },
+	{ "tpope/vim-commentary" }, -- for commenting out lines
+	{ "tpope/vim-surround" }, -- for surrounding selected text with a given char
+	{ "milkypostman/vim-togglelist" },
+	{ "nvim-lua/plenary.nvim" },
+	{
+		"nvim-treesitter/nvim-treesitter",
+		build = ":TSUpdate",
+		config = function()
+			require("nvim-treesitter").setup({})
+		end,
+	},
+	{ "williamboman/mason.nvim" },
+	{ "neovim/nvim-lspconfig" },
+	{
+		"folke/trouble.nvim",
+		dependencies = { "folke/lsp-colors.nvim" },
+	},
+	{ "bnmoch3/nvim-goto-preview" },
+	{ "ray-x/lsp_signature.nvim" },
+	{ "akinsho/toggleterm.nvim" },
 
 	-- autocompletion
-	use("hrsh7th/cmp-nvim-lsp")
-	use("hrsh7th/cmp-buffer")
-	use("hrsh7th/cmp-path")
-	use("hrsh7th/cmp-cmdline")
-	use("hrsh7th/nvim-cmp")
+	{ "hrsh7th/cmp-nvim-lsp" },
+	{ "hrsh7th/cmp-buffer" },
+	{ "hrsh7th/cmp-path" },
+	{ "hrsh7th/cmp-cmdline" },
+	{ "hrsh7th/nvim-cmp" },
 
 	-- snippets
-	use("L3MON4D3/LuaSnip")
-	use("saadparwaiz1/cmp_luasnip")
-	-- use("rafamadriz/friendly-snippets")
+	{ "L3MON4D3/LuaSnip" },
+	{ "saadparwaiz1/cmp_luasnip" },
 
 	-- themes, styling
-	use("RRethy/nvim-base16")
-	use("DanilaMihailov/beacon.nvim") -- temporarily highlight cursor's curr line
-	use("lukas-reineke/indent-blankline.nvim") -- indentation guides
+	{ "RRethy/nvim-base16" },
+	{ "DanilaMihailov/beacon.nvim" }, -- temporarily highlight cursor's current line
+	{ "lukas-reineke/indent-blankline.nvim" }, -- indentation guides
 
-	use("christoomey/vim-tmux-navigator") -- add tmux navigation compatibility
-	vim.g.tmux_navigator_no_mappings = 1
-	vim.g.tmux_navigator_disable_when_zoomed = true
-	vim.g.tmux_navigator_save_on_switch = true
+	{
+		"christoomey/vim-tmux-navigator", -- add tmux navigation compatibility
+		init = function()
+			vim.g.tmux_navigator_no_mappings = 1
+			vim.g.tmux_navigator_disable_when_zoomed = true
+			vim.g.tmux_navigator_save_on_switch = true
+		end,
+	},
 
-	use("kshenoy/vim-signature") -- for toggling, displaying and navigating marks
-	use("tpope/vim-unimpaired") -- tim-pope's, for quick navigation of lists
-	use("ap/vim-buftabline") -- display buffer list on tabline
-	use("nvim-tree/nvim-web-devicons")
-	use("onsails/lspkind.nvim")
-	use("nvim-tree/nvim-tree.lua")
-	use("nvim-lualine/lualine.nvim")
-	use({ "nvim-telescope/telescope.nvim", requires = { "nvim-lua/plenary.nvim" } })
-	use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" }) -- for fuzzy search in telescope
+	{ "kshenoy/vim-signature" }, -- for toggling, displaying and navigating marks
+	{ "tpope/vim-unimpaired" }, -- tpope's, for quick navigation of lists
+	{ "ap/vim-buftabline" }, -- display buffer list on tabline
+	{ "nvim-tree/nvim-web-devicons" },
+	{ "onsails/lspkind.nvim" },
+	{ "nvim-tree/nvim-tree.lua" },
+	{ "nvim-lualine/lualine.nvim" },
+	{
+		"nvim-telescope/telescope.nvim",
+		dependencies = { "nvim-lua/plenary.nvim" },
+	},
+	{
+		"nvim-telescope/telescope-fzf-native.nvim",
+		build = "make",
+	},
 
 	-- langs
-	use("simrat39/rust-tools.nvim")
-	use("mfussenegger/nvim-jdtls")
-	use("ziglang/zig.vim")
-	use({
+	{ "mrcjkb/rustaceanvim", version = "^5", lazy = false },
+	{ "mfussenegger/nvim-jdtls" },
+	{ "ziglang/zig.vim" },
+	{
 		"folke/lazydev.nvim",
 		ft = "lua",
-		config = function()
-			require("lazydev").setup({
-				library = {
-					-- Load luvit types when the `vim.uv` word is found
-					{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
-				},
-			})
-		end,
-	})
+		opts = {
+			library = {
+				-- Load luvit types when the `vim.uv` word is found
+				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
+			},
+		},
+	},
 
 	-- diagnostics, linting, formatting
-	use("mfussenegger/nvim-lint")
-	use("stevearc/conform.nvim")
-	use("j-hui/fidget.nvim")
+	{ "mfussenegger/nvim-lint" },
+	{ "stevearc/conform.nvim" },
+	{ "j-hui/fidget.nvim" },
 
 	-- git
-	use({
+	{
 		"lewis6991/gitsigns.nvim",
 		event = { "BufReadPre", "BufNewFile" },
-		config = function()
-			require("gitsigns").setup({
-				sign_priority = 5,
-			})
-		end,
-	})
-
-	-- Automatically set up your configuration after cloning packer.nvim
-	-- Put this at the end after all plugins
-	if packer_bootstrap then
-		require("packer").sync()
-	end
-end)
+		opts = { sign_priority = 5 },
+	},
+}, {
+	ui = {
+		icons = {
+			cmd = "⌘",
+			config = "🛠",
+			event = "📅",
+			ft = "📂",
+			init = "⚙",
+			keys = "🗝",
+			plugin = "🔌",
+			runtime = "💻",
+			require = "🌙",
+			source = "📄",
+			start = "🚀",
+			task = "📌",
+		},
+	},
+})
 
 -- ============================================================================
 --                              GENERAL
@@ -172,7 +186,6 @@ vim.o.tabstop = 4
 vim.o.softtabstop = 4
 vim.o.shiftwidth = 4
 vim.o.expandtab = true
--- vim.o.autoindent = true
 vim.o.smartindent = true
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "html", "css", "javascript", "typescript", "json", "markdown", "typescriptreact" },
@@ -181,22 +194,13 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.opt_local.softtabstop = 2
 		vim.opt_local.shiftwidth = 2
 		vim.opt_local.wrap = true
-		-- vim.opt_local.expandtab = true
 	end,
 })
 
 -- ignorecase makes all searches case-insensitive
--- smartcase overrides the ignorecase option if the search pattern contains
--- at least one uppercase character. That is, if there's an uppercase
--- character, the search becomes case-sensistive
--- For situations where you want to override ignorecase for an all-lowercase
--- search patter, append \C to the pattern, for example /foo\C will not match
--- Foo and FOO
+-- smartcase overrides ignorecase when the pattern contains at least one uppercase char
 vim.o.ignorecase = true
 vim.o.smartcase = true
-
--- TODO install filetype
--- vim.g.did_load_filetypes = 1
 
 local colorscheme = (function()
 	-- luacheck: ignore white black_pale black_bright grey_light grey_comments grey_highlight grey_dark
@@ -347,24 +351,21 @@ vim.keymap.set("n", "<C-n>n", ":NvimTreeToggle<CR>", { noremap = true, silent = 
 -- ============================================================================
 --                              TREE-SITTER
 -- ============================================================================
-local nvim_treesitter_configs = require("nvim-treesitter.configs")
+-- nvim-treesitter main branch dropped the configs module.
+-- Parsers are managed via :TSInstall / :TSUpdate.
+-- Highlighting is enabled per-buffer via FileType autocmd.
 require("nvim-treesitter.install").prefer_git = true
---
-nvim_treesitter_configs.setup({
-	ensure_installed = "all",
-	ignore_install = { "ipkg" }, -- repository deleted: https://github.com/srghma/tree-sitter-ipkg
-	auto_install = false,
-	sync_install = false,
-	highlight = { enable = true, disable = { "proto" } },
-	-- use external plugin for indentation until fixed
-	yati = { enable = true },
-	indent = { enable = true },
+
+vim.api.nvim_create_autocmd("FileType", {
+	callback = function()
+		-- pcall so it silently skips filetypes with no parser installed
+		pcall(vim.treesitter.start)
+	end,
 })
 
 -- ============================================================================
 --                              FOLDING
 -- ============================================================================
-
 vim.o.foldmethod = "indent"
 vim.o.foldnestmax = 3
 vim.o.foldminlines = 1
@@ -373,9 +374,7 @@ vim.o.foldlevelstart = 99
 vim.o.foldlevel = 99
 
 -- Disable concealment and ensure all folds are open when editing:
--- JSON, JSONC,Markdown files.
--- This helps to always see raw syntax (e.g. backticks, quotes, Unicode
--- escapes) and avoids starting with folded sections.
+-- JSON, JSONC, Markdown files.
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "json", "jsonc", "markdown" },
 	callback = function()
@@ -409,11 +408,10 @@ telescope.setup({
 	},
 	extensions = {
 		fzf = {
-			fuzzy = true, -- false will only do exact matching
-			override_generic_sorter = true, -- override the generic sorter
-			override_file_sorter = true, -- override the file sorter
-			case_mode = "smart_case", -- or "ignore_case" or "respect_case"
-			-- the default case_mode is "smart_case"
+			fuzzy = true,
+			override_generic_sorter = true,
+			override_file_sorter = true,
+			case_mode = "smart_case",
 		},
 	},
 })
@@ -480,11 +478,9 @@ require("fidget").setup()
 -- ============================================================================
 vim.o.signcolumn = "yes:1"
 
--- Let's be more explicit about severity levels
 local default_severity = { min = vim.diagnostic.severity.WARN }
 vim.g._diagnostic_min_severity = default_severity
 
--- Simplified diagnostic config - let's test without the handler override first
 vim.diagnostic.config({
 	float = { source = "if_many" },
 	underline = { severity = vim.diagnostic.severity.ERROR },
@@ -494,8 +490,8 @@ vim.diagnostic.config({
 		text = {
 			[vim.diagnostic.severity.ERROR] = "E",
 			[vim.diagnostic.severity.WARN] = "W",
-			[vim.diagnostic.severity.INFO] = "",
-			[vim.diagnostic.severity.HINT] = "",
+			[vim.diagnostic.severity.INFO] = "",
+			[vim.diagnostic.severity.HINT] = "",
 		},
 	},
 	severity_sort = true,
@@ -532,7 +528,6 @@ local function toggle_virtual_text_diagnostics()
 
 	local vt_config = vim.g._diagnostic_virtual_text_enabled and { severity = vim.g._diagnostic_min_severity } or false
 	vim.diagnostic.config({ virtual_text = vt_config })
-	-- vim.notify("virtual_text " .. (vim.g._diagnostic_virtual_text_enabled and "enabled" or "disabled"))
 
 	local fidget_notify = require("fidget.notification").notify
 	fidget_notify(
@@ -551,7 +546,6 @@ local function set_min_severity_level(opts)
 	local new_severity = { min = severity_val }
 	vim.g._diagnostic_min_severity = new_severity
 
-	-- Update existing diagnostic config to respect the new severity
 	local curr_config = vim.diagnostic.config()
 	if curr_config == nil then
 		return
@@ -565,7 +559,6 @@ local function set_min_severity_level(opts)
 	vim.diagnostic.config(curr_config)
 end
 
--- completion for severity levels when configuring as Command
 local opts_set_min_severity_level = {
 	nargs = 1,
 	complete = function(ArgLeader)
@@ -580,7 +573,6 @@ local opts_set_min_severity_level = {
 	end,
 }
 
--- jump to next/prev diagnostic matching current min severity
 local function goto_diagnostics(direction)
 	local count = ({ next = 1, prev = -1 })[direction]
 	if not count then
@@ -621,12 +613,12 @@ vim.api.nvim_create_autocmd("CursorHold", {
 local trouble = require("trouble")
 trouble.setup({
 	keys = {
-		["p"] = "toggle_preview", -- 'p' to toggle preview
-		["<cr>"] = "jump", -- default behavior for other modes
+		["p"] = "toggle_preview",
+		["<cr>"] = "jump",
 	},
 	modes = {
 		symbols = {
-			auto_preview = false, -- disable auto to make toggle meaningful
+			auto_preview = false,
 			keys = {
 				["<cr>"] = "jump_close",
 			},
@@ -653,7 +645,6 @@ vim.keymap.set(
 vim.keymap.set("n", "<Leader>dw", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Workspace Diagnostics (Trouble)" })
 
 vim.keymap.set("n", "]d", goto_diagnostics("next"), { silent = true, desc = "Next diagnostic" })
-
 vim.keymap.set("n", "[d", goto_diagnostics("prev"), { silent = true, desc = "Previous diagnostic" })
 
 vim.keymap.set("n", "<Leader>ds", toggle_diagnostics, {
@@ -678,7 +669,7 @@ vim.keymap.set("n", "<Leader>da", function()
 		},
 	})
 end, {
-	desc = "Toggle virtual_text diagnostics",
+	desc = "Toggle symbols panel",
 	silent = true,
 })
 
@@ -694,15 +685,15 @@ local symbols = trouble.statusline({
 	mode = "lsp_document_symbols",
 	groups = {},
 	title = false,
-	filter = { range = true }, -- this makes it update based on cursor position
-	format = "{kind_icon}{symbol.name:Normal}", -- change format to reduce verbosity
+	filter = { range = true },
+	format = "{kind_icon}{symbol.name:Normal}",
 	hl_group = "lualine_c_normal",
 })
 
 lualine.setup({
 	options = {
 		theme = "gruvbox",
-		disabled_filetypes = { "packer", "NvimTree" },
+		disabled_filetypes = { "lazy", "NvimTree" },
 		component_separators = { left = "|", right = "|" },
 		section_separators = { left = "", right = "" },
 		globalstatus = true,
@@ -763,6 +754,7 @@ cmp.setup.cmdline(":", {
 		{ name = "cmdline" },
 	}),
 })
+
 -- ============================================================================
 --                              MY MODULES
 -- ============================================================================
@@ -823,6 +815,7 @@ require("conform").setup({
 		["*"] = { "trim_whitespace", "trim_newlines" },
 	},
 })
+
 -- ============================================================================
 --                              LINTING
 -- ============================================================================
@@ -853,12 +846,6 @@ end, {})
 
 vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave", "BufWritePost" }, {
 	callback = function()
-		-- try_lint without arguments runs the linters defined in `linters_by_ft`
-		-- for the current filetype
 		require("lint").try_lint()
 	end,
 })
-
--- ============================================================================
--- ============================================================================
---
