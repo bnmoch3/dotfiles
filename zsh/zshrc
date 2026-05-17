@@ -50,6 +50,7 @@ else
 fi
 alias l1='ls -1'
 alias tree='eza --tree --git-ignore'
+alias fcc='files-combine --format xml --stdout | pbcopy'
 
 # directory stack
 setopt AUTO_PUSHD # push the current directory visited on to the stack.
