@@ -188,6 +188,11 @@ function M.setup()
 		})
 	end
 
+	local tmux_window_arrange = create_zoomed_toggle_term("tmux-arrange")
+	vim.api.nvim_create_user_command("Tmw", function()
+		tmux_window_arrange:toggle()
+	end, { desc = "Open tmux-arrange to reorder/rename/remove tmux windows" })
+
 	local todo = create_zoomed_toggle_term("nvim + ~/TODO.txt")
 	vim.api.nvim_create_user_command("Todo", function()
 		todo:toggle()
