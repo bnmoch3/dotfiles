@@ -122,6 +122,11 @@ require("lazy").setup({
 		event = { "BufReadPre", "BufNewFile" },
 		opts = { sign_priority = 5 },
 	},
+	-- use nvim to edit text box in chrome
+	{
+		"subnut/nvim-ghost.nvim",
+		lazy = false,
+	},
 }, {
 	ui = {
 		icons = {
@@ -845,5 +850,27 @@ end, {})
 vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave", "BufWritePost" }, {
 	callback = function()
 		require("lint").try_lint()
+	end,
+})
+
+-- ============================================================================
+--                              GHOST
+-- ============================================================================
+local ghost_group = vim.api.nvim_create_augroup("nvim_ghost_user_autocommands", { clear = true })
+
+vim.api.nvim_create_autocmd("User", {
+	pattern = "*",
+	group = ghost_group,
+	callback = function()
+		vim.wo.wrap = true
+	end,
+})
+
+vim.api.nvim_create_autocmd("User", {
+	pattern = "claude.ai",
+	group = ghost_group,
+	callback = function()
+		vim.bo.filetype = "markdown"
+		vim.wo.wrap = true
 	end,
 })
