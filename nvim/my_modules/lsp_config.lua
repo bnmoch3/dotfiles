@@ -45,12 +45,12 @@ local lsp_actions = {
 	},
 	{ -- jumps to the def of symbols under the cursor
 		cmd = "definition",
-		keybinding = { "<Leader>gs", "<C-]>" },
+		keybinding = { "<Leader>ls", "<C-]>" },
 		action = vim.lsp.buf.definition,
 	},
 	{ -- displays information about the symbol under the cursor
 		cmd = { "hover", "doc" },
-		keybinding = "<Leader>gd",
+		keybinding = "<Leader>ld",
 		action = vim.lsp.buf.hover,
 	},
 	{ -- lists all the implementations for the symbol under the cursor
@@ -85,7 +85,7 @@ local lsp_actions = {
 	},
 	{ -- jumps to the definition of the type of sym under the cursor
 		cmd = "type_definition",
-		keybinding = "<Leader>gt",
+		keybinding = "<Leader>lt",
 		action = vim.lsp.buf.type_definition,
 	},
 	{ -- removes document highlights from current buffer
