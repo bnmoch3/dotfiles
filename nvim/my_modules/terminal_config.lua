@@ -188,12 +188,16 @@ function M.setup()
 		})
 	end
 
-	local tmux_window_arrange = create_zoomed_toggle_term("tmux-arrange")
+	local tmux_window_arrange = create_zoomed_toggle_term("EDITOR=vim tmux-arrange")
 	vim.api.nvim_create_user_command("Tmw", function()
 		tmux_window_arrange:toggle()
 	end, { desc = "Open tmux-arrange to reorder/rename/remove tmux windows" })
 
-	local todo = create_zoomed_toggle_term("nvim + ~/TODO.txt")
+	-- vim.api.nvim_create_user_command("Todo", function()
+	-- 	vim.cmd("e ~/TODO.txt")
+	-- end, { desc = "Open my TODO list" })
+
+	local todo = create_zoomed_toggle_term("vim + ~/TODO.txt")
 	vim.api.nvim_create_user_command("Todo", function()
 		todo:toggle()
 	end, { desc = "Open my TODO list" })
@@ -201,6 +205,16 @@ function M.setup()
 	local lazygit = create_zoomed_toggle_term("lazygit")
 	vim.keymap.set("n", "<leader>gg", function()
 		lazygit:toggle()
+	end, { desc = "Lazygit (zoom-safe)" })
+
+	local hunk_diff = create_zoomed_toggle_term("hunk diff")
+	vim.keymap.set("n", "<leader>gd", function()
+		hunk_diff:toggle()
+	end, { desc = "Lazygit (zoom-safe)" })
+
+	local hunk_show = create_zoomed_toggle_term("hunk show")
+	vim.keymap.set("n", "<leader>gs", function()
+		hunk_show:toggle()
 	end, { desc = "Lazygit (zoom-safe)" })
 end
 

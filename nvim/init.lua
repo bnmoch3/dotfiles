@@ -15,8 +15,6 @@ end
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 
-vim.api.nvim_create_user_command("Todo", "e ~/TODO.txt", {})
-
 -- ============================================================================
 --                              PLUGINS (lazy.nvim)
 -- ============================================================================
