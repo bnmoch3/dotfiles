@@ -28,7 +28,7 @@ truncation_length = 3
 truncate_to_repo = true
 
 [python]
-symbol = " "
+symbol = "🐍"
 format = '\([$symbol venv]($style)\) '
 style = 'bold green'
 version_format = ''
