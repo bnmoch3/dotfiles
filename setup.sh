@@ -7,9 +7,12 @@ set -e
 # helpers
 # ---------------------------------------------------------------------------
 
-_info()  { echo "info  $*"; }
-_warn()  { echo "warn  $*"; }
-_error() { echo "error $*" >&2; exit 1; }
+_info() { echo "info  $*"; }
+_warn() { echo "warn  $*"; }
+_error() {
+    echo "error $*" >&2
+    exit 1
+}
 
 # create a symlink from a dotfiles file/dir to its destination
 # usage: _link <source-relative-to-dotfiles-root> <destination-full-path>
@@ -61,28 +64,28 @@ _setup_local_bin() {
 
 _setup_configs() {
     # --- bash ---
-    _link "bash/bashrc"       "$HOME/.bashrc"
+    _link "bash/bashrc" "$HOME/.bashrc"
 
     # --- zsh ---
-    _link "zsh/zshrc"         "$HOME/.zshrc"
-    _link "zsh/zshenv"        "$HOME/.zshenv"
+    _link "zsh/zshrc" "$HOME/.zshrc"
+    _link "zsh/zshenv" "$HOME/.zshenv"
     _link "zsh/functions.zsh" "$HOME/.config/zsh/functions.zsh"
     _link "zsh/auto-venv.zsh" "$HOME/.config/zsh/auto-venv.zsh"
     _link "zsh/external/completion.zsh" "$HOME/.config/zsh/external/completion.zsh"
 
     # --- git ---
-    _link "git/gitconfig"     "$HOME/.gitconfig"
-    _link "git/gitignore"     "$HOME/.gitignore"
+    _link "git/gitconfig" "$HOME/.gitconfig"
+    _link "git/gitignore" "$HOME/.gitignore"
 
     # --- tmux ---
-    _link "tmux.conf"         "$HOME/.tmux.conf"
+    _link "tmux.conf" "$HOME/.tmux.conf"
 
     # --- readline ---
-    _link "inputrc"           "$HOME/.inputrc"
+    _link "inputrc" "$HOME/.inputrc"
 
     # --- db clients ---
-    _link "psqlrc"            "$HOME/.psqlrc"
-    _link "sqliterc"          "$HOME/.sqliterc"
+    _link "psqlrc" "$HOME/.psqlrc"
+    _link "sqliterc" "$HOME/.sqliterc"
 
     # --- alacritty (config path differs by os) ---
     if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -95,14 +98,13 @@ _setup_configs() {
     _link "atuin/config.toml" "$HOME/.config/atuin/config.toml"
 
     # --- starship ---
-    _link "starship.toml"     "$HOME/.config/starship.toml"
+    _link "starship.toml" "$HOME/.config/starship.toml"
 
     # --- nvim ---
-    _link "nvim/init.lua"          "$HOME/.config/nvim/init.lua"
-    _link "nvim/vimrc"             "$HOME/.vimrc"
-    _link "nvim/coc-settings.json" "$HOME/.config/nvim/coc-settings.json"
-    _link "nvim/my_modules"        "$HOME/.config/nvim/lua/my_modules"
-    _link "nvim/ftplugin"          "$HOME/.config/nvim/ftplugin"
+    _link "nvim/init.lua" "$HOME/.config/nvim/init.lua"
+    _link "nvim/vimrc" "$HOME/.vimrc"
+    _link "nvim/my_modules" "$HOME/.config/nvim/lua/my_modules"
+    _link "nvim/ftplugin" "$HOME/.config/nvim/ftplugin"
 }
 
 # ---------------------------------------------------------------------------
@@ -139,15 +141,21 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 while [[ -n "$1" ]]; do
     case "$1" in
-        -n | --dry-run)   DRY_RUN=1 ;;
-        -o | --overwrite) OVERWRITE=1 ;;
-        -h | --help)      usage; exit 0 ;;
-        -b | --bin-path)
-            shift
-            BIN_PATH="$1"
-            [[ -d "$BIN_PATH" || $DRY_RUN == 1 ]] || _error "invalid bin path: $BIN_PATH"
-            ;;
-        *) usage >&2; exit 1 ;;
+    -n | --dry-run) DRY_RUN=1 ;;
+    -o | --overwrite) OVERWRITE=1 ;;
+    -h | --help)
+        usage
+        exit 0
+        ;;
+    -b | --bin-path)
+        shift
+        BIN_PATH="$1"
+        [[ -d "$BIN_PATH" || $DRY_RUN == 1 ]] || _error "invalid bin path: $BIN_PATH"
+        ;;
+    *)
+        usage >&2
+        exit 1
+        ;;
     esac
     shift
 done
