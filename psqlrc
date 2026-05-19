@@ -1,6 +1,5 @@
 \set QUIET 1
-\set PROMPT1 '%n@%/%R%#%x '
-\set PROMPT1 '%[%033[1;32m%]%n@%/%R%#%x%[%033[0m%] '
+\set PROMPT1 '%033[1;32m%n@%/%R%#%x %033[0m '
 \set PROMPT2 ''
 \set HISTFILE ~/.psql_history- :DBNAME
 \set HISTCONTROL ignoredups
