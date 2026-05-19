@@ -41,9 +41,6 @@ export FZF_DEFAULT_COMMAND='rg --files'
 [[ -d "/usr/local/cuda/bin" ]] && export PATH="/usr/local/cuda/bin:$PATH"
 [[ -d "/usr/local/cuda-12.3/lib64" ]] && export LD_LIBRARY_PATH="/usr/local/cuda-12.3/lib64:$LD_LIBRARY_PATH"
 
-# VCPKG
-export VCPKG_ROOT="$HOME/LOCAL/bin/vcpkg"
-
 # Bob: manage nvim versions
 [[ -d "$HOME/.local/share/bob/nvim-bin" ]] && export PATH="$HOME/.local/share/bob/nvim-bin:$PATH"
 
