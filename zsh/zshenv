@@ -22,6 +22,7 @@ fi
 # assume fzf & rg are present
 export FZF_DEFAULT_OPTS="--height 80% --layout=reverse --border --margin=1 -m"
 export FZF_DEFAULT_COMMAND='rg --files'
+export FZF_CTRL_T_COMMAND='rg --files'
 
 # path additions
 # Go (manual install, linux)
