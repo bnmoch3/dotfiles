@@ -239,7 +239,6 @@ function M.setup()
 		"ts_ls",
 		"buf_ls",
 		"lua_ls",
-		"vimls",
 		"taplo",
 		"yamlls",
 	})
