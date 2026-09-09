@@ -129,7 +129,3 @@ daymode() {
 todo() {
 	nvim + "$HOME/TODO.txt"
 }
-
-hello_world() {
-  echo "hello zsh"
-}

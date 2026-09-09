@@ -202,9 +202,8 @@ bob use <version>         # switch active version
 On first launch, lazy.nvim installs all plugins automatically. Then inside nvim:
 
 ```
-:MasonInstall lua-language-server pyright gopls typescript-language-server
-              rust-analyzer bash-language-server json-lsp yaml-language-server
-              html-lsp css-lsp biome taplo
+:MasonInstall lua-language-server pyright gopls clangd typescript-language-server
+              taplo yaml-language-server buf
 
 :TSInstall all
 ```
@@ -226,7 +225,7 @@ On first launch, lazy.nvim installs all plugins automatically. Then inside nvim:
 
 ### Active LSP servers (vim.lsp.enable)
 
-pyright, gopls, clangd, ts_ls, buf_ls, lua_ls, vimls, taplo, yamlls
+pyright, gopls, clangd, ts_ls, buf_ls, lua_ls, taplo, yamlls
 
 ### Formatters (conform.nvim, format on save)
 

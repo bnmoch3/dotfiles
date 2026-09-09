@@ -55,7 +55,7 @@ else
 fi
 alias l1='ls -1'
 alias tree='eza --tree --git-ignore'
-alias fcc='files-combine --format xml --stdout | pbcopy'
+alias fcc='files-combine --format markdown --stdout | pbcopy'
 alias tmw='tmux-arrange'
 
 # directory stack
@@ -72,7 +72,6 @@ unset index
 
 
 # optimized completion initialization
-autoload -Uz compinit
 autoload -Uz compinit
 if [[ ! -f ~/.zcompdump ]] || [[ $(find ~/.zcompdump -mtime +1 2>/dev/null) ]]; then
   compinit
