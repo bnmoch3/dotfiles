@@ -1,7 +1,7 @@
 \set QUIET 1
 \set PROMPT1 '%033[1;32m%n@%/%R%#%x %033[0m '
 \set PROMPT2 ''
-\set HISTFILE ~/.psql_history- :DBNAME
+\set HISTFILE ~/.psql/ :DBNAME
 \set HISTCONTROL ignoredups
 \x auto
 \set ON_ERROR_STOP on

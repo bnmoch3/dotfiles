@@ -58,6 +58,14 @@ _setup_local_bin() {
     fi
 }
 
+_setup_psql_history() {
+    local psql_hist_dir="$HOME/.psql"
+    if [[ ! -d "$psql_hist_dir" ]]; then
+        _info "mkdir $psql_hist_dir"
+        [[ $DRY_RUN == 1 ]] || mkdir -p "$psql_hist_dir"
+    fi
+}
+
 # ---------------------------------------------------------------------------
 # configs
 # ---------------------------------------------------------------------------
@@ -113,6 +121,7 @@ _setup_configs() {
 
 setup() {
     _setup_local_bin
+    _setup_psql_history
     _setup_configs
 }
 
