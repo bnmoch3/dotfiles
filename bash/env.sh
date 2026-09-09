@@ -16,7 +16,6 @@ if command -v bat >/dev/null; then
 fi
 
 # FZF options
-# FZF options
 export FZF_DEFAULT_OPTS='--height 80% --layout=reverse --border --margin=1 -m'
 
 if type rg &>/dev/null; then
@@ -28,10 +27,7 @@ if [[ -f $HOME/.fzf.bash ]]; then
 fi
 
 # yarn
-if command -v yarn &>/dev/null; then
-    yarn_bin=$(yarn global bin)
-    PATH=$PATH:$yarn_bin
-fi
+[[ -d "$HOME/.yarn/bin" ]] && PATH="$PATH:$HOME/.yarn/bin"
 
 # go
 if [[ -d /usr/local/go ]]; then
@@ -42,11 +38,6 @@ fi
 # source cargo
 if [[ -f "$HOME/.cargo/env" ]]; then
     . "$HOME/.cargo/env"
-fi
-
-# # opam configuration
-if [[ -f $HOME/.opam/opam-init/init.sh ]]; then
-    . $HOME/.opam/opam-init/init.sh
 fi
 
 # local bin
@@ -63,5 +54,10 @@ fi
 # cuda (linux only)
 [[ -d "/usr/local/cuda/bin" ]] && PATH="/usr/local/cuda/bin:$PATH"
 [[ -d "/usr/local/cuda-12.3/lib64" ]] && export LD_LIBRARY_PATH="/usr/local/cuda-12.3/lib64:$LD_LIBRARY_PATH"
+
+# mise
+if [[ -f "$HOME/.local/bin/mise" ]]; then
+    eval "$($HOME/.local/bin/mise activate bash)"
+fi
 
 export PATH
