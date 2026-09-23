@@ -116,13 +116,9 @@ find1() {
     find "${dir:-.}" -maxdepth 1 "$@"
 }
 
-# adjust redshift color temp
+# nightmode
 nightmode() {
-	[[ "$OSTYPE" == linux-gnu* ]] && redshift -x && redshift -o -O 1500
-}
-
-daymode() {
-	[[ "$OSTYPE" == linux-gnu* ]] && redshift -x
+    "$HOME/dotfiles/tools/nightmode.py"
 }
 
 # quick open TODO, move to last line
