@@ -27,6 +27,10 @@ COMMANDS = {
         interactive=True,
         cwd=os.path.expanduser("~/PROJECTS/.scratch/codex"),
     ),
+    "nightmode": Command(
+        [os.path.expanduser("~/dotfiles/tools/nightmode.py")],
+        interactive=True,
+    ),
 }
 
 
