@@ -129,3 +129,10 @@ daymode() {
 todo() {
 	nvim + "$HOME/TODO.txt"
 }
+
+chatgpt() {
+    (
+        cd "$HOME/PROJECTS/.scratch/codex" || return 1
+        exec codex --model gpt-5.6-luna
+    )
+}
