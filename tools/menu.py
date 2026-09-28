@@ -15,7 +15,7 @@ class Command:
 
 
 COMMANDS = {
-    "scratch shell": Command(["zsh", "-i"], interactive=True),
+    "shell": Command(["zsh", "-i"], interactive=True),
     "git status": Command(["git", "status"]),
     "tmux-arrange": Command(["tmux-arrange"], interactive=True),
     "todo": Command(
@@ -36,7 +36,12 @@ COMMANDS = {
 
 def choose():
     proc = subprocess.run(
-        ["fzf", "--prompt=tmux> "],
+        [
+            "fzf",
+            "--prompt=tmux> ",
+            "--bind=ctrl-x:print-query",
+            "--header=Enter: select preset | Ctrl-X: run query",
+        ],
         input="\n".join(COMMANDS),
         text=True,
         capture_output=True,
@@ -45,7 +50,12 @@ def choose():
     if proc.returncode != 0:
         return None
 
-    return proc.stdout.strip()
+    value = proc.stdout.rstrip("\n")
+
+    if not value:
+        return None
+
+    return value
 
 
 def wait_to_close():
@@ -102,6 +112,25 @@ def run_command(command):
     return returncode
 
 
+def run_shell_query(query):
+    if not query.strip():
+        return 0
+
+    try:
+        os.execvp(
+            "zsh",
+            ["zsh", "-ic", f"{query}; exec zsh -i"],
+        )
+    except FileNotFoundError:
+        print("Command not found: 'zsh'", file=sys.stderr)
+        wait_to_close()
+        return 1
+    except OSError as exc:
+        print(f"Failed to launch shell: {exc}", file=sys.stderr)
+        wait_to_close()
+        return 1
+
+
 def main():
     choice = choose()
 
@@ -110,14 +139,10 @@ def main():
 
     command = COMMANDS.get(choice)
 
-    if command is None:
-        print(
-            f"Unknown tmux menu command: {choice!r}",
-            file=sys.stderr,
-        )
-        return 1
+    if command is not None:
+        return run_command(command)
 
-    return run_command(command)
+    return run_shell_query(choice)
 
 
 if __name__ == "__main__":
