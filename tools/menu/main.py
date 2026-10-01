@@ -52,9 +52,14 @@ def refresh_actions(helper):
     )
 
 
+def read_state(state_path):
+    return json.loads(state_path.read_text()) if state_path.exists() else None
+
+
 def read_children(state_path):
     # None means curated aliases; even an empty mapping is a browsing level.
-    return json.loads(state_path.read_text()) if state_path.exists() else None
+    state = read_state(state_path)
+    return state["children"] if state is not None else None
 
 
 def choose(state_path):
@@ -70,10 +75,11 @@ def choose(state_path):
             "--disabled",
             "--print-query",
             "--expect=ctrl-x",
-            "--header=Enter: select preset | Tab: browse recursive directory | Ctrl-X: run query",
+            "--header=Enter: select | Tab: descend | Shift-Tab: back | Ctrl-X: run query",
             f"--bind=start:{refresh},change:{refresh}",
             f"--bind=enter:transform({helper} --accept {{q}} {{}})",
             f"--bind=tab:transform({helper} --tab {{q}} {{}})",
+            f"--bind=btab:transform({helper} --back {{q}})",
         ],
         input="\n".join(candidates("")),
         text=True,
@@ -110,7 +116,8 @@ def main():
     if args[:1] == ["--state"]:
         state_path = Path(args[1])
         args = args[2:]
-    children = read_children(state_path) if state_path else None
+    state = read_state(state_path) if state_path else None
+    children = state["children"] if state is not None else None
     # Helpers only print data/actions; only choose() launches fzf.
     if args:
         if len(args) < 2:
@@ -129,15 +136,36 @@ def main():
                 print(f"change-query({selected} )")
             else:
                 print("accept")
-        elif action == "--tab":
+        elif action in ("--tab", "--back"):
             selected = args[2] if len(args) > 2 else ""
-            if state_path and namespace(query)[0] == "cd" and selected:
-                name = (
-                    selected if children is not None else selected.removeprefix("cd ")
-                )
-                descendants = cd.descend(name, children)
-                if descendants is not None:
-                    state_path.write_text(json.dumps(descendants))
+            if state_path and namespace(query)[0] == "cd":
+                changed = False
+                if action == "--tab" and selected:
+                    name = (
+                        selected
+                        if children is not None
+                        else selected.removeprefix("cd ")
+                    )
+                    descent = cd.descend(name, children)
+                    if descent is not None:
+                        path, descendants = descent
+                        stack = state["stack"] if state is not None else []
+                        state = {
+                            "stack": [*stack, path],
+                            "children": descendants,
+                        }
+                        changed = True
+                elif action == "--back" and state is not None:
+                    stack = state["stack"][:-1]
+                    # An unavailable parent is still a level we can back out of.
+                    state = (
+                        {"stack": stack, "children": cd.list_children(stack[-1]) or {}}
+                        if stack
+                        else None
+                    )
+                    changed = True
+                if changed:
+                    state_path.write_text(json.dumps(state))
                     helper = shlex.join(
                         [
                             sys.executable,

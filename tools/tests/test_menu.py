@@ -80,9 +80,9 @@ class DirectoryTests(unittest.TestCase):
             with patch.dict(
                 cd.DIRECTORIES, {"test": cd.Directory(tmp, cd.DirectoryMode.RECURSIVE)}
             ):
-                self.assertEqual(
-                    list(cd.descend("test")), ["Alpha space", "link", "zebra"]
-                )
+                path, descendants = cd.descend("test")
+                self.assertEqual(path, tmp)
+                self.assertEqual(list(descendants), ["Alpha space", "link", "zebra"])
             for bad in (str(root / "missing"), str(root / "file"), "bad\0path"):
                 with (
                     self.subTest(path=bad),
@@ -134,6 +134,7 @@ class FzfTests(unittest.TestCase):
                             "choice": value,
                             "cwd": command.cwd if command else None,
                             "args": command.args if command else None,
+                            "state": main.read_state(state),
                         }
                     )
                 )
@@ -169,7 +170,10 @@ class FzfTests(unittest.TestCase):
             os.close(fd)
 
     def test_terminal_enter_and_tab(self):
-        for keys in ([b"cd shamiri AI", b"\r"], [b"cd shamiri AI", b"\t", b"\r"]):
+        for keys in (
+            [b"cd shamiri AI", b"\r"],
+            [b"cd shamiri AI", b"\t", b"\x1b[Z", b"\r"],
+        ):
             value, state = self.choose(keys)
             self.assertEqual(value["cwd"], str(self.root / "Desktop" / "shamiri_AI"))
             self.assertIsNone(state)
@@ -210,11 +214,91 @@ class FzfTests(unittest.TestCase):
         self.assertEqual(value["choice"], "printf arbitrary")
 
     def test_namespace_switch_and_ctrl_x_while_browsing(self):
-        value, state = self.choose([b"cd desktop", b"\t", b"\x15git status", b"\r"])
-        self.assertIsNone(state)
-        self.assertEqual(value["args"], ["git", "status"])
+        for query in ("git status", "browser hackernews", "tmux arrange"):
+            with self.subTest(query=query):
+                value, state = self.choose(
+                    [b"cd desktop", b"\t", b"\x15" + query.encode(), b"\r"]
+                )
+                self.assertIsNone(state)
+                self.assertIsNone(value["state"])
+                self.assertEqual(value["args"], main.resolve(query).args)
         value, _ = self.choose([b"cd desktop", b"\t", b"Projects", b"\x18"])
         self.assertEqual(value["choice"], "cd Projects")
+
+    def test_back_once_to_aliases(self):
+        value, state = self.choose(
+            [b"cd desktop", b"\t", b"\x1b[Z", b"shamiri AI", b"\r"]
+        )
+        self.assertIsNone(state)
+        self.assertIsNone(value["state"])
+        self.assertEqual(value["cwd"], str(self.root / "Desktop" / "shamiri_AI"))
+
+    def test_back_from_nested_level(self):
+        value, children = self.choose(
+            [b"cd desktop", b"\t", b"Projects", b"\t", b"\x1b[Z", b"\x18"]
+        )
+        self.assertEqual(value["choice"], "cd ")
+        self.assertEqual(list(children), ["Projects", "Screenshots", "shamiri_AI"])
+        self.assertEqual(value["state"]["stack"], [str(self.root / "Desktop")])
+
+    def test_back_twice_to_aliases(self):
+        value, state = self.choose(
+            [
+                b"cd desktop",
+                b"\t",
+                b"Projects",
+                b"\t",
+                b"\x1b[Z",
+                b"\x1b[Z",
+                b"desktop",
+                b"\r",
+            ]
+        )
+        self.assertIsNone(state)
+        self.assertEqual(value["cwd"], str(self.root / "Desktop"))
+
+    def test_back_at_curated_level(self):
+        value, state = self.choose([b"cd ", b"\x1b[Z", b"desktop", b"\r"])
+        self.assertIsNone(state)
+        self.assertEqual(value["cwd"], str(self.root / "Desktop"))
+
+    def test_back_from_empty_directory(self):
+        value, children = self.choose(
+            [b"cd desktop", b"\t", b"Screenshots", b"\t", b"\x1b[Z", b"\x1b"]
+        )
+        self.assertIsNone(value["choice"])
+        self.assertEqual(list(children), ["Projects", "Screenshots", "shamiri_AI"])
+        self.assertEqual(value["state"]["stack"], [str(self.root / "Desktop")])
+
+    def test_filter_and_descend_after_back(self):
+        value, children = self.choose(
+            [
+                b"cd desktop",
+                b"\t",
+                b"Projects",
+                b"\t",
+                b"\x1b[Z",
+                b"Projects",
+                b"\t",
+                b"Nested",
+                b"\r",
+            ]
+        )
+        self.assertEqual(list(children), ["Nested space"])
+        self.assertEqual(
+            value["state"]["stack"],
+            [str(self.root / "Desktop"), str(self.root / "Desktop" / "Projects")],
+        )
+        self.assertEqual(
+            value["cwd"], str(self.root / "Desktop" / "Projects" / "Nested space")
+        )
+
+    def test_return_to_cd_resets_to_aliases(self):
+        value, state = self.choose(
+            [b"cd desktop", b"\t", b"\x15git status", b"\x15cd desktop", b"\r"]
+        )
+        self.assertIsNone(state)
+        self.assertEqual(value["cwd"], str(self.root / "Desktop"))
 
 
 if __name__ == "__main__":

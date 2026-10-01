@@ -54,8 +54,17 @@ def descend(name, children=None):
     entry = directory(name, children)
     if entry is None or entry.mode is not DirectoryMode.RECURSIVE:
         return None
+    path = os.path.expanduser(entry.path)
+    descendants = list_children(path)
+    if descendants is None:
+        return None
+    return path, descendants
+
+
+def list_children(path):
+    """List one level, returning None when the directory is unavailable."""
     try:
-        with os.scandir(os.path.expanduser(entry.path)) as entries:
+        with os.scandir(path) as entries:
             return {
                 child.name: child.path
                 for child in sorted(entries, key=lambda child: child.name)
@@ -65,5 +74,4 @@ def descend(name, children=None):
                 and child.is_dir()
             }
     except (OSError, ValueError):
-        # Leave the current candidates in place if the directory is unavailable.
         return None
