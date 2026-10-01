@@ -12,7 +12,7 @@ export MANPAGER='nvim +Man!'
 
 # pager, use bat if present
 if command -v bat >/dev/null; then
-    export PAGER=bat
+    export PAGER='bat --style=plain'
 fi
 
 # FZF options

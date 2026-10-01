@@ -15,7 +15,7 @@ export MANPAGER='nvim +Man!'
 
 # Use bat as pager if available
 if command -v bat &>/dev/null; then
-	export PAGER=bat
+    export PAGER='bat --style=plain'
     export GIT_PAGER=delta
 fi
 
