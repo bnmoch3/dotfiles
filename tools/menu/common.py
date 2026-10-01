@@ -37,7 +37,7 @@ def run_command(command):
     if command.cwd is not None:
         try:
             os.chdir(command.cwd)
-        except OSError as exc:
+        except (OSError, ValueError) as exc:
             print(
                 f"Failed to change directory to {command.cwd!r}: {exc}",
                 file=sys.stderr,

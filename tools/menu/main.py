@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """One fzf session, with query-driven submenu candidates and filtering."""
 
+import json
 import os
 import shlex
 import subprocess
 import sys
+import tempfile
+from pathlib import Path
 
 # Support direct execution as well as the compatibility launcher.
 if not __package__:
@@ -24,27 +27,42 @@ def namespace(query):
     return None, query
 
 
-def candidates(query):
+def candidates(query, children=None):
     prefix, _ = namespace(query)
+    if prefix == "cd":
+        return cd.candidates(children)
     if prefix:
         return SUBMENUS[prefix].candidates()
     return [*COMMANDS, *SUBMENUS]
 
 
-def resolve(value):
+def resolve(value, children=None):
     prefix, name = namespace(value)
+    if prefix == "cd":
+        return cd.resolve(name if children is not None else name.strip(), children)
     if prefix:
         return SUBMENUS[prefix].resolve(name.strip())
     return COMMANDS.get(value.strip())
 
 
-def choose():
-    helper = shlex.join([sys.executable, os.path.abspath(__file__)])
-    # fzf shell-quotes {q} and {}. Never embed user text in action syntax.
-    refresh = (
+def refresh_actions(helper):
+    return (
         f"reload-sync({helper} --candidates {{q}})"
         f"+transform-search({helper} --search {{q}})"
     )
+
+
+def read_children(state_path):
+    # None means curated aliases; even an empty mapping is a browsing level.
+    return json.loads(state_path.read_text()) if state_path.exists() else None
+
+
+def choose(state_path):
+    helper = shlex.join(
+        [sys.executable, os.path.abspath(__file__), "--state", str(state_path)]
+    )
+    # fzf shell-quotes {q} and {}. Never embed user text in action syntax.
+    refresh = refresh_actions(helper)
     proc = subprocess.run(
         [
             "fzf",
@@ -52,9 +70,10 @@ def choose():
             "--disabled",
             "--print-query",
             "--expect=ctrl-x",
-            "--header=Enter: select preset | Ctrl-X: run query",
+            "--header=Enter: select preset | Tab: browse recursive directory | Ctrl-X: run query",
             f"--bind=start:{refresh},change:{refresh}",
             f"--bind=enter:transform({helper} --accept {{q}} {{}})",
+            f"--bind=tab:transform({helper} --tab {{q}} {{}})",
         ],
         input="\n".join(candidates("")),
         text=True,
@@ -69,6 +88,13 @@ def choose():
     query = lines[0]
     key = lines[1] if len(lines) > 1 else ""
     selected = lines[2] if len(lines) > 2 else ""
+    # During browsing the selection, rather than the filter, identifies the path.
+    if (
+        key != "ctrl-x"
+        and namespace(query)[0] == "cd"
+        and read_children(state_path) is not None
+    ):
+        return f"cd {selected}" if selected else None
     if key == "ctrl-x" or resolve(query) is not None or not selected:
         return query
     prefix, _ = namespace(query)
@@ -79,29 +105,58 @@ def choose():
 
 
 def main():
+    args = sys.argv[1:]
+    state_path = None
+    if args[:1] == ["--state"]:
+        state_path = Path(args[1])
+        args = args[2:]
+    children = read_children(state_path) if state_path else None
     # Helpers only print data/actions; only choose() launches fzf.
-    if len(sys.argv) > 1:
-        if len(sys.argv) < 3:
-            raise SystemExit(f"Missing query argument for {sys.argv[1]}")
-        action, query = sys.argv[1:3]
+    if args:
+        if len(args) < 2:
+            raise SystemExit(f"Missing query argument for {args[0]}")
+        action, query = args[:2]
         if action == "--candidates":
-            print("\n".join(candidates(query)))
+            if namespace(query)[0] != "cd" and state_path:
+                state_path.write_text("null")
+                children = None
+            print("\n".join(candidates(query, children)))
         elif action == "--search":
             print(namespace(query)[1])
         elif action == "--accept":
-            selected = sys.argv[3] if len(sys.argv) > 3 else ""
+            selected = args[2] if len(args) > 2 else ""
             if namespace(query)[0] is None and selected in SUBMENUS:
                 print(f"change-query({selected} )")
             else:
                 print("accept")
+        elif action == "--tab":
+            selected = args[2] if len(args) > 2 else ""
+            if state_path and namespace(query)[0] == "cd" and selected:
+                name = (
+                    selected if children is not None else selected.removeprefix("cd ")
+                )
+                descendants = cd.descend(name, children)
+                if descendants is not None:
+                    state_path.write_text(json.dumps(descendants))
+                    helper = shlex.join(
+                        [
+                            sys.executable,
+                            os.path.abspath(__file__),
+                            "--state",
+                            str(state_path),
+                        ]
+                    )
+                    print(f"change-query(cd )+{refresh_actions(helper)}")
         else:
             raise SystemExit(f"Unknown option: {action}")
         return 0
 
-    choice = choose()
-    if choice is None or not choice.strip():
-        return 0
-    command = resolve(choice)
+    with tempfile.TemporaryDirectory(prefix="menu-") as session:
+        state_path = Path(session) / "cd.json"
+        choice = choose(state_path)
+        if choice is None or not choice.strip():
+            return 0
+        command = resolve(choice, read_children(state_path))
     if command is None:
         command = Command(
             ["zsh", "-ic", f"{choice}; exec zsh -i"], mode=Mode.INTERACTIVE
