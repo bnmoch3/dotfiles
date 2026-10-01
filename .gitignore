@@ -1,2 +1,4 @@
 .Xmodmap_notes
 TODO
+tools/**/__pycache__/
+tools/**/*.pyc

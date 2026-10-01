@@ -1,0 +1,1 @@
+"""The tmux command palette."""

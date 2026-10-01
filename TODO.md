@@ -53,6 +53,9 @@
       fallback, align selection/copy keys (`v`/`y`), and target the system
       clipboard
 - [ ] Verify the copy workflow in normal tmux panes and popups
+- [ ] Upgrade tmux from 3.4 to 3.8+ so I can use floating panes/windows,
+      including resizing/maximizing them and moving a floating pane into its own
+      tmux window.
 
 ## Known Warnings / Bugs
 
