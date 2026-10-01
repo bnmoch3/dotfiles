@@ -17,6 +17,7 @@ class Command:
     args: list[str]
     mode: Mode = Mode.OUTPUT
     cwd: str | None = None
+    display_prefix: bool = False
 
     def __post_init__(self):
         if not isinstance(self.mode, Mode):
@@ -38,13 +39,16 @@ def run_command(command):
             os.chdir(command.cwd)
         except OSError as exc:
             print(
-                f"Failed to change directory to {command.cwd!r}: {exc}", file=sys.stderr
+                f"Failed to change directory to {command.cwd!r}: {exc}",
+                file=sys.stderr,
             )
             wait_to_close()
             return 1
+
     try:
         if command.mode is Mode.INTERACTIVE:
             os.execvp(command.args[0], command.args)
+
         elif command.mode is Mode.DETACHED:
             subprocess.Popen(
                 command.args,
@@ -54,13 +58,20 @@ def run_command(command):
                 start_new_session=True,
             )
             return 0
-        else:
-            returncode = subprocess.run(command.args).returncode
+
+        elif command.mode is Mode.OUTPUT:
+            returncode = subprocess.run(command.args, check=False).returncode
             wait_to_close()
             return returncode
+
+        else:
+            raise ValueError(f"Unknown command mode: {command.mode!r}")
+
     except FileNotFoundError:
         print(f"Command not found: {command.args[0]!r}", file=sys.stderr)
+
     except OSError as exc:
         print(f"Failed to run {command.args[0]!r}: {exc}", file=sys.stderr)
+
     wait_to_close()
     return 1

@@ -8,6 +8,8 @@ DIRECTORIES = {
     "downloads": "~/Downloads",
     "desktop": "~/Desktop",
     "projects": "~/PROJECTS",
+    "shamiri AI": "~/Desktop/shamiri_AI",
+    "papersurvey": "~/PROJECTS/shamiri/papersurvey_replacement",
 }
 
 

@@ -10,11 +10,11 @@ import sys
 if not __package__:
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from menu import cd, git, tmux
+from menu import browser, cd, git, hunk, tmux
 from menu.commands import COMMANDS
 from menu.common import Command, Mode, run_command
 
-SUBMENUS = {"cd": cd, "git": git, "tmux": tmux}
+SUBMENUS = {"cd": cd, "git": git, "tmux": tmux, "browser": browser, "hunk": hunk}
 
 
 def namespace(query):
@@ -72,12 +72,17 @@ def choose():
     if key == "ctrl-x" or resolve(query) is not None or not selected:
         return query
     prefix, _ = namespace(query)
+    if prefix and selected.startswith(f"{prefix} "):
+        return selected
+
     return f"{prefix} {selected}" if prefix else selected
 
 
 def main():
     # Helpers only print data/actions; only choose() launches fzf.
     if len(sys.argv) > 1:
+        if len(sys.argv) < 3:
+            raise SystemExit(f"Missing query argument for {sys.argv[1]}")
         action, query = sys.argv[1:3]
         if action == "--candidates":
             print("\n".join(candidates(query)))
