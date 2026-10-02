@@ -16,6 +16,7 @@ import termios
 import time
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -23,6 +24,58 @@ from menu import cd, common, main
 
 
 class DirectoryTests(unittest.TestCase):
+    def test_initial_query_launch_arguments(self):
+        for argv, expected in (
+            (["menu"], ""),
+            (["menu", "--query", "tmux "], "tmux "),
+            (["menu", "--query", "git status --short "], "git status --short "),
+            (["menu", "--query", "arbitrary normal text"], "arbitrary normal text"),
+        ):
+            with (
+                self.subTest(argv=argv),
+                patch.object(sys, "argv", argv),
+                patch.object(main, "choose", return_value=None) as choose,
+            ):
+                self.assertEqual(main.main(), 0)
+                self.assertEqual(choose.call_args.args[1], expected)
+
+    def test_choose_passes_initial_query_to_fzf_and_cancel_is_clean(self):
+        with (
+            tempfile.TemporaryDirectory() as tmp,
+            patch.object(
+                main.subprocess,
+                "run",
+                return_value=SimpleNamespace(returncode=130, stdout=""),
+            ) as run,
+        ):
+            self.assertIsNone(main.choose(Path(tmp) / "state.json", "tmux "))
+        self.assertIn("--query=tmux ", run.call_args.args[0])
+
+    def test_helper_arguments_are_unchanged(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            state = str(Path(tmp) / "state.json")
+            cases = (
+                (
+                    ["--state", state, "--candidates", "tmux "],
+                    "\n".join(main.candidates("tmux ")) + "\n",
+                ),
+                (["--state", state, "--search", "git status"], "status\n"),
+                (
+                    ["--state", state, "--accept", "tmux ", "tmux arrange windows"],
+                    "accept\n",
+                ),
+                (["--state", state, "--tab", "git ", "git status"], ""),
+                (["--state", state, "--back", "git "], ""),
+            )
+            for args, expected in cases:
+                with (
+                    self.subTest(args=args),
+                    patch.object(sys, "argv", ["menu", *args]),
+                    contextlib.redirect_stdout(io.StringIO()) as output,
+                ):
+                    self.assertEqual(main.main(), 0)
+                    self.assertEqual(output.getvalue(), expected)
+
     def test_arbitrary_query_dispatch_and_cancel(self):
         with (
             patch.object(sys, "argv", ["menu"]),
@@ -112,7 +165,7 @@ class FzfTests(unittest.TestCase):
         (self.root / "Desktop" / ".hidden").mkdir()
         (self.root / "Desktop" / "file").touch()
 
-    def choose(self, keys):
+    def choose(self, keys, initial_query=""):
         result = self.root / "result.json"
         state = self.root / "state.json"
         result.unlink(missing_ok=True)
@@ -124,7 +177,7 @@ class FzfTests(unittest.TestCase):
                 os.environ.update(
                     HOME=str(self.root), TERM="xterm-256color", FZF_DEFAULT_OPTS=""
                 )
-                value = main.choose(state)
+                value = main.choose(state, initial_query)
                 command = (
                     main.resolve(value, main.read_children(state)) if value else None
                 )
@@ -178,6 +231,27 @@ class FzfTests(unittest.TestCase):
             self.assertEqual(value["cwd"], str(self.root / "Desktop" / "shamiri_AI"))
             self.assertIsNone(state)
 
+    def test_initial_query_submenus(self):
+        for initial_query, keys, expected in (
+            ("tmux ", [b"arrange", b"\r"], "tmux arrange windows"),
+            ("git ", [b"status", b"\r"], "git status"),
+        ):
+            with self.subTest(initial_query=initial_query):
+                value, _ = self.choose(keys, initial_query)
+                self.assertEqual(value["args"], main.resolve(expected).args)
+
+        value, children = self.choose(
+            [b"desktop", b"\t", b"Projects", b"\r"], "cd "
+        )
+        self.assertEqual(list(children), ["Projects", "Screenshots", "shamiri_AI"])
+        self.assertEqual(value["cwd"], str(self.root / "Desktop" / "Projects"))
+
+    def test_initial_arbitrary_query_and_cancel(self):
+        value, _ = self.choose([b"\x18"], "printf arbitrary text ")
+        self.assertEqual(value["choice"], "printf arbitrary text ")
+        value, _ = self.choose([b"\x1b"], "tmux ")
+        self.assertIsNone(value["choice"])
+
     def test_recursive_enter(self):
         value, _ = self.choose([b"cd desktop", b"\r"])
         self.assertEqual(value["cwd"], str(self.root / "Desktop"))
@@ -206,7 +280,7 @@ class FzfTests(unittest.TestCase):
         self.assertEqual(list(state), ["Projects", "Screenshots", "shamiri_AI"])
 
     def test_other_submenus_and_query(self):
-        for query in ("git status", "tmux arrange", "browser hackernews"):
+        for query in ("git status", "tmux arrange windows", "browser hackernews"):
             with self.subTest(query=query):
                 value, _ = self.choose([query.encode(), b"\t", b"\r"])
                 self.assertEqual(value["args"], main.resolve(query).args)
@@ -214,7 +288,7 @@ class FzfTests(unittest.TestCase):
         self.assertEqual(value["choice"], "printf arbitrary")
 
     def test_namespace_switch_and_ctrl_x_while_browsing(self):
-        for query in ("git status", "browser hackernews", "tmux arrange"):
+        for query in ("git status", "browser hackernews", "tmux arrange windows"):
             with self.subTest(query=query):
                 value, state = self.choose(
                     [b"cd desktop", b"\t", b"\x15" + query.encode(), b"\r"]

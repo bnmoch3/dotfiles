@@ -62,7 +62,7 @@ def read_children(state_path):
     return state["children"] if state is not None else None
 
 
-def choose(state_path):
+def choose(state_path, initial_query=""):
     helper = shlex.join(
         [sys.executable, os.path.abspath(__file__), "--state", str(state_path)]
     )
@@ -74,6 +74,7 @@ def choose(state_path):
             "--prompt=tmux> ",
             "--disabled",
             "--print-query",
+            f"--query={initial_query}",
             "--expect=ctrl-x",
             "--header=Enter: select | Tab: descend | Shift-Tab: back | Ctrl-X: run query",
             f"--bind=start:{refresh},change:{refresh}",
@@ -113,9 +114,18 @@ def choose(state_path):
 def main():
     args = sys.argv[1:]
     state_path = None
+    initial_query = ""
     if args[:1] == ["--state"]:
         state_path = Path(args[1])
         args = args[2:]
+    # --query is launch-only; fzf helper re-execs always start with --state.
+    elif args[:1] == ["--query"]:
+        if len(args) < 2:
+            raise SystemExit("Missing query argument for --query")
+        if len(args) > 2:
+            raise SystemExit("Unexpected arguments after --query")
+        initial_query = args[1]
+        args = []
     state = read_state(state_path) if state_path else None
     children = state["children"] if state is not None else None
     # Helpers only print data/actions; only choose() launches fzf.
@@ -181,7 +191,7 @@ def main():
 
     with tempfile.TemporaryDirectory(prefix="menu-") as session:
         state_path = Path(session) / "cd.json"
-        choice = choose(state_path)
+        choice = choose(state_path, initial_query)
         if choice is None or not choice.strip():
             return 0
         command = resolve(choice, read_children(state_path))

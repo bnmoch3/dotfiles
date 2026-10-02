@@ -47,7 +47,16 @@ def run_command(command):
 
     try:
         if command.mode is Mode.INTERACTIVE:
-            os.execvp(command.args[0], command.args)
+            returncode = subprocess.run(command.args, check=False).returncode
+
+            if returncode != 0:
+                print()
+                print(
+                    f"Command failed with exit status {returncode}: {command.args[0]}"
+                )
+                wait_to_close()
+
+            return returncode
 
         elif command.mode is Mode.DETACHED:
             subprocess.Popen(

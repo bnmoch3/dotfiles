@@ -4,7 +4,7 @@ import os
 import subprocess
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-NEW_SESSION_SCRIPT = os.path.join(SCRIPT_DIR, "new-session.sh")
+NEW_SESSION_SCRIPT = os.path.join(SCRIPT_DIR, "new_session.sh")
 
 NEW_SESSION = "__new_session__"
 NEW_SESSION_DISPLAY = "+ new session"

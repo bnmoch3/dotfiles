@@ -3,7 +3,7 @@
 set -euo pipefail
 
 if [[ -z "${TMUX:-}" ]] || ! tmux display-message -p '#S' &>/dev/null; then
-    echo "rename-window: must be run inside a tmux session" >&2
+    echo "rename_window: must be run inside a tmux session" >&2
     exit 1
 fi
 

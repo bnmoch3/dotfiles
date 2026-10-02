@@ -3,7 +3,7 @@
 set -euo pipefail
 
 if ! tmux list-sessions &>/dev/null; then
-    echo "kill-session: no tmux sessions" >&2
+    echo "kill_session: no tmux sessions" >&2
     exit 1
 fi
 

@@ -9,32 +9,32 @@ TMUX_DIR = os.path.join(TOOLS_DIR, "tmux")
 
 COMMANDS = {
     "switch session": Command(
-        [os.path.join(TMUX_DIR, "switch-session.py")],
+        [os.path.join(TMUX_DIR, "switch_session.py")],
         mode=Mode.INTERACTIVE,
         display_prefix=True,
     ),
     "switch window": Command(
-        [os.path.join(TMUX_DIR, "switch-window.sh")],
+        [os.path.join(TMUX_DIR, "switch_window.sh")],
         mode=Mode.INTERACTIVE,
         display_prefix=True,
     ),
     "new session": Command(
-        [os.path.join(TMUX_DIR, "new-session.sh")],
+        [os.path.join(TMUX_DIR, "new_session.sh")],
         mode=Mode.INTERACTIVE,
         display_prefix=True,
     ),
     "kill session": Command(
-        [os.path.join(TMUX_DIR, "kill-session.sh")],
+        [os.path.join(TMUX_DIR, "kill_session.sh")],
         mode=Mode.INTERACTIVE,
         display_prefix=True,
     ),
     "rename window": Command(
-        [os.path.join(TMUX_DIR, "rename-window.sh")],
+        [os.path.join(TMUX_DIR, "rename_window.sh")],
         mode=Mode.INTERACTIVE,
         display_prefix=True,
     ),
     "arrange windows": Command(
-        ["tmux-arrange"],
+        [os.path.join(TMUX_DIR, "arrange_windows.py")],
         mode=Mode.INTERACTIVE,
         display_prefix=True,
     ),
