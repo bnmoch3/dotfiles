@@ -58,8 +58,8 @@ alias tree='eza --tree --git-ignore'
 alias fcc='files-combine --format markdown --stdout | pbcopy'
 
 # tmux
-alias tmn="$HOME/dotfiles/tools/tmux/new_session.sh"
-alias tms="$HOME/dotfiles/tools/tmux/switch_session.py"
+alias tmn="tmux_new_session"
+alias tms="tmux_switch_session"
 
 # directory stack
 setopt AUTO_PUSHD # push the current directory visited on to the stack.

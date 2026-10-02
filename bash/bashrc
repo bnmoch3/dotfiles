@@ -72,5 +72,5 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 fi
 
 # tmux
-alias tmn="$HOME/dotfiles/tools/tmux/new_session.sh"
-alias tms="$HOME/dotfiles/tools/tmux/switch_session.py"
+alias tmn="tmux_new_session"
+alias tms="tmux_switch_session"
