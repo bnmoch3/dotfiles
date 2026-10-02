@@ -5,19 +5,6 @@ nv() {
 	nvim "$(fzf -m)"
 }
 
-# rename tmux window
-tmr() {
-	local window_name=${1:-main}
-	if [[ -n $TMUX ]]; then
-		tmux rename-window -t 1 "$window_name"
-	fi
-}
-
-# kill tmux session chosen via fzf
-tmk() {
-	tmux kill-session -t "$(tmux ls -F '#{session_name}' | fzf)"
-}
-
 # copy cwd to clipboard
 pwdd() {
 	case "$OSTYPE" in

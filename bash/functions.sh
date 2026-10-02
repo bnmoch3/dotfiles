@@ -4,20 +4,6 @@ function nv() {
     nvim "$(fzf -m)"
 }
 
-function tmr() {
-    window_name='main'
-    if [[ -n $1 ]]; then
-        window_name=$1
-    fi
-    if [[ -n $TMUX ]]; then
-        tmux rename-window -t 1 $window_name
-    fi
-}
-
-function tmk() {
-    tmux kill-session -t "$(tmux ls -F '#{session_name}' | fzf)"
-}
-
 # copy cwd to system clipboard
 function pwdd() {
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
