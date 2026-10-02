@@ -412,24 +412,49 @@ telescope.setup({
 	},
 })
 telescope.load_extension("fzf")
+
+local buffer_tools = require("my_modules.buffer_tools")
+
+vim.keymap.set("n", "<leader>ff", function()
+	require("telescope.builtin").buffers({
+		layout_strategy = "vertical",
+		layout_config = {
+			width = 0.5,
+			height = 0.22,
+			anchor = "N",
+			anchor_padding = 1,
+			prompt_position = "top",
+			preview_cutoff = 1,
+		},
+		sorting_strategy = "ascending",
+		previewer = false,
+		sort_mru = true,
+		ignore_current_buffer = false,
+		path_display = buffer_tools.buffer_path_display(),
+	})
+end, { noremap = true, silent = true, desc = "Find buffer" })
+
 vim.keymap.set(
 	"n",
-	"<leader>ff",
+	"<leader>fn",
 	require("telescope.builtin").find_files,
-	{ noremap = true, silent = true, desc = "Find files" }
+	{ noremap = true, silent = true, desc = "Find file" }
 )
+
+vim.keymap.set(
+	"n",
+	"<leader>fa",
+	buffer_tools.toggle_arrange_buffers,
+	{ noremap = true, silent = true, desc = "Arrange buffers" }
+)
+
 vim.keymap.set(
 	"n",
 	"<leader>fg",
 	require("telescope.builtin").live_grep,
 	{ noremap = true, silent = true, desc = "Live grep" }
 )
-vim.keymap.set(
-	"n",
-	"<leader>fb",
-	require("telescope.builtin").buffers,
-	{ noremap = true, silent = true, desc = "Find buffers" }
-)
+
 vim.keymap.set(
 	"n",
 	"<leader>fh",
