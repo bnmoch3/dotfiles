@@ -67,11 +67,6 @@ find1() {
     find "${dir:-.}" -maxdepth 1 "$@"
 }
 
-# nightmode
-nightmode() {
-    "$HOME/dotfiles/tools/nightmode.py"
-}
-
 # quick open TODO, move to last line
 todo() {
 	nvim + "$HOME/TODO.txt"

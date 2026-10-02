@@ -37,12 +37,6 @@
 - [ ] Clean up `tools/`: keep `.py` suffixes and expose shell commands through
       `~/.local/bin` symlinks
 - [ ] Update `setup.sh` to sync new tool scripts and symlinks
-- [ ] Add shell commands: `menu`, `nightmode`, `project_pick`, and possibly
-      `chatgpt`
-- [ ] Build `project_pick.py`: select curated projects with fzf, switch to an
-      existing tmux session, or create a session/window/pane as appropriate
-- [ ] Revisit whether `project_pick.py` needs Questionary/Textual after trying
-      fzf
 
 ## Tmux
 

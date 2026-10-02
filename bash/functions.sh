@@ -73,14 +73,6 @@ function find1() {
     find $dir -maxdepth 1 "$@"
 }
 
-# nightmode
-function nightmode() {
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        redshift -x
-        redshift -o -O 1500
-    fi
-}
-
 function daymode() {
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         redshift -x
