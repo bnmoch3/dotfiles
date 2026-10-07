@@ -95,9 +95,14 @@ zstyle ':completion:*:(ssh|scp|rsync):*:hosts-domain' ignored-patterns '<->.<->.
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<->.<->.<->|(|::)([[:xdigit:].]##:(#c,2))##(|%*))' '127.0.0.<->' '255.255.255.255' '::1' 'fe80::*'
 
 _todo() {
+    if (( CURRENT != 2 )); then
+        return 1
+    fi
+
     local -a docs
-    docs=("${(@f)$(todo --completion)}")
-    _describe 'document' docs
+    docs=("${(@f)$(todo --completion 2>/dev/null)}")
+
+    _describe "document" docs
 }
 
-_todo "$@"
+compdef _todo todo
