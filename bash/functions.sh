@@ -78,7 +78,3 @@ function daymode() {
         redshift -x
     fi
 }
-
-function todo() {
-    nvim "$HOME/TODO.txt"
-}

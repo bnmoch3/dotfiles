@@ -67,10 +67,6 @@ find1() {
     find "${dir:-.}" -maxdepth 1 "$@"
 }
 
-# quick open TODO, move to last line
-todo() {
-	nvim + "$HOME/TODO.txt"
-}
 
 chatgpt() {
     (

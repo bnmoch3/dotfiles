@@ -193,15 +193,6 @@ function M.setup()
 		tmux_window_arrange:toggle()
 	end, { desc = "Open tmux-arrange to reorder/rename/remove tmux windows" })
 
-	-- vim.api.nvim_create_user_command("Todo", function()
-	-- 	vim.cmd("e ~/TODO.txt")
-	-- end, { desc = "Open my TODO list" })
-
-	local todo = create_zoomed_toggle_term("vim + ~/TODO.txt")
-	vim.api.nvim_create_user_command("Todo", function()
-		todo:toggle()
-	end, { desc = "Open my TODO list" })
-
 	local lazygit = create_zoomed_toggle_term("lazygit")
 	vim.keymap.set("n", "<leader>gg", function()
 		lazygit:toggle()
