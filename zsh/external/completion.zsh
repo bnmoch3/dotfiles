@@ -94,22 +94,6 @@ zstyle ':completion:*:(ssh|scp|rsync):*:hosts-host' ignored-patterns '*(.|:)*' l
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-domain' ignored-patterns '<->.<->.<->.<->' '^[-[:alnum:]]##(.[-[:alnum:]]##)##' '*@*'
 zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<->.<->.<->|(|::)([[:xdigit:].]##:(#c,2))##(|%*))' '127.0.0.<->' '255.255.255.255' '::1' 'fe80::*'
 
-_tool() {
-    # only complete the first argument for now
-    if (( CURRENT != 2 )); then
-        return 1
-    fi
-
-    local -a tools
-    tools=(
-        list
-        "${(@f)$(tool list 2>/dev/null)}"
-    )
-
-    _describe "tool" tools
-}
-
-compdef _tool tool
 _todo() {
     local -a docs
     docs=("${(@f)$(todo --completion)}")
