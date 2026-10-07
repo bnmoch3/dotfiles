@@ -46,6 +46,20 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     alias pbpaste='xclip -selection clipboard -o'
 fi
 
+# launch dotmenu
+if [[ -z "$TMUX" ]]; then
+    dotmenu_widget() {
+        zle -I
+        "$HOME/.local/bin/dotmenu"
+        zle reset-prompt
+    }
+
+    zle -N dotmenu_widget
+
+    bindkey -M viins -r '^A'
+    bindkey -M viins '^A ' dotmenu_widget
+fi
+
 # aliases
 alias ll='ls -alF'
 if command -v eza &>/dev/null; then
