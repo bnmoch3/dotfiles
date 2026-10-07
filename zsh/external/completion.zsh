@@ -110,3 +110,10 @@ _tool() {
 }
 
 compdef _tool tool
+_todo() {
+    local -a docs
+    docs=("${(@f)$(todo --completion)}")
+    _describe 'document' docs
+}
+
+_todo "$@"
