@@ -1,9 +1,5 @@
 #!/usr/bin/bash
 
-function nv() {
-    nvim "$(fzf -m)"
-}
-
 # copy cwd to system clipboard
 function pwdd() {
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -71,10 +67,4 @@ function find1() {
         shift
     fi
     find $dir -maxdepth 1 "$@"
-}
-
-function daymode() {
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        redshift -x
-    fi
 }

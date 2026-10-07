@@ -1,10 +1,5 @@
 #!/usr/bin/zsh
 
-# interactive fuzzy find and open with nvim
-nv() {
-	nvim "$(fzf -m)"
-}
-
 # copy cwd to clipboard
 pwdd() {
 	case "$OSTYPE" in
