@@ -113,6 +113,7 @@ _setup_configs() {
     _link "nvim/vimrc" "$HOME/.vimrc"
     _link "nvim/my_modules" "$HOME/.config/nvim/lua/my_modules"
     _link "nvim/ftplugin" "$HOME/.config/nvim/ftplugin"
+    _link "nvim/syntax" "$HOME/.config/nvim/syntax"
 }
 
 # ---------------------------------------------------------------------------
